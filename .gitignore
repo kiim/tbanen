@@ -1,0 +1,6 @@
+# Station photos — too large for git, kept on server
+images/
+
+# Dev/temp files
+tbanen_stasjoner.xlsx
+splash2.html

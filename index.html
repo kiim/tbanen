@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>T—BANEN / OSLO</title>
+  <meta name="theme-color" content="#080808">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #080808;
+      --l1: #5B9BD5;
+      --l2: #E8751A;
+      --l3: #8B5EA7;
+      --l4: #C8102E;
+      --l5: #3D9A5C;
+      --sans: 'Helvetica Neue', Arial, 'Liberation Sans', sans-serif;
+      --mono: 'Courier New', Courier, monospace;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--black);
+      overflow: hidden;
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      cursor: pointer;
+    }
+
+    /* ── Network canvas ── */
+    #network-bg {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ── Identity — top-left system label ── */
+    #identity {
+      position: fixed;
+      left: 20px;
+      top: calc(16px + env(safe-area-inset-top, 0px));
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 7px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .wordmark-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .wordmark {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #ffffff;
+      text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+      white-space: nowrap;
+    }
+
+    .wordmark-tail {
+      display: flex;
+      align-items: center;
+      margin-left: 6px;
+    }
+
+    .wordmark-line {
+      width: clamp(10px, 1.2vw, 16px);
+      height: 1px;
+      background: currentColor;
+      opacity: 0.38;
+    }
+
+    .wordmark-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      margin-left: 3px;
+      transition: background-color 2.4s ease;
+    }
+
+    .subtitle {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 400;
+      letter-spacing: 0.20em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.28);
+    }
+
+    /* ── Gateway — compositional center, primary anchor ── */
+    #gateway {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateY(8vh);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #gateway-rule {
+      width: 32px;
+      height: 1px;
+      background: rgba(175, 163, 143, 0.20);
+      transition: width 1.8s ease, opacity 1.8s ease;
+    }
+
+    #gateway:hover #gateway-rule {
+      width: 56px;
+      opacity: 0.38;
+    }
+
+    #gateway-cta {
+      font-family: var(--sans);
+      font-size: clamp(20px, 3.2vw, 44px);
+      font-weight: 300;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(200, 194, 182, 0.55);
+      text-decoration: none;
+      cursor: pointer;
+      pointer-events: all;
+      transition: color 1.0s ease;
+      white-space: nowrap;
+      display: block;
+      text-align: center;
+      line-height: 1;
+    }
+
+    #gateway-cta:hover {
+      color: rgba(220, 214, 200, 0.85);
+    }
+
+    #gateway-sub {
+      font-family: var(--sans);
+      font-size: clamp(8px, 0.70vw, 10px);
+      font-weight: 400;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(105, 101, 95, 0.40);
+      text-align: center;
+      pointer-events: none;
+      transition: color 1.0s ease;
+    }
+
+    #gateway:hover #gateway-sub {
+      color: rgba(138, 133, 124, 0.60);
+    }
+  </style>
+  <!-- Matomo -->
+  <script>
+    var _paq = window._paq = window._paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u='//stats.kiim.net/';
+      _paq.push(['setTrackerUrl', u + 'matomo.php']);
+      _paq.push(['setSiteId', '1']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+  <!-- End Matomo -->
+</head>
+<body>
+
+  <canvas id="network-bg"></canvas>
+
+  <div id="identity">
+    <div class="wordmark-row">
+      <span class="wordmark">T—BANEN</span>
+      <div class="wordmark-tail">
+        <div class="wordmark-line" id="id-line"></div>
+        <div class="wordmark-dot" id="id-dot"></div>
+      </div>
+    </div>
+    <p class="subtitle">OSLO T-BANE</p>
+  </div>
+
+  <div id="gateway">
+    <div id="gateway-rule"></div>
+    <a id="gateway-cta" href="/tbanen/app.html?enter">T-BANEN OSLO</a>
+    <p id="gateway-sub">— / — stasjoner dokumentert</p>
+  </div>
+
+  <script>
+  // ═══════════════════════════════════════════════════════════════════
+  //  T—BANEN SPLASH — ambient network visualisation
+  //  Simulated train movement along the Oslo T-bane network.
+  //
+  //  TO CONNECT REAL-TIME DATA:
+  //  Replace `spawnSimulatedTrains()` with `fetchEnturVehicles()`.
+  //  See comment block marked [REALTIME API] below.
+  // ═══════════════════════════════════════════════════════════════════
+
+  const LC = { 1:'#5B9BD5', 2:'#E8751A', 3:'#8B5EA7', 4:'#C8102E', 5:'#3D9A5C' };
+
+  // Station coordinates — same reference frame as main app (viewBox 0 0 1120 620)
+  const COORDS = {
+    // Shared city centre
+    majorstua:         [430, 310],
+    nationaltheateret: [530, 310],
+    stortinget:        [580, 310],
+    jernbanetorget:    [630, 310],
+    gronland:          [680, 310],
+    toyen:             [730, 310],
+
+    // L1 west — Holmenkollen branch
+    frognerseteren:    [120, 120],
+    voksenkollen:      [154, 138],
+    vettakollen:       [186, 158],
+    besserud:          [216, 176],
+    holmenkollen:      [244, 194],
+    midtstuen:         [270, 210],
+    skadalen:          [294, 224],
+    voksenlia:         [316, 236],
+    gullerasen:        [338, 246],
+    graakammen:        [358, 256],
+    slemdal:           [374, 266],
+    ris:               [390, 276],
+    gaustad:           [404, 288],
+    lillevann:         [410, 296],
+    vinderen:          [416, 300],
+    steinerud:         [418, 306],
+    froen:             [418, 310],
+
+    // L2 west
+    osteraas:          [120, 238],
+    lijordet:          [163, 238],
+    eiksmarka:         [206, 238],
+    ekraveien:         [249, 238],
+    roa:               [292, 238],
+    hovseter:          [324, 252],
+    holmen:            [352, 264],
+    makrellbekken:     [376, 276],
+    smestad:           [396, 286],
+    borgen:            [412, 296],
+
+    // L3 west — diagonal
+    kolsas:            [120, 548],
+    hauger:            [156, 512],
+    gjettum:           [190, 478],
+    avlos:             [222, 446],
+    haslum:            [252, 416],
+    gjonnes:           [280, 388],
+    bekkestua:         [306, 362],
+    ringstabekk:       [330, 338],
+    jar:               [352, 316],
+    bjornsletta:       [366, 304],
+    aasjordet:         [378, 298],
+    ullernaasen:       [390, 294],
+    montebello:        [400, 290],
+
+    // L4+L5 northern arch
+    ullevaal:          [430, 120],
+    forskningsparken:  [430, 152],
+    blindern:          [430, 184],
+
+    // L5 west
+    sognsvann:         [120, 162],
+    kringsjaa:         [164, 162],
+    holstein:          [208, 162],
+    osthorn:           [252, 162],
+    tasen:             [292, 162],
+    berg:              [330, 162],
+
+    // L4+L5 right post
+    nydalen:           [772, 120],
+    storo:             [772, 178],
+    sinsen:            [772, 222],
+    carlberner:        [772, 266],
+    loren:             [840, 222],
+
+    // Grorud arc
+    okern:             [800, 100],
+    hasle:             [813, 91],
+    rislokka:          [826, 82],
+    vollebekk:         [854, 68],
+    linderud:          [882, 62],
+    veitvet:           [910, 62],
+    rodtvet:           [936, 68],
+    kalbakken:         [960, 80],
+    ammerud:           [982, 96],
+    grorud:            [1002, 114],
+    romsos:            [1018, 134],
+    rommen:            [1030, 156],
+    stovner:           [1038, 180],
+    vestli:            [1042, 206],
+
+    // L1+L4 east arc
+    ensjo:             [820, 340],
+    helsfyr:           [848, 370],
+    brynseng:          [866, 400],
+    hoyenhall:         [878, 428],
+    manglerud:         [884, 456],
+    ryen:              [884, 482],
+    brattlikollen:     [876, 506],
+    karlsrud:          [862, 528],
+    lambertseter:      [840, 548],
+    munkelia:          [812, 564],
+    bergkrystallen:    [780, 578],
+
+    // L2+L3 east
+    hellerud:          [840, 310],
+    tveita:            [874, 288],
+    haugerud:          [904, 266],
+    trosterud:         [930, 244],
+    lindeberg:         [952, 222],
+    furuset:           [970, 200],
+    ellingsrudaasen:   [984, 176],
+
+    // L3 east
+    godlia:            [852, 342],
+    skoyenaasen:       [846, 370],
+    oppsal:            [836, 398],
+    ulsrud:            [822, 424],
+    boler:             [804, 448],
+    bogerud:           [782, 470],
+    skullerud:         [756, 490],
+    mortensrud:        [728, 508],
+  };
+
+  // Line paths — each array is a one-way sequence of station IDs
+  // Trains spawn at one end and travel to the other, then reset
+  const LINE_SEGS = [
+    { line: 1, color: LC[1], ids: ['frognerseteren','voksenkollen','vettakollen','besserud','holmenkollen','midtstuen','skadalen','voksenlia','gullerasen','graakammen','slemdal','ris','gaustad','lillevann','vinderen','steinerud','froen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hoyenhall','manglerud','ryen','brattlikollen','karlsrud','lambertseter','munkelia','bergkrystallen'] },
+    { line: 2, color: LC[2], ids: ['osteraas','lijordet','eiksmarka','ekraveien','roa','hovseter','holmen','makrellbekken','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','tveita','haugerud','trosterud','lindeberg','furuset','ellingsrudaasen'] },
+    { line: 3, color: LC[3], ids: ['kolsas','hauger','gjettum','avlos','haslum','gjonnes','bekkestua','ringstabekk','jar','bjornsletta','aasjordet','ullernaasen','montebello','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','godlia','skoyenaasen','oppsal','ulsrud','boler','bogerud','skullerud','mortensrud'] },
+    // L4 west arm: Bergkrystallen → Nydalen
+    { line: 4, color: LC[4], ids: ['bergkrystallen','munkelia','lambertseter','karlsrud','brattlikollen','ryen','manglerud','hoyenhall','brynseng','helsfyr','ensjo','toyen','gronland','jernbanetorget','stortinget','nationaltheateret','majorstua','blindern','forskningsparken','ullevaal','nydalen'] },
+    // L4 inner: Nydalen → Tøyen via Sinsen
+    { line: 4, color: LC[4], ids: ['nydalen','storo','sinsen','carlberner','toyen'] },
+    // L4 east arm: Nydalen → Vestli
+    { line: 4, color: LC[4], ids: ['nydalen','okern','hasle','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'] },
+    // L4 spur: Sinsen → Løren
+    { line: 4, color: LC[4], ids: ['sinsen','loren'] },
+    { line: 5, color: LC[5], ids: ['sognsvann','kringsjaa','holstein','osthorn','tasen','berg','ullevaal','forskningsparken','blindern','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','carlberner','sinsen','storo','nydalen','okern','hasle','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'] },
+    // L5 spur: Sinsen → Løren
+    { line: 5, color: LC[5], ids: ['sinsen','loren'] },
+  ];
+
+  // ── Canvas setup ─────────────────────────────────────────────────
+  const canvas = document.getElementById('network-bg');
+  const ctx    = canvas.getContext('2d');
+
+  const VB_W = 1120, VB_H = 620; // same viewBox as main SVG map
+
+  let scale, offsetX, offsetY;
+
+  function resize() {
+    canvas.width  = window.innerWidth  * devicePixelRatio;
+    canvas.height = window.innerHeight * devicePixelRatio;
+    canvas.style.width  = window.innerWidth  + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+
+    // Letterbox: fit entire network, centered, with padding
+    const pad = 0.08;
+    const scaleX = (window.innerWidth  * (1 - pad * 2)) / VB_W;
+    const scaleY = (window.innerHeight * (1 - pad * 2)) / VB_H;
+    scale   = Math.min(scaleX, scaleY) * devicePixelRatio;
+    offsetX = (canvas.width  - VB_W * scale) / 2;
+    offsetY = (canvas.height - VB_H * scale) / 2;
+  }
+
+  function toCanvas(id) {
+    const [x, y] = COORDS[id];
+    return [offsetX + x * scale, offsetY + y * scale];
+  }
+
+  // ── Build polyline point arrays ───────────────────────────────────
+  // Pre-compute [canvasX, canvasY] for each segment on resize
+  let segPoints = []; // updated each resize
+
+  function buildSegPoints() {
+    segPoints = LINE_SEGS.map(seg => ({
+      ...seg,
+      pts: seg.ids.map(id => COORDS[id] ? toCanvas(id) : null).filter(Boolean),
+    }));
+  }
+
+  // ── Draw static network ──────────────────────────────────────────
+  // ── Depth values per LINE_SEG index ──────────────────────────────
+  // 0 = very distant/quiet, 1 = close/active
+  // Central city segments feel nearer; terminal branches more remote
+  const SEG_DEPTH = [
+    0.55, // 0 L1 full (Holmenkollen branch — long, rises to hills)
+    0.65, // 1 L2 (Østerås — suburban west)
+    0.58, // 2 L3 (Kolsås — suburban SW)
+    0.80, // 3 L4 west arm (Bergkrystallen→Nydalen via city)
+    0.95, // 4 L4 inner (Nydalen→Sinsen→Tøyen — underground ring)
+    0.62, // 5 L4 east (Nydalen→Vestli — Grorud arc)
+    0.28, // 6 L4 spur (Sinsen→Løren)
+    0.82, // 7 L5 full (Sognsvann→Vestli through centre)
+    0.28, // 8 L5 spur (Sinsen→Løren)
+  ];
+
+  // Per-line phase offset for slow rhythm oscillation
+  const LINE_PHASE = { 1: 0.0, 2: 1.3, 3: 2.6, 4: 3.9, 5: 5.2 };
+
+  // Central tunnel stations — drawn with atmospheric glow
+  const TUNNEL_NODES = [
+    'nationaltheateret','stortinget','jernbanetorget','gronland','toyen',
+    'carlberner','sinsen',
+  ];
+
+  // ── Atmospheric texture — vignette, grain, warm center ───────────
+  let grainCanvas = null;
+  let grainPattern = null;
+
+  function buildGrain() {
+    const sz = 180;
+    const off = document.createElement('canvas');
+    off.width = off.height = sz;
+    const octx = off.getContext('2d');
+    const img = octx.createImageData(sz, sz);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const v = Math.random() * 255 | 0;
+      img.data[i]   = v;
+      img.data[i+1] = v;
+      img.data[i+2] = v;
+      img.data[i+3] = Math.random() * 18 | 0; // very sparse alpha
+    }
+    octx.putImageData(img, 0, 0);
+    grainCanvas = off;
+    grainPattern = ctx.createPattern(off, 'repeat');
+  }
+
+  function drawAtmosphere(hover = 0) {
+    const w = canvas.width, h = canvas.height;
+    const cx = w / 2, cy = h / 2;
+
+    // Vignette — darkness pooling at edges
+    const vig = ctx.createRadialGradient(cx, cy * 0.9, h * 0.1, cx, cy * 0.9, Math.max(w, h) * 0.78);
+    vig.addColorStop(0,   'rgba(0,0,0,0)');
+    vig.addColorStop(0.6, 'rgba(0,0,0,0.15)');
+    vig.addColorStop(1,   'rgba(0,0,0,0.62)');
+    ctx.fillStyle   = vig;
+    ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, w, h);
+
+    // Warm center breath — lifts slightly on gateway hover
+    const warmCx = w * 0.52, warmCy = h * 0.54;
+    const warmBase  = 0.045 + hover * 0.025;
+    const warm = ctx.createRadialGradient(warmCx, warmCy, 0, warmCx, warmCy, h * (0.38 + hover * 0.08));
+    warm.addColorStop(0,   `rgba(160,130,90,${warmBase})`);
+    warm.addColorStop(0.5, `rgba(120,100,70,${warmBase * 0.4})`);
+    warm.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle   = warm;
+    ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, w, h);
+
+    // Gateway glow — faint warm ellipse at the compositional center
+    // Lifts subtly on hover to make the CTA feel embedded in the network
+    const gwCx = w * 0.50, gwCy = h * 0.60; // matches gateway vertical position
+    const gwA  = 0.018 + hover * 0.022;
+    const gwGrd = ctx.createRadialGradient(gwCx, gwCy, 0, gwCx, gwCy, w * 0.28);
+    gwGrd.addColorStop(0,   `rgba(175,158,132,${gwA})`);
+    gwGrd.addColorStop(0.5, `rgba(140,125,105,${gwA * 0.4})`);
+    gwGrd.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle   = gwGrd;
+    ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, w, h);
+
+    // Film grain — organic texture in the darkness
+    if (grainPattern) {
+      ctx.fillStyle   = grainPattern;
+      ctx.globalAlpha = 0.028;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  function drawNetwork(t, hover = 0) {
+    // 1. Lines — depth-modulated opacity and width
+    ctx.lineCap  = 'round';
+    ctx.lineJoin = 'round';
+
+    LINE_SEGS.forEach((seg, i) => {
+      const pts = segPoints[i].pts;
+      if (pts.length < 2) return;
+
+      const depth  = SEG_DEPTH[i] ?? 0.6;
+      const rhythm = 0.75 + 0.25 * Math.sin(t * 0.18 + LINE_PHASE[seg.line]);
+      const alpha  = 0.088 * depth * rhythm;
+      const weight = (0.65 + 0.55 * depth) * scale;
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let k = 1; k < pts.length; k++) ctx.lineTo(pts[k][0], pts[k][1]);
+      ctx.strokeStyle = seg.color;
+      ctx.lineWidth   = weight;
+      ctx.globalAlpha = alpha;
+      ctx.stroke();
+    });
+
+    // 2. Station dots — size and brightness scale with depth
+    const drawn = new Set();
+    LINE_SEGS.forEach((seg, i) => {
+      const depth = SEG_DEPTH[i] ?? 0.6;
+      seg.ids.forEach(id => {
+        if (drawn.has(id) || !COORDS[id]) return;
+        drawn.add(id);
+        const [cx, cy] = toCanvas(id);
+        const r = (0.7 + 0.8 * depth) * scale;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fillStyle   = '#ffffff';
+        ctx.globalAlpha = 0.06 + 0.10 * depth;
+        ctx.fill();
+      });
+    });
+
+    // 3. Central tunnel atmospheric glow — city breathing underground
+    TUNNEL_NODES.forEach((id, ti) => {
+      if (!COORDS[id]) return;
+      const [cx, cy] = toCanvas(id);
+
+      // Outer warm breath — expands gently on hover
+      const gr1 = (90 + hover * 18) * scale;
+      const oa1 = 0.038 + hover * 0.018;
+      const grd1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr1);
+      grd1.addColorStop(0, `rgba(200,185,160,${oa1})`);
+      grd1.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, gr1, 0, Math.PI * 2);
+      ctx.fillStyle   = grd1;
+      ctx.globalAlpha = 1;
+      ctx.fill();
+
+      // Inner tight warmth for the deepest tunnel stations
+      if (ti >= 1 && ti <= 5) { // stortinget through carlberner
+        const gr2 = 32 * scale;
+        const oa2 = 0.055 + hover * 0.028;
+        const grd2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr2);
+        grd2.addColorStop(0, `rgba(220,200,170,${oa2})`);
+        grd2.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.beginPath();
+        ctx.arc(cx, cy, gr2, 0, Math.PI * 2);
+        ctx.fillStyle   = grd2;
+        ctx.globalAlpha = 1;
+        ctx.fill();
+      }
+    });
+
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Geographic station coordinates (lat, lon) ────────────────────
+  // Used to project real GPS positions onto the schematic paths.
+  // Approximate values — precision of ~200m is sufficient for ambient display.
+  const GEO = {
+    majorstua:         [59.9258, 10.7170],
+    nationaltheateret: [59.9138, 10.7313],
+    stortinget:        [59.9126, 10.7386],
+    jernbanetorget:    [59.9102, 10.7494],
+    gronland:          [59.9084, 10.7583],
+    toyen:             [59.9072, 10.7688],
+    carlberner:        [59.9093, 10.7789],
+    // L1 Holmenkollen
+    frognerseteren:    [59.9752, 10.6762],
+    voksenkollen:      [59.9713, 10.6829],
+    vettakollen:       [59.9680, 10.6893],
+    besserud:          [59.9649, 10.6958],
+    holmenkollen:      [59.9598, 10.7002],
+    midtstuen:         [59.9552, 10.7008],
+    skadalen:          [59.9515, 10.7015],
+    voksenlia:         [59.9481, 10.7025],
+    gullerasen:        [59.9451, 10.7046],
+    graakammen:        [59.9416, 10.7082],
+    slemdal:           [59.9368, 10.7152],
+    ris:               [59.9329, 10.7199],
+    gaustad:           [59.9301, 10.7232],
+    lillevann:         [59.9278, 10.7194],
+    vinderen:          [59.9272, 10.7137],
+    steinerud:         [59.9266, 10.7155],
+    froen:             [59.9263, 10.7168],
+    // L2 Østerås
+    osteraas:          [59.9260, 10.5331],
+    lijordet:          [59.9267, 10.5543],
+    eiksmarka:         [59.9255, 10.5756],
+    ekraveien:         [59.9242, 10.5992],
+    roa:               [59.9267, 10.6195],
+    hovseter:          [59.9258, 10.6481],
+    holmen:            [59.9259, 10.6648],
+    makrellbekken:     [59.9267, 10.6761],
+    smestad:           [59.9266, 10.6884],
+    borgen:            [59.9261, 10.7022],
+    // L3 Kolsås
+    kolsas:            [59.9179, 10.5319],
+    hauger:            [59.9148, 10.5520],
+    gjettum:           [59.9146, 10.5710],
+    avlos:             [59.9160, 10.5892],
+    haslum:            [59.9197, 10.6047],
+    gjonnes:           [59.9209, 10.6243],
+    bekkestua:         [59.9203, 10.6460],
+    ringstabekk:       [59.9222, 10.6618],
+    jar:               [59.9236, 10.6762],
+    bjornsletta:       [59.9241, 10.6864],
+    aasjordet:         [59.9246, 10.6962],
+    ullernaasen:       [59.9249, 10.7041],
+    montebello:        [59.9253, 10.7092],
+    // L4+L5 North / inner ring
+    ullevaal:          [59.9432, 10.7268],
+    forskningsparken:  [59.9481, 10.7282],
+    blindern:          [59.9445, 10.7222],
+    nydalen:           [59.9485, 10.7651],
+    storo:             [59.9371, 10.7714],
+    sinsen:            [59.9271, 10.7847],
+    loren:             [59.9281, 10.7938],
+    // L5 Sognsvann
+    sognsvann:         [59.9676, 10.7172],
+    kringsjaa:         [59.9597, 10.7243],
+    holstein:          [59.9534, 10.7262],
+    osthorn:           [59.9484, 10.7262],
+    tasen:             [59.9448, 10.7262],
+    berg:              [59.9396, 10.7258],
+    // Grorud arc (NE arc: Nydalen → Vestli)
+    okern:             [59.9351, 10.8028],
+    hasle:             [59.9282, 10.8112],
+    rislokka:          [59.9228, 10.8175],
+    vollebekk:         [59.9181, 10.8193],
+    linderud:          [59.9148, 10.8222],
+    veitvet:           [59.9290, 10.8380], // curves north after linderud
+    rodtvet:           [59.9360, 10.8430],
+    kalbakken:         [59.9430, 10.8480],
+    ammerud:           [59.9500, 10.8540],
+    grorud:            [59.9580, 10.8600],
+    romsos:            [59.9630, 10.8660],
+    rommen:            [59.9680, 10.8720],
+    stovner:           [59.9730, 10.8780],
+    vestli:            [59.9789, 10.8818],
+    // L1+L4 east arc (Tøyen → Bergkrystallen)
+    ensjo:             [59.9031, 10.7897],
+    helsfyr:           [59.8990, 10.8022],
+    brynseng:          [59.8908, 10.8090],
+    hoyenhall:         [59.8851, 10.8134],
+    manglerud:         [59.8793, 10.8175],
+    ryen:              [59.8734, 10.8200],
+    brattlikollen:     [59.8673, 10.8200],
+    karlsrud:          [59.8606, 10.8197],
+    lambertseter:      [59.8549, 10.8214],
+    munkelia:          [59.8523, 10.8213],
+    bergkrystallen:    [59.8537, 10.8196],
+    // L2+L3 east (Brynseng → Ellingsrudåsen)
+    hellerud:          [59.8908, 10.8230],
+    tveita:            [59.8920, 10.8440],
+    haugerud:          [59.8938, 10.8700],
+    trosterud:         [59.9010, 10.8950],
+    lindeberg:         [59.9082, 10.9172],
+    furuset:           [59.9162, 10.9310],
+    ellingsrudaasen:   [59.9189, 10.9343],
+    // L3 south (Brynseng → Mortensrud)
+    godlia:            [59.8882, 10.8280],
+    skoyenaasen:       [59.8823, 10.8290],
+    oppsal:            [59.8757, 10.8330],
+    ulsrud:            [59.8683, 10.8312],
+    boler:             [59.8583, 10.8298],
+    bogerud:           [59.8483, 10.8323],
+    skullerud:         [59.8421, 10.8270],
+    mortensrud:        [59.8406, 10.8233],
+  };
+
+  // ── Project GPS → progress t [0,1] along a line's geographic path ─
+  // Finds the closest point on the polyline defined by station IDs,
+  // returns cumulative arc-length fraction [0, 1].
+  function geoToProgress(ids, lat, lon) {
+    const pts = ids.map(id => GEO[id]).filter(Boolean);
+    if (pts.length < 2) return null;
+
+    // Precompute cumulative arc lengths in degree-space
+    const segLens = [];
+    let total = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const dLat = pts[i][0] - pts[i-1][0];
+      const dLon = pts[i][1] - pts[i-1][1];
+      const l = Math.sqrt(dLat*dLat + dLon*dLon * 0.36); // rough aspect correction
+      segLens.push({ from: total, len: l });
+      total += l;
+    }
+    if (total === 0) return 0;
+
+    // Find closest segment and project
+    let bestArcLen = 0, minDist = Infinity;
+    for (let i = 1; i < pts.length; i++) {
+      const a = pts[i-1], b = pts[i];
+      const abLat = b[0]-a[0], abLon = b[1]-a[1];
+      const ab2   = abLat*abLat + abLon*abLon;
+      let t = ab2 > 0 ? ((lat-a[0])*abLat + (lon-a[1])*abLon) / ab2 : 0;
+      t = Math.max(0, Math.min(1, t));
+      const cLat = a[0]+t*abLat, cLon = a[1]+t*abLon;
+      const d = (lat-cLat)**2 + (lon-cLon)**2;
+      if (d < minDist) {
+        minDist = d;
+        bestArcLen = segLens[i-1].from + t * segLens[i-1].len;
+      }
+    }
+    return bestArcLen / total;
+  }
+
+  // ── Entur Journey Planner — real-time metro positions ────────────
+  //
+  // Ruter does not publish vehicle GPS positions to any public feed.
+  // Instead we use Entur's Journey Planner GraphQL to fetch estimated
+  // departure times at key stations. From (expectedDepartureTime - now)
+  // and known line sequences, we infer each train's current position.
+  //
+  // API:  https://api.entur.io/journey-planner/v3/graphql
+  // Auth: none — ET-Client-Name header identifies the client
+  // Docs: https://developer.entur.org/pages-journeyplanner-journeyplanner
+  //
+  // Position formula:
+  //   posIdx = queryStationIdx - dir * (secondsUntilDeparture / AVG_STATION_S)
+  //   t      = posIdx / (segLength - 1)   →  [0, 1] on the schematic path
+  //
+  // Where dir = +1 (toward higher segment indices) or -1 (toward lower).
+  // A future departure (secsUntil > 0) means the train is still approaching.
+  // A past departure  (secsUntil < 0) means the train has moved past.
+
+  const ENTUR_GQL  = 'https://api.entur.io/journey-planner/v3/graphql';
+  const ENTUR_CLIENT = 'kiim-tbanen';
+  const POLL_INTERVAL = 30000; // ms — GraphQL is heavier, poll every 30s
+  const AVG_STATION_S = 90;    // approximate seconds between consecutive stops
+
+  // Key query stations: NSR stop ID → our internal station ID
+  // These span all five lines. Querying termini + city center gives full coverage.
+  const QUERY_STATIONS = [
+    { nsr: 'NSR:StopPlace:58366', id: 'jernbanetorget' }, // all lines
+    { nsr: 'NSR:StopPlace:59768', id: 'frognerseteren' }, // L1 west terminus
+    { nsr: 'NSR:StopPlace:58243', id: 'bergkrystallen' }, // L1+L4 terminus
+    { nsr: 'NSR:StopPlace:59705', id: 'sognsvann'      }, // L5 west terminus
+    { nsr: 'NSR:StopPlace:58277', id: 'osteraas'       }, // L2 west terminus
+    { nsr: 'NSR:StopPlace:58284', id: 'kolsas'         }, // L3 west terminus
+    { nsr: 'NSR:StopPlace:58218', id: 'vestli'         }, // L4+L5 east terminus
+    { nsr: 'NSR:StopPlace:58228', id: 'mortensrud'     }, // L3 south terminus
+    { nsr: 'NSR:StopPlace:58220', id: 'ellingsrudaasen'}, // L2 east terminus
+  ];
+
+  // Map lowercase destination name → our station ID
+  // Used to find destination's index in the line sequence → determine direction
+  const DEST_NAME_MAP = (() => {
+    const m = {};
+    // Extract unique station names from line sequences
+    LINE_SEGS.forEach(seg => seg.ids.forEach(id => {
+      // We need a name→id lookup; derive from COORDS keys + known names
+    }));
+    return m;
+  })();
+
+  // Hardcoded destination→id for known T-bane terminal destinations
+  const DEST_TO_ID = {
+    'frognerseteren': 'frognerseteren',
+    'bergkrystallen': 'bergkrystallen',
+    'ellingsrudåsen': 'ellingsrudaasen',
+    'østerås': 'osteraas',
+    'kolsås': 'kolsas',
+    'mortensrud': 'mortensrud',
+    'sognsvann': 'sognsvann',
+    'vestli': 'vestli',
+    // Short-turn destinations
+    'helsfyr': 'helsfyr',
+    'ryen': 'ryen',
+    'brynseng': 'brynseng',
+    'nydalen': 'nydalen',
+    'majorstua': 'majorstua',
+    'nationaltheateret': 'nationaltheateret',
+    // Ring / special services — map to a direction anchor
+    'ringen via tøyen': 'toyen',         // eastbound ring
+    'ringen via majorstuen': 'majorstua', // westbound ring
+  };
+
+  // Build a per-segment station-id → index lookup
+  const SEG_IDX_OF = LINE_SEGS.map(seg => {
+    const m = {};
+    seg.ids.forEach((id, i) => { m[id] = i; });
+    return m;
+  });
+
+  // For a given line number, find the segment index + station index within it
+  function findInSegments(lineNum, stationId) {
+    for (let si = 0; si < LINE_SEGS.length; si++) {
+      const seg = LINE_SEGS[si];
+      if (seg.line !== lineNum) continue;
+      const idx = SEG_IDX_OF[si][stationId];
+      if (idx !== undefined) return { si, idx };
+    }
+    return null;
+  }
+
+  // Build a single batched GraphQL query for all query stations
+  function buildQuery() {
+    const startTime = new Date(Date.now() - 12 * 60 * 1000).toISOString(); // 12 min ago
+    const fields = `estimatedCalls(
+        numberOfDepartures: 25
+        startTime: "${startTime}"
+        timeRange: 1500
+        whiteListedModes: [metro]
+      ) {
+        realtime
+        expectedDepartureTime
+        destinationDisplay { frontText }
+        serviceJourney { id line { publicCode } }
+      }`;
+    const aliases = QUERY_STATIONS.map(({ nsr, id }) =>
+      `${id}: stopPlace(id: "${nsr}") { ${fields} }`
+    ).join('\n');
+    return `{ ${aliases} }`;
+  }
+
+  let usingRealtime = false;
+  const seenJourneys = new Set(); // deduplicate across query stations
+
+  async function fetchEnturTrains() {
+    try {
+      const res = await fetch(ENTUR_GQL, {
+        method: 'POST',
+        headers: {
+          'ET-Client-Name': ENTUR_CLIENT,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query: buildQuery() }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const { data } = await res.json();
+      if (!data) throw new Error('no data');
+
+      const now = Date.now();
+      const newTrains = [];
+      seenJourneys.clear();
+      let totalReal = 0;
+
+      for (const qs of QUERY_STATIONS) {
+        const stop = data[qs.id];
+        if (!stop?.estimatedCalls?.length) continue;
+
+        for (const call of stop.estimatedCalls) {
+          if (!call.realtime) continue;
+
+          const journeyId = call.serviceJourney?.id;
+          if (!journeyId || seenJourneys.has(journeyId)) continue;
+
+          const lineNum = parseInt(call.serviceJourney?.line?.publicCode);
+          if (isNaN(lineNum) || lineNum < 1 || lineNum > 5) continue;
+
+          const expDep = new Date(call.expectedDepartureTime).getTime();
+          const secsUntil = (expDep - now) / 1000;
+
+          // Skip trains that are more than 10 minutes past or 20 minutes future
+          if (secsUntil < -600 || secsUntil > 1200) continue;
+
+          // Find query station in the line's schematic segment
+          const qsLoc = findInSegments(lineNum, qs.id);
+          if (!qsLoc) continue;
+
+          const { si: segIdx, idx: qsIdx } = qsLoc;
+          const seg = LINE_SEGS[segIdx];
+          const nStations = seg.ids.length;
+
+          // Determine direction of travel from destination name
+          const destText = (call.destinationDisplay?.frontText ?? '').toLowerCase();
+          const destId   = DEST_TO_ID[destText];
+          let dir = 0;
+          if (destId) {
+            const destLoc = findInSegments(lineNum, destId);
+            if (destLoc?.si === segIdx) {
+              dir = destLoc.idx > qsIdx ? +1 : -1;
+            }
+          }
+          // Fallback: if terminus is query station, direction is inbound (toward center)
+          if (dir === 0 && qsIdx === 0)               dir = +1;
+          if (dir === 0 && qsIdx === nStations - 1)   dir = -1;
+          if (dir === 0) dir = +1; // last resort
+
+          // Compute fractional position along the segment
+          // posIdx = qsIdx - dir * secsUntil/AVG  (approaching = positive secsUntil, past = negative)
+          const posIdx = qsIdx - dir * (secsUntil / AVG_STATION_S);
+          const t = Math.max(0, Math.min(1, posIdx / (nStations - 1)));
+
+          seenJourneys.add(journeyId);
+          totalReal++;
+
+          // Speed: traverse the full segment (t 0→1) in (nStations * AVG_STATION_S) seconds
+          const segSpeed = 1 / (nStations * AVG_STATION_S);
+
+          newTrains.push({
+            segIdx,
+            progress: t,
+            targetProgress: t,
+            color: LC[lineNum],
+            pulse: Math.random() * Math.PI * 2,
+            r: 2.5,
+            real: true,
+            dir,
+            speed: segSpeed,
+            journeyId,
+          });
+        }
+      }
+
+      if (totalReal === 0) {
+        console.warn('[Entur] No realtime metro departures found');
+        return false;
+      }
+
+      // Merge — update existing trains in place, add new ones, remove gone ones.
+      // Never replace the array wholesale — that causes a visual flash.
+      const incomingById = new Map(newTrains.map(t => [t.journeyId, t]));
+      const existingById = new Map(trains.filter(t => t.real && t.journeyId).map(t => [t.journeyId, t]));
+
+      // Update targets on trains that persist
+      for (const [jid, incoming] of incomingById) {
+        const existing = existingById.get(jid);
+        if (existing) {
+          existing.targetProgress = incoming.targetProgress;
+          existing.dir            = incoming.dir;
+          existing.speed          = incoming.speed;
+        }
+      }
+
+      // Add truly new trains (fade them in via pulse starting at 0)
+      for (const [jid, incoming] of incomingById) {
+        if (!existingById.has(jid)) {
+          incoming.pulse = 0; // will ramp up naturally
+          trains.push(incoming);
+        }
+      }
+
+      // Remove trains no longer in the API response
+      trains = trains.filter(t => !t.real || !t.journeyId || incomingById.has(t.journeyId));
+
+      usingRealtime = true;
+      console.info(`[Entur] ${totalReal} real-time metro trains (merged)`);
+      return true;
+
+    } catch (e) {
+      console.warn('[Entur] Fetch error:', e.message);
+      return false;
+    }
+  }
+
+  // ── Simulated fallback ────────────────────────────────────────────
+  // Each train: segIdx, progress [0,1], direction ±1, pulse phase, radius
+  let trains = [];
+
+  function spawnSimulatedTrains() {
+    trains = [];
+    LINE_SEGS.forEach((seg, segIdx) => {
+      if (seg.ids.length < 3) return;
+      const count = seg.ids.length > 20 ? 3 : seg.ids.length > 10 ? 2 : 1;
+      for (let i = 0; i < count; i++) {
+        trains.push({
+          segIdx,
+          progress: i / count,
+          targetProgress: null,
+          speed: 0.0018 + Math.random() * 0.0008,
+          dir: Math.random() > 0.5 ? 1 : -1,
+          color: seg.color,
+          pulse: Math.random() * Math.PI * 2,
+          r: 2.2 + Math.random() * 0.8,
+          real: false,
+        });
+      }
+    });
+  }
+
+  async function startRealtime() {
+    const ok = await fetchEnturTrains();
+    if (!ok) {
+      console.info('[Entur] Falling back to simulation');
+      spawnSimulatedTrains();
+    }
+    setInterval(async () => {
+      const ok = await fetchEnturTrains();
+      if (!ok && !usingRealtime) spawnSimulatedTrains();
+    }, POLL_INTERVAL);
+  }
+
+  // Interpolate a position along an array of [x,y] points at t ∈ [0,1]
+  function interpolateAlongPath(pts, t) {
+    if (pts.length === 0) return null;
+    if (pts.length === 1) return pts[0];
+    t = Math.max(0, Math.min(1, t));
+
+    // Total path length
+    const lens = [];
+    let total = 0;
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i][0] - pts[i-1][0];
+      const dy = pts[i][1] - pts[i-1][1];
+      const l  = Math.sqrt(dx*dx + dy*dy);
+      total += l;
+      lens.push(total);
+    }
+
+    const target = t * total;
+    for (let i = 0; i < lens.length; i++) {
+      if (target <= lens[i]) {
+        const prev = i === 0 ? 0 : lens[i-1];
+        const frac = (target - prev) / (lens[i] - prev);
+        const a = pts[i], b = pts[i+1];
+        return [
+          a[0] + (b[0] - a[0]) * frac,
+          a[1] + (b[1] - a[1]) * frac,
+        ];
+      }
+    }
+    return pts[pts.length - 1];
+  }
+
+  // ── Main render loop ──────────────────────────────────────────────
+  let lastTime = 0;
+  let globalTime = 0;
+
+  function render(now) {
+    const dt = Math.min((now - lastTime) / 1000, 0.1); // seconds, capped
+    lastTime = now;
+    globalTime += dt;
+
+    // Smooth gateway hover value
+    const hoverTarget = gatewayOver ? 1 : 0;
+    gatewayHover += (hoverTarget - gatewayHover) * Math.min(dt * 2.2, 1);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawAtmosphere(gatewayHover);
+    drawNetwork(globalTime, gatewayHover);
+
+    // Update + draw trains
+    trains.forEach(train => {
+      train.pulse += dt * 0.8;
+
+      // All trains advance continuously at their speed
+      train.progress += train.speed * dt * train.dir;
+
+      if (train.real) {
+        // Gently drift toward the API-reported position (corrects accumulated error)
+        if (train.targetProgress !== null) {
+          train.progress += (train.targetProgress - train.progress) * dt * 0.05;
+        }
+        // Clamp — real trains don't bounce, they stop at terminus
+        train.progress = Math.max(0, Math.min(1, train.progress));
+      } else {
+        // Simulated: bounce at ends
+        if (train.progress > 1) { train.progress = 1; train.dir = -1; }
+        if (train.progress < 0) { train.progress = 0; train.dir =  1; }
+      }
+
+      const pts = segPoints[train.segIdx]?.pts;
+      if (!pts || pts.length < 2) return;
+
+      const pos = interpolateAlongPath(pts, train.progress);
+      if (!pos) return;
+
+      const [x, y] = pos;
+      const pulse = (0.7 + 0.3 * Math.sin(train.pulse)) * (1 + gatewayHover * 0.28);
+      const r     = train.r * scale;
+
+      // Motion trail — soft light smeared behind the train
+      const TRAIL_STEPS = 5;
+      const TRAIL_LEN   = 0.022;
+      for (let i = 1; i <= TRAIL_STEPS; i++) {
+        const frac = i / (TRAIL_STEPS + 1);
+        const tp   = train.progress - train.dir * (TRAIL_LEN * frac);
+        const tpos = interpolateAlongPath(pts, Math.max(0, Math.min(1, tp)));
+        if (!tpos) continue;
+        const tr = r * (1 - frac * 0.55);
+        const ta = 0.22 * pulse * (1 - frac);
+        ctx.beginPath();
+        ctx.arc(tpos[0], tpos[1], Math.max(tr, 0.5), 0, Math.PI * 2);
+        ctx.fillStyle   = train.color;
+        ctx.globalAlpha = ta;
+        ctx.fill();
+      }
+
+      // Bloom — wide soft halo
+      const bloom = ctx.createRadialGradient(x, y, 0, x, y, r * 5.5);
+      bloom.addColorStop(0,   hexAlpha(train.color, 0.14 * pulse));
+      bloom.addColorStop(0.4, hexAlpha(train.color, 0.06 * pulse));
+      bloom.addColorStop(1,   hexAlpha(train.color, 0));
+      ctx.beginPath();
+      ctx.arc(x, y, r * 5.5, 0, Math.PI * 2);
+      ctx.fillStyle   = bloom;
+      ctx.globalAlpha = 1;
+      ctx.fill();
+
+      // Tight glow
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 2.5);
+      grd.addColorStop(0,   hexAlpha(train.color, 0.38 * pulse));
+      grd.addColorStop(0.5, hexAlpha(train.color, 0.15 * pulse));
+      grd.addColorStop(1,   hexAlpha(train.color, 0));
+      ctx.beginPath();
+      ctx.arc(x, y, r * 2.5, 0, Math.PI * 2);
+      ctx.fillStyle   = grd;
+      ctx.globalAlpha = 1;
+      ctx.fill();
+
+      // Core dot
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle   = train.color;
+      ctx.globalAlpha = 0.82 * pulse;
+      ctx.fill();
+
+      // Inner specular highlight
+      ctx.beginPath();
+      ctx.arc(x, y, r * 0.42, 0, Math.PI * 2);
+      ctx.fillStyle   = '#ffffff';
+      ctx.globalAlpha = 0.30 * pulse;
+      ctx.fill();
+
+      ctx.globalAlpha = 1;
+    });
+
+    requestAnimationFrame(render);
+  }
+
+  // ── Utility ───────────────────────────────────────────────────────
+  function hexAlpha(hex, a) {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  // ── Fetch station count from live data (optional, graceful fallback) ─
+  async function loadCount() {
+    try {
+      const res  = await fetch('/tbanen/data/stations.json');
+      const data = await res.json();
+      const total = data.stations.length;
+      const done  = data.stations.filter(s => s.image).length;
+      document.getElementById('gateway-sub').textContent =
+        `${done} / ${total} stasjoner dokumentert`;
+    } catch(e) {
+      // keep default text
+    }
+  }
+
+  // ── Identity dot — cycles through line colors, slow and quiet ────
+  const LINE_COLORS = Object.values(LC); // [L1…L5]
+  let colorIdx = 4; // start on L5 green
+
+  function cycleIdentityColor() {
+    colorIdx = (colorIdx + 1) % LINE_COLORS.length;
+    const c = LINE_COLORS[colorIdx];
+    const dot  = document.getElementById('id-dot');
+    const line = document.getElementById('id-line');
+    if (dot)  dot.style.backgroundColor = c;
+    if (line) line.style.color = c; // line uses currentColor
+  }
+
+  // Initialise immediately, then cycle every ~7s
+  cycleIdentityColor();
+  setInterval(cycleIdentityColor, 7200);
+
+  // ── Gateway hover — subtle canvas response ────────────────────────
+  let gatewayHover = 0; // 0..1, smoothed
+  const gatewayCta = document.getElementById('gateway-cta');
+  let gatewayOver = false;
+  gatewayCta.addEventListener('mouseenter', () => { gatewayOver = true; });
+  gatewayCta.addEventListener('mouseleave', () => { gatewayOver = false; });
+
+  // ── Boot ──────────────────────────────────────────────────────────
+  window.addEventListener('resize', () => {
+    resize();
+    buildSegPoints();
+    buildGrain();
+  });
+
+  resize();
+  buildSegPoints();
+  buildGrain();
+  spawnSimulatedTrains(); // show simulation immediately while first fetch loads
+  loadCount();
+  startRealtime();        // replaces simulation with real data as soon as API responds
+  requestAnimationFrame(t => { lastTime = t; requestAnimationFrame(render); });
+
+  // Click anywhere → enter gallery
+  document.body.addEventListener('click', () => { window.location.href = '/tbanen/app.html?enter'; });
+  </script>
+
+</body>
+</html>
