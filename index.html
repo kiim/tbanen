@@ -84,15 +84,6 @@
       transition: background-color 2.4s ease;
     }
 
-    .subtitle {
-      font-family: var(--mono);
-      font-size: 8px;
-      font-weight: 400;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.28);
-    }
-
     /* ── Gateway ── */
     #gateway {
       position: fixed;
@@ -227,7 +218,6 @@
         <div class="wordmark-dot" id="id-dot"></div>
       </div>
     </div>
-    <p class="subtitle">OSLO T-BANE</p>
   </div>
 
   <div id="gateway">
@@ -1092,6 +1082,9 @@
   buildSegPoints();
   buildGrain();
   spawnSimulatedTrains(); // visible immediately (but hidden by systemSat=0)
+
+  // Force full reload when restored from bfcache (back button from archive)
+  window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
 
   // Start render loop first, then boot (render is always running)
   requestAnimationFrame(t => { lastTime = t; requestAnimationFrame(render); });
