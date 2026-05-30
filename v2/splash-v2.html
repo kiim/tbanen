@@ -54,7 +54,7 @@
     /* Gateway CTA — centered, appears when network is alive */
     #gateway {
       position: fixed;
-      top: 50%; left: 50%;
+      top: calc(50% + 30px); left: 50%;
       transform: translate(-50%, -50%);
       z-index: 10;
       display: flex;
@@ -144,12 +144,12 @@
   let animTime = 0;
 
   // Phase thresholds (seconds from first frame)
-  const PH_NODES  = 0.3;   // Phase 2: central nodes activate
-  const PH_LINES  = 0.9;   // Phase 3: propagation begins
-  const PH_PROP   = 3.2;   // duration: each segment takes this long to fully draw
-  const PH_TRAINS = 4.5;   // Phase 5: train signals appear
-  const PH_COLORS = 5.0;   // Phase 6: line colors saturate
-  const PH_CTA    = 6.8;   // Phase 7: archive entry appears
+  const PH_NODES  = 0.2;   // Phase 2: central nodes activate
+  const PH_LINES  = 0.6;   // Phase 3: propagation begins
+  const PH_PROP   = 2.6;   // duration: each segment takes this long to fully draw
+  const PH_TRAINS = 3.6;   // Phase 5: train signals appear
+  const PH_COLORS = 4.0;   // Phase 6: line colors saturate
+  const PH_CTA    = 5.5;   // Phase 7: archive entry appears
 
   // Per-segment propagation stagger (seconds after PH_LINES)
   // Inner/central segments start first, outlying branches last
