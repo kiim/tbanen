@@ -130,7 +130,6 @@ if (!empty($_GET['err']))       $error  = htmlspecialchars(urldecode($_GET['err'
 
 // ── POST handlers ─────────────────────────────────────────────────
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    verify_csrf();
 
     if ($action === 'login') {
         $pw = $_POST['password'] ?? '';
@@ -142,6 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Feil passord.';
 
     } elseif ($action === 'save' && authed()) {
+        verify_csrf();
         $id   = $_POST['sid'] ?? '';
         $data = load_data();
         $s    = find_station($data, $id);
@@ -158,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ?station=' . urlencode($id) . '&saved=1'); exit;
 
     } elseif ($action === 'upload' && authed()) {
+        verify_csrf();
         $id = $_POST['sid'] ?? '';
         if (empty($_FILES['image']['tmp_name']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
             header('Location: ?station=' . urlencode($id) . '&err=' . urlencode('Ingen fil valgt.')); exit;
@@ -172,6 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ?station=' . urlencode($id) . '&uploaded=1'); exit;
 
     } elseif ($action === 'unpublish' && authed()) {
+        verify_csrf();
         $id   = $_POST['sid'] ?? '';
         $data = load_data();
         update_station($data, $id, ['image' => null]);
