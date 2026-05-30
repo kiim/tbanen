@@ -49,16 +49,16 @@
     /* System name — transport designation, not a headline */
     .id-primary {
       font-family: var(--mono);
-      font-size: clamp(10px, 1.1vw, 13px);
+      font-size: clamp(18px, 1.95vw, 23px);
       font-weight: 400;
-      letter-spacing: 0.22em;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.70);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-bottom: 9px;
+      margin-bottom: 17px;
     }
     .id-line { width: 14px; height: 1px; background: currentColor; opacity: 0.28; }
     .id-dot  { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; transition: background-color 2.4s ease; }
@@ -66,12 +66,12 @@
     /* City — geographic context, very secondary */
     .id-secondary {
       font-family: var(--mono);
-      font-size: 8px;
+      font-size: 12px;
       font-weight: 400;
-      letter-spacing: 0.45em;
+      letter-spacing: 0.36em;
       text-transform: uppercase;
       color: rgba(255,255,255,0.20);
-      margin-bottom: 18px;
+      margin-bottom: 28px;
     }
 
     /* Station count — archival status, not a tagline */
@@ -84,21 +84,9 @@
       color: rgba(255,255,255,0.18);
       opacity: 0;
       transition: opacity 2.2s ease;
-      margin-bottom: 20px;
+      margin-bottom: 28px;
     }
     #id-count.ready { opacity: 1; }
-
-    /* ── Scale variants — switch via ?v=a (default), ?v=b, ?v=c ── */
-
-    /* B: +50% T—BANEN, +30% OSLO */
-    #identity.scale-b .id-primary   { font-size: clamp(15px, 1.65vw, 20px); letter-spacing: 0.20em; margin-bottom: 13px; }
-    #identity.scale-b .id-secondary { font-size: 10px; letter-spacing: 0.40em; margin-bottom: 22px; }
-    #identity.scale-b #id-count     { margin-bottom: 24px; }
-
-    /* C: +75% T—BANEN, +50% OSLO */
-    #identity.scale-c .id-primary   { font-size: clamp(18px, 1.95vw, 23px); letter-spacing: 0.18em; margin-bottom: 17px; }
-    #identity.scale-c .id-secondary { font-size: 12px; letter-spacing: 0.36em; margin-bottom: 28px; }
-    #identity.scale-c #id-count     { margin-bottom: 28px; }
 
     /* Wayfinding indicator — direction only, no text, no button */
     #id-indicator {
@@ -1091,10 +1079,6 @@
   window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
 
   // ── Start ─────────────────────────────────────────────────────────
-  // Scale variant — ?v=a (current), ?v=b (+50/+30%), ?v=c (+75/+50%)
-  const scaleVariant = new URLSearchParams(location.search).get('v') || 'a';
-  if (scaleVariant !== 'a') document.getElementById('identity').classList.add('scale-' + scaleVariant);
-
   window.addEventListener('resize', () => { resize(); buildSegPoints(); buildGrain(); });
 
   resize();
