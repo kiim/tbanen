@@ -517,13 +517,6 @@
       ? Math.min(1, (animTime - PH_TRAINS) / 2.2)
       : 0;
 
-    // Phase 5: identity reveals when the system comes alive
-    // The network names itself as trains begin moving
-    if (animTime >= PH_TRAINS && !identityShown) {
-      identityShown = true;
-      const id = document.getElementById('identity');
-      if (id) id.classList.add('visible');
-    }
 
     // Phase 6: line colors saturate from gray to full
     colorSat = animTime >= PH_COLORS
@@ -1088,6 +1081,9 @@
   spawnSimulatedTrains();
 
   requestAnimationFrame(t => { lastTime = t; requestAnimationFrame(render); });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.getElementById('identity').classList.add('visible');
+  }));
   bootData();
   </script>
 
