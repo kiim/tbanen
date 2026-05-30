@@ -29,100 +29,76 @@
 
     #c { position: fixed; inset: 0; width: 100%; height: 100%; }
 
-    /* ── Identity block — upper third, map-title position ── */
-    /* Anchored above the network activity. Reveals when system comes alive. */
+    /* ── Identity — lower third, system label ── */
+    /* Grounded at the bottom of the network. The splash does not ask.  */
+    /* The network is the hero. Click anywhere to enter.                */
     #identity {
       position: fixed;
-      top: 30%;
+      bottom: 18%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       z-index: 10;
       text-align: center;
       pointer-events: none;
       user-select: none;
       opacity: 0;
-      transition: opacity 2.2s ease;
+      transition: opacity 2.4s ease;
     }
     #identity.visible { opacity: 1; }
 
-    /* Primary — the system designation */
+    /* System name — transport designation, not a headline */
     .id-primary {
       font-family: var(--mono);
-      font-size: clamp(11px, 1.2vw, 14px);
+      font-size: clamp(10px, 1.1vw, 13px);
       font-weight: 400;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.82);
+      color: rgba(255,255,255,0.70);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      margin-bottom: 11px;
+      margin-bottom: 9px;
     }
-    .id-line { width: 14px; height: 1px; background: currentColor; opacity: 0.30; }
+    .id-line { width: 14px; height: 1px; background: currentColor; opacity: 0.28; }
     .id-dot  { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; transition: background-color 2.4s ease; }
 
-    /* Secondary — geographic context */
+    /* City — geographic context, very secondary */
     .id-secondary {
       font-family: var(--mono);
-      font-size: 9px;
+      font-size: 8px;
       font-weight: 400;
-      letter-spacing: 0.42em;
+      letter-spacing: 0.45em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.22);
+      color: rgba(255,255,255,0.20);
+      margin-bottom: 18px;
     }
 
-    /* ── Gateway CTA — lower third, directional invitation ── */
-    /* Appears after identity settles. Action, not branding. */
-    #gateway {
-      position: fixed;
-      top: 70%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 2.0s ease;
-    }
-    #gateway.online {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    #dep-cta {
-      font-family: var(--sans);
-      font-size: clamp(16px, 2.2vw, 28px);
-      font-weight: 500;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: rgba(198,190,178,0.58);
-      text-decoration: none;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: color 0.9s ease;
-    }
-    #dep-cta:hover { color: rgba(220,212,200,0.90); }
-    #dep-arrow { opacity: 0.36; transition: transform 0.55s ease, opacity 0.55s ease; }
-    #dep-cta:hover #dep-arrow { transform: translateX(5px); opacity: 0.68; }
-
-    #dep-count {
+    /* Station count — archival status, not a tagline */
+    #id-count {
       font-family: var(--mono);
       font-size: 8px;
       font-weight: 400;
       letter-spacing: 0.10em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.16);
-      text-align: center;
+      color: rgba(255,255,255,0.18);
       opacity: 0;
-      transition: opacity 2.0s ease;
+      transition: opacity 2.2s ease;
+      margin-bottom: 20px;
     }
-    #dep-count.ready { opacity: 1; }
+    #id-count.ready { opacity: 1; }
+
+    /* Wayfinding indicator — direction only, no text, no button */
+    #id-indicator {
+      font-size: 11px;
+      color: rgba(255,255,255,0.18);
+      animation: breathe-down 3.2s ease-in-out infinite;
+      display: block;
+    }
+    @keyframes breathe-down {
+      0%, 100% { opacity: 0.12; transform: translateY(0); }
+      50%       { opacity: 0.28; transform: translateY(3px); }
+    }
 
     /* Tunnel iris — departure transition */
     #tunnel {
@@ -135,7 +111,7 @@
 
   <canvas id="c"></canvas>
 
-  <!-- Identity — anchored in upper third, reveals when system comes alive -->
+  <!-- Identity — lower third, system label. No CTA. Click anywhere to enter. -->
   <div id="identity">
     <div class="id-primary">
       T—BANEN
@@ -143,15 +119,8 @@
       <span class="id-dot"  id="id-dot"></span>
     </div>
     <div class="id-secondary">OSLO</div>
-  </div>
-
-  <!-- CTA — lower third, directional invitation -->
-  <div id="gateway">
-    <a id="dep-cta" href="/tbanen/app.html?enter">
-      UTFORSK STASJONENE
-      <span id="dep-arrow">→</span>
-    </a>
-    <div id="dep-count"></div>
+    <div id="id-count"></div>
+    <span id="id-indicator">↓</span>
   </div>
 
   <div id="tunnel"></div>
@@ -561,18 +530,14 @@
       ? Math.min(1, (animTime - PH_COLORS) / 2.8)
       : 0;
 
-    // Phase 7: CTA appears — the invitation, after identity has settled
+    // Phase 7: system becomes interactive — no CTA, just clickable
     if (animTime >= PH_CTA && !ctaShown) {
       ctaShown = true;
       systemOnline = true;
-
-      const dep = document.getElementById('gateway');
-      dep.classList.add('online');
-
       setTimeout(() => {
-        const c = document.getElementById('dep-count');
+        const c = document.getElementById('id-count');
         if (c && countReady) c.classList.add('ready');
-      }, 900);
+      }, 400);
     }
   }
 
@@ -1044,16 +1009,15 @@
   // Data loading happens in parallel — trains update when data arrives.
 
   async function bootData() {
-    // Station count for the departure board
     fetch('/tbanen/data/stations.json')
       .then(r => r.json())
       .then(data => {
         const total = data.stations.length;
         const done  = data.stations.filter(s => s.image).length;
         countReady = true;
-        const c = document.getElementById('dep-count');
+        const c = document.getElementById('id-count');
         if (c) {
-          c.textContent = `${done} / ${total} stasjoner`;
+          c.textContent = `${done} / ${total} stasjoner dokumentert`;
           if (ctaShown) c.classList.add('ready');
         }
       })
@@ -1091,8 +1055,6 @@
     if (departing || !systemOnline) return;
     departing = true;
 
-    document.getElementById('gateway').style.transition  = 'opacity 0.3s ease';
-    document.getElementById('gateway').style.opacity    = '0';
     document.getElementById('identity').style.transition = 'opacity 0.3s ease';
     document.getElementById('identity').style.opacity   = '0';
 
@@ -1106,14 +1068,12 @@
     }, 650);
   }
 
-  const ctaEl = document.getElementById('dep-cta');
-  ctaEl.addEventListener('mouseenter', () => { gatewayOver = true; });
-  ctaEl.addEventListener('mouseleave', () => { gatewayOver = false; });
-  ctaEl.addEventListener('click', e => { e.preventDefault(); startDeparture(); });
+  // Click anywhere to enter
+  document.body.addEventListener('click', () => startDeparture());
 
-  document.body.addEventListener('click', e => {
-    if (e.target.closest('#dep-cta')) return;
-    startDeparture();
+  // Keyboard: Enter or Space
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startDeparture(); }
   });
 
   window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
