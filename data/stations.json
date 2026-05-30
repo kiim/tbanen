@@ -118,8 +118,7 @@
       "id": "lillevann",
       "name": "Lillevann",
       "lines": [
-        1,
-        2
+        1
       ],
       "image": "lillevann.jpg",
       "terminus": false,
@@ -163,8 +162,7 @@
       "id": "slemdal",
       "name": "Slemdal",
       "lines": [
-        1,
-        2
+        1
       ],
       "image": "slemdal.jpg",
       "terminus": false,
@@ -175,8 +173,7 @@
       "id": "ris",
       "name": "Ris",
       "lines": [
-        1,
-        2
+        1
       ],
       "image": null,
       "terminus": false,
@@ -187,8 +184,7 @@
       "id": "gaustad",
       "name": "Gaustad",
       "lines": [
-        1,
-        2
+        1
       ],
       "image": null,
       "terminus": false,
@@ -837,8 +833,7 @@
       "id": "boler",
       "name": "Bøler",
       "lines": [
-        3,
-        5
+        3
       ],
       "image": "boler.jpg",
       "terminus": false,
@@ -1200,6 +1195,7 @@
       "id": "carlberner",
       "name": "Carl Berners plass",
       "lines": [
+        4,
         5
       ],
       "image": "carlberner.jpg",
