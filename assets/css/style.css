@@ -443,6 +443,22 @@ body.immersive #immersive-label {
   color: var(--secondary);
 }
 
+.menu-info-credit {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 14px;
+}
+.menu-info-credit a {
+  color: var(--dim);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+.menu-info-credit a:hover { color: var(--secondary); }
+
 #menu-station-list {
   display: flex;
   flex-direction: column;
