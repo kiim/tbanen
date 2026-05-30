@@ -1,6 +1,5 @@
 /* ─────────────────────────────────────────────────────────────
-   T—BANEN / OSLO  ·  app.js
-   Mobile-first · Touch-enabled · Photographic archive
+   T—BANEN / OSLO  ·  app.js  ·  V2
    ───────────────────────────────────────────────────────────── */
 
 const LC = { 1:'#5B9BD5', 2:'#E8751A', 3:'#8B5EA7', 4:'#C8102E', 5:'#3D9A5C' };
@@ -8,29 +7,29 @@ const LN = { 1:'Linje 1', 2:'Linje 2', 3:'Linje 3', 4:'Linje 4', 5:'Linje 5' };
 
 let DATA, stationMap = {}, lineSeqs = {};
 let cur = { id: null, line: 1, networkLine: 1 };
-let mapFocusLine = null;  // null = all lines visible
+let mapFocusLine = null;
 
 const LINE_ORDER = [1, 2, 3, 4, 5];
 
+// True only for the first photo load when arriving from the splash
+let isEntryLoad = location.search.includes('enter');
+
 // ── Init ────────────────────────────────────────────────────────────
 async function init() {
+  // Reveal the page — fades in from black (tunnel entry from splash)
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.documentElement.classList.add('visible');
+  }));
+
   const r = await fetch('/tbanen/data/stations.json');
   DATA = await r.json();
   DATA.stations.forEach(s => stationMap[s.id] = s);
   lineSeqs = DATA.lineSequences;
 
-  const total = DATA.stations.length;
-  const photographed = DATA.stations.filter(s => s.image).length;
-  const countEl = qs('#landing-count');
-  if (countEl) countEl.textContent = `${photographed} / ${total} STASJONER DOKUMENTERT`;
-
-  qs('#btn-enter').addEventListener('click', () => enterAt('nationaltheateret', 1));
-  qs('#btn-home').addEventListener('click', () => { window.location.href = '/tbanen/'; });
   qs('#btn-menu').addEventListener('click', openMenu);
   qs('#btn-close-menu').addEventListener('click', closeMenu);
   qs('#menu-btn-map').addEventListener('click', () => { closeMenu(); openNetwork(); });
-  qs('#menu-btn-alpha').addEventListener('click', () => { closeMenu(); openAlpha(); });
-  qs('#btn-close-alpha').addEventListener('click', closeAlpha);
+  qs('#menu-btn-alpha').addEventListener('click', () => { window.location.href = '/tbanen/alle.html'; });
   qs('#btn-network').addEventListener('click', openNetwork);
   qs('#btn-close-network').addEventListener('click', closeNetwork);
   qs('#btn-prev').addEventListener('click', () => { stopSlideshow(); navPrev(); });
@@ -46,8 +45,9 @@ async function init() {
   buildMapLegend();
   setupMapTooltip();
 
-  // If arriving from the splash (?enter), skip the landing view
-  if (location.search.includes('enter')) {
+  if (isEntryLoad) {
+    // Panel starts hidden — will arrive after the first photo loads
+    qs('#station-panel').classList.add('panel-wait');
     enterAt('nationaltheateret', 1);
   }
 }
@@ -66,13 +66,39 @@ function enterAt(id, line) {
   show('station');
 }
 
+// dir: 'next' | 'prev' | null
 function navPrev() {
   const t = qs('#btn-prev').dataset.target;
-  if (t) enterAt(t, cur.line);
+  if (t) enterAtDir(t, cur.line, 'prev');
 }
 function navNext() {
   const t = qs('#btn-next').dataset.target;
-  if (t) enterAt(t, cur.line);
+  if (t) enterAtDir(t, cur.line, 'next');
+}
+
+function enterAtDir(id, line, dir) {
+  const s = stationMap[id];
+  if (!s || !s.image) return;
+
+  const img = qs('#photo-img');
+
+  // Exit current image in the direction of travel
+  if (dir === 'next') {
+    img.classList.add('exit-left');
+  } else if (dir === 'prev') {
+    img.classList.add('exit-right');
+  }
+
+  // After exit transition, switch station
+  setTimeout(() => {
+    img.classList.remove('exit-left', 'exit-right', 'loaded');
+
+    cur.id   = id;
+    cur.line = line || s.lines[0];
+    renderStationMeta();
+    loadPhotoDir(s, dir);
+    markMapCurrent();
+  }, 450);
 }
 
 
@@ -82,18 +108,44 @@ function renderStation() {
   const seq = lineSeqs[String(cur.line)];
   const idx = seq.indexOf(cur.id);
 
-  // Prev / next with photos
   let prevId = null, nextId = null;
   for (let i = idx - 1; i >= 0; i--)
     if (stationMap[seq[i]]?.image) { prevId = seq[i]; break; }
   for (let i = idx + 1; i < seq.length; i++)
     if (stationMap[seq[i]]?.image) { nextId = seq[i]; break; }
 
+  renderStationMeta(prevId, nextId);
+  loadPhoto(s);
+  markMapCurrent();
+}
+
+function renderStationMeta(prevId, nextId) {
+  const s   = stationMap[cur.id];
+  const seq = lineSeqs[String(cur.line)];
+  const idx = seq.indexOf(cur.id);
+
+  // Recompute if not passed
+  if (prevId === undefined) {
+    prevId = null; nextId = null;
+    for (let i = idx - 1; i >= 0; i--)
+      if (stationMap[seq[i]]?.image) { prevId = seq[i]; break; }
+    for (let i = idx + 1; i < seq.length; i++)
+      if (stationMap[seq[i]]?.image) { nextId = seq[i]; break; }
+  }
+
   qs('#station-name').textContent = s.name;
+
+  const metaEl = qs('#station-meta');
+  if (metaEl) {
+    const parts = [];
+    if (s.year)                   parts.push(s.year);
+    if (s.elevation !== undefined) parts.push(s.elevation + ' moh');
+    metaEl.textContent = parts.join(' · ');
+  }
+
   const il = qs('#immersive-label');
   if (il) il.textContent = s.name;
 
-  // Line indicator — show all lines the station is on
   const ind = qs('#line-indicator');
   ind.innerHTML = s.lines.map(l =>
     `<span style="color:${LC[l]}">Linje ${l}</span>`
@@ -101,27 +153,76 @@ function renderStation() {
 
   const pb = qs('#btn-prev');
   if (prevId) { pb.dataset.target = prevId; pb.disabled = false; }
-  else         { pb.dataset.target = '';     pb.disabled = true;  }
+  else        { pb.dataset.target = '';     pb.disabled = true;  }
 
   const nb = qs('#btn-next');
   if (nextId) { nb.dataset.target = nextId; nb.disabled = false; }
   else        { nb.dataset.target = '';     nb.disabled = true;  }
 
-  loadPhoto(s);
-  markMapCurrent();
+  // Direction labels — transit wayfinding toward each terminus
+  const startName = stationMap[seq[0]]?.name;
+  const endName   = stationMap[seq[seq.length - 1]]?.name;
+
+  const prevDest = qs('.nav-dest-prev');
+  const nextDest = qs('.nav-dest-next');
+  if (prevDest) {
+    prevDest.textContent = prevId && startName ? `← ${startName}` : '';
+    prevDest.classList.toggle('has-target', !!prevId);
+  }
+  if (nextDest) {
+    nextDest.textContent = nextId && endName ? `${endName} →` : '';
+    nextDest.classList.toggle('has-target', !!nextId);
+  }
 }
 
 function loadPhoto(s) {
   const img = qs('#photo-img');
   const ldr = qs('#photo-loading');
 
-  img.classList.remove('loaded');
+  img.classList.remove('loaded', 'exit-left', 'exit-right', 'enter-left', 'enter-right');
   ldr.classList.remove('hidden');
 
-  const src = `/tbanen/images/stations/${s.image}`;
   img.alt = s.name;
-  img.src = src;
-  img.onload  = () => { img.classList.add('loaded'); ldr.classList.add('hidden'); };
+  img.src = `/tbanen/images/stations/${s.image}`;
+  img.onload = () => {
+    img.classList.add('loaded');
+    ldr.classList.add('hidden');
+    // On entry from splash: panel arrives after photo breathes in
+    if (isEntryLoad) {
+      isEntryLoad = false;
+      setTimeout(() => {
+        const panel = qs('#station-panel');
+        panel.classList.add('panel-arrive');
+        requestAnimationFrame(() => panel.classList.remove('panel-wait'));
+      }, 650);
+    }
+  };
+  img.onerror = () => { ldr.classList.add('hidden'); };
+}
+
+function loadPhotoDir(s, dir) {
+  const img = qs('#photo-img');
+  const ldr = qs('#photo-loading');
+
+  // Pre-position: enter from opposite side
+  img.classList.remove('loaded', 'exit-left', 'exit-right', 'enter-left', 'enter-right');
+  if (dir === 'next') img.classList.add('enter-right');
+  else if (dir === 'prev') img.classList.add('enter-left');
+
+  ldr.classList.remove('hidden');
+
+  img.alt = s.name;
+  img.src = `/tbanen/images/stations/${s.image}`;
+  img.onload = () => {
+    // Small rAF delay to ensure enter class is painted before removing it
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        img.classList.remove('enter-left', 'enter-right');
+        img.classList.add('loaded');
+        ldr.classList.add('hidden');
+      });
+    });
+  };
   img.onerror = () => { ldr.classList.add('hidden'); };
 }
 
@@ -147,15 +248,15 @@ function setupSwipe() {
 }
 
 
-// ── Keyboard (desktop supplement, not primary) ──────────────────────
+// ── Keyboard ────────────────────────────────────────────────────────
 function setupKeyboard() {
   document.addEventListener('keydown', e => {
     if (e.target.tagName === 'INPUT') return;
-    if (e.key === 'ArrowLeft')  navPrev();
-    if (e.key === 'ArrowRight') navNext();
-    if (e.key === 'Escape') { stopSlideshow(); closeNetwork(); closeMenu(); closeAlpha(); }
+    if (e.key === 'ArrowLeft')  { stopSlideshow(); navPrev(); }
+    if (e.key === 'ArrowRight') { stopSlideshow(); navNext(); }
+    if (e.key === 'Escape') { stopSlideshow(); closeNetwork(); closeMenu(); }
     if (e.key === 'm' || e.key === 'M') {
-      if (!qs('#view-network').hidden) { closeNetwork(); }
+      if (!qs('#view-network').hidden) closeNetwork();
       else if (cur.id) openNetwork();
     }
     if (e.key === ' ') { e.preventDefault(); toggleSlideshow(); }
@@ -173,7 +274,6 @@ function toggleSlideshow() {
 }
 
 function startSlideshow() {
-  // If at end of line, restart from first station with a photo
   if (!qs('#btn-next').dataset.target) {
     const seq = lineSeqs[String(cur.line)];
     const first = seq.find(id => stationMap[id]?.image);
@@ -219,30 +319,27 @@ function onSlideshowMouseMove() {
 function advanceSlideshow() {
   const nextId = qs('#btn-next').dataset.target;
   if (!nextId) {
-    // End of current line — move to first station on next line
     const nextLine = LINE_ORDER[(LINE_ORDER.indexOf(cur.line) + 1) % LINE_ORDER.length];
     const seq = lineSeqs[String(nextLine)];
     const first = seq.find(id => stationMap[id]?.image);
     if (first) {
       slideshowTimer = setTimeout(() => {
-        enterAt(first, nextLine);
-        advanceSlideshow();
+        enterAtDir(first, nextLine, 'next');
+        setTimeout(advanceSlideshow, 450);
       }, SLIDE_INTERVAL);
     }
     return;
   }
   slideshowTimer = setTimeout(() => {
-    enterAt(nextId, cur.line);
-    advanceSlideshow();
+    enterAtDir(nextId, cur.line, 'next');
+    setTimeout(advanceSlideshow, 450);
   }, SLIDE_INTERVAL);
 }
 
 
 // ── View switching ──────────────────────────────────────────────────
 function show(view) {
-  qs('#view-landing').style.display = view === 'landing' ? '' : 'none';
-  qs('#view-station').hidden         = view !== 'station';
-  // network overlay handled separately
+  qs('#view-station').hidden = view !== 'station';
 }
 
 function openNetwork() {
@@ -295,8 +392,6 @@ function buildStationList(lineNum) {
   list.innerHTML = '';
   const seq = lineSeqs[String(lineNum)] || [];
   const color = LC[lineNum];
-
-  // Deduplicate (some stations appear twice in Line 5 route)
   const seen = new Set();
 
   seq.forEach(id => {
@@ -315,12 +410,10 @@ function buildStationList(lineNum) {
       (isCurrent ? ' is-current' : '');
     item.setAttribute('role', 'listitem');
 
-    // Dot
     const dot = document.createElement('div');
     dot.className = 'item-dot' + (hasPhoto ? ' filled' : '');
     dot.style.color = color;
 
-    // Name
     const name = document.createElement('div');
     name.className = 'item-name';
     name.textContent = s.name;
@@ -328,7 +421,6 @@ function buildStationList(lineNum) {
     item.appendChild(dot);
     item.appendChild(name);
 
-    // Transfer indicators
     if (xfers.length) {
       const xferEl = document.createElement('div');
       xferEl.className = 'item-xfers';
@@ -352,11 +444,9 @@ function buildStationList(lineNum) {
     list.appendChild(item);
   });
 
-  // Scroll to current
   const current = list.querySelector('.is-current');
   if (current) setTimeout(() => current.scrollIntoView({ block: 'center' }), 80);
 
-  // Footer count
   const photographed = seq.filter(id => stationMap[id]?.image);
   const unique = [...new Set(photographed)];
   qs('#list-footer').textContent =
@@ -365,7 +455,7 @@ function buildStationList(lineNum) {
 
 
 // ══════════════════════════════════════════════════════════════════
-// SVG MAP  —  desktop only, rendered but hidden on mobile via CSS
+// SVG MAP
 // ══════════════════════════════════════════════════════════════════
 
 const COORDS = {
@@ -376,7 +466,6 @@ const COORDS = {
   gronland:          [706, 310],
   toyen:             [772, 310],
 
-  // L1 west — diagonal NW
   frognerseteren:    [120, 68],
   voksenkollen:      [148, 98],
   vettakollen:       [178, 128],
@@ -394,7 +483,6 @@ const COORDS = {
   steinerud:         [406, 310],
   froen:             [418, 310],
 
-  // L2 west — horizontal then diagonal
   osteraas:          [120, 238],
   lijordet:          [163, 238],
   eiksmarka:         [206, 238],
@@ -406,7 +494,6 @@ const COORDS = {
   smestad:           [396, 286],
   borgen:            [412, 296],
 
-  // L3 west — 45° diagonal SW→NE
   kolsas:            [120, 548],
   hauger:            [156, 512],
   gjettum:           [190, 478],
@@ -421,12 +508,10 @@ const COORDS = {
   ullernaasen:       [390, 294],
   montebello:        [400, 290],
 
-  // L4+L5 northern arch — left post (above majorstua)
   ullevaal:          [430, 120],
   forskningsparken:  [430, 152],
   blindern:          [430, 184],
 
-  // L5 west — horizontal into arch
   sognsvann:         [120, 162],
   kringsjaa:         [164, 162],
   holstein:          [208, 162],
@@ -434,16 +519,13 @@ const COORDS = {
   tasen:             [292, 162],
   berg:              [330, 162],
 
-  // L4+L5 arch — top rail + right post
   nydalen:           [772, 120],
   storo:             [772, 178],
   sinsen:            [772, 222],
   carlberner:        [772, 266],
 
-  // Løren — spur from Sinsen (L4 branch terminus)
   loren:             [840, 222],
 
-  // Grorud arc (L4+L5) — NE from nydalen
   okern:             [800, 100],
   hasle:             [813, 91],
   rislokka:          [826, 82],
@@ -459,7 +541,6 @@ const COORDS = {
   stovner:           [1038, 180],
   vestli:            [1042, 206],
 
-  // L1+L4 east — SE arc to Bergkrystallen
   ensjo:             [820, 340],
   helsfyr:           [848, 370],
   brynseng:          [866, 400],
@@ -472,7 +553,6 @@ const COORDS = {
   munkelia:          [812, 564],
   bergkrystallen:    [780, 578],
 
-  // L2+L3 east — NE to Ellingsrudåsen
   hellerud:          [840, 310],
   tveita:            [874, 288],
   haugerud:          [904, 266],
@@ -481,7 +561,6 @@ const COORDS = {
   furuset:           [970, 200],
   ellingsrudaasen:   [984, 176],
 
-  // L3 east — S to Mortensrud
   godlia:            [852, 342],
   skoyenaasen:       [846, 370],
   oppsal:            [836, 398],
@@ -500,26 +579,22 @@ const LINE_PATHS = {
   5: ['sognsvann','kringsjaa','holstein','osthorn','tasen','berg','ullevaal','forskningsparken','blindern','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','carlberner','sinsen','storo','nydalen','okern','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'],
 };
 
-// Løren is a short spur off Sinsen — not part of the main L4 ring
 const SPUR_PATHS = [
   { ids: ['sinsen','loren'], line: 4 },
   { ids: ['sinsen','loren'], line: 5 },
 ];
 
-// Only terminal stations get permanent labels — everything else on hover only
 const ALWAYS_LABEL = new Set([
   'frognerseteren','sognsvann','osteraas','kolsas',
   'vestli','ellingsrudaasen','bergkrystallen','mortensrud',
 ]);
 
-// Major interchange nodes — slightly larger dot, anchor for orientation
 const JUNCTIONS = new Set([
   'majorstua','toyen','nydalen','ullevaal',
   'nationaltheateret','stortinget','jernbanetorget','gronland',
   'carlberner','sinsen','storo',
 ]);
 
-// Label offset table: [dx, dy, anchor]
 const LABEL_POS = {
   frognerseteren:  [10, 0,   'start'],
   sognsvann:       [10, 0,   'start'],
@@ -539,13 +614,10 @@ function buildMapSVG() {
   const svg = qs('#network-svg');
   svg.setAttribute('viewBox', '0 0 1120 620');
 
-  // ── Lines ────────────────────────────────────────────────────────
   const linesG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
-  // L4 is a ring — draw only the half-paths to avoid double-rendering the shared arc
-  // Use simplified L4: just Bergkrystallen side and Vestli side meeting at Nydalen
-  const L4_WEST = ['bergkrystallen','munkelia','lambertseter','karlsrud','brattlikollen','ryen','manglerud','hoyenhall','brynseng','helsfyr','ensjo','toyen','gronland','jernbanetorget','stortinget','nationaltheateret','majorstua','blindern','forskningsparken','ullevaal','nydalen'];
-  const L4_EAST = ['nydalen','okern','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'];
+  const L4_WEST  = ['bergkrystallen','munkelia','lambertseter','karlsrud','brattlikollen','ryen','manglerud','hoyenhall','brynseng','helsfyr','ensjo','toyen','gronland','jernbanetorget','stortinget','nationaltheateret','majorstua','blindern','forskningsparken','ullevaal','nydalen'];
+  const L4_EAST  = ['nydalen','okern','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'];
   const L4_INNER = ['nydalen','storo','sinsen','carlberner','toyen'];
 
   const linesToDraw = [
@@ -576,7 +648,6 @@ function buildMapSVG() {
     linesG.appendChild(path);
   });
 
-  // Spur lines (Løren etc.)
   SPUR_PATHS.forEach(({ ids, line }) => {
     const pts = ids.map(id => COORDS[id]).filter(Boolean);
     if (pts.length < 2) return;
@@ -594,11 +665,9 @@ function buildMapSVG() {
 
   svg.appendChild(linesG);
 
-  // ── Nodes ────────────────────────────────────────────────────────
   const nodesG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   const drawn = new Set();
 
-  // Collect all station ids that appear in any line path (incl. spurs)
   const allIds = new Set();
   Object.values(LINE_PATHS).forEach(ids => ids.forEach(id => allIds.add(id)));
   SPUR_PATHS.forEach(({ ids }) => ids.forEach(id => allIds.add(id)));
@@ -610,8 +679,8 @@ function buildMapSVG() {
     const s = stationMap[id];
     if (!s) return;
 
-    const [x, y]   = COORDS[id];
-    const hasPhoto  = !!s.image;
+    const [x, y]    = COORDS[id];
+    const hasPhoto   = !!s.image;
     const isJunction = JUNCTIONS.has(id);
     const showLabel  = ALWAYS_LABEL.has(id);
 
@@ -626,7 +695,6 @@ function buildMapSVG() {
     g.setAttribute('data-lines', s.lines.join(','));
     g.setAttribute('transform', `translate(${x},${y})`);
 
-    // Circle size — restrained hierarchy
     let r = hasPhoto ? 2 : 1.5;
     if (isJunction) r = 3;
     else if (showLabel) r = 2.5;
@@ -635,12 +703,11 @@ function buildMapSVG() {
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('class', 'node-circle');
     circle.setAttribute('r', r);
-    circle.setAttribute('fill', '#0d0d0d');
+    circle.setAttribute('fill', '#0c0c0c');
     circle.setAttribute('stroke', color);
     circle.setAttribute('stroke-width', isJunction ? '1.5' : '1');
     g.appendChild(circle);
 
-    // Labels (only for ALWAYS_LABEL)
     if (showLabel) {
       const pos = LABEL_POS[id] || [0, 13, 'middle'];
       const [lx, ly, anchor] = pos;
@@ -677,19 +744,14 @@ function markMapCurrent() {
   const fl = mapFocusLine ? String(mapFocusLine) : null;
 
   qsa('.svg-line').forEach(p => {
-    if (!fl) {
-      p.setAttribute('opacity', '0.55');
-    } else {
-      p.setAttribute('opacity', p.dataset.line === fl ? '1' : '0.08');
-    }
+    p.setAttribute('opacity', !fl ? '0.55' : (p.dataset.line === fl ? '1' : '0.08'));
   });
 
   qsa('.station-node').forEach(n => {
     const isCurrent = n.dataset.id === cur.id;
     n.classList.toggle('is-current', isCurrent);
-    if (!fl) {
-      n.classList.remove('off-line');
-    } else {
+    if (!fl) n.classList.remove('off-line');
+    else {
       const onLine = n.dataset.lines.split(',').includes(fl);
       n.classList.toggle('off-line', !onLine);
     }
@@ -728,8 +790,10 @@ function setupMapTooltip() {
   });
 }
 
+
 // ── Menu overlay ────────────────────────────────────────────────────
 let missingBuilt = false;
+
 function buildMissingList() {
   const missing = DATA.stations
     .filter(s => !s.image)
@@ -773,103 +837,6 @@ function closeMenu() {
   qs('#menu-open-icon').style.display = '';
   qs('#menu-close-icon').style.display = 'none';
   qs('#view-menu').setAttribute('hidden', '');
-}
-
-function buildMenuStationList() {
-  const list = qs('#menu-station-list');
-  if (!list) return;
-
-  const stations = DATA.stations
-    .filter(s => s.image)
-    .sort((a, b) => a.name.localeCompare(b.name, 'no'));
-
-  stations.forEach(s => {
-    const item = document.createElement('button');
-    item.className = 'menu-station-item';
-
-    const name = document.createElement('span');
-    name.className = 'menu-station-name';
-    name.textContent = s.name;
-
-    const lines = document.createElement('span');
-    lines.className = 'menu-station-lines';
-    lines.innerHTML = s.lines.map(l =>
-      `<span class="menu-line-pip" style="color:${LC[l]}">L${l}</span>`
-    ).join('');
-
-    item.appendChild(name);
-    item.appendChild(lines);
-    item.addEventListener('click', () => {
-      enterAt(s.id, s.lines[0]);
-      closeMenu();
-    });
-
-    list.appendChild(item);
-  });
-}
-
-
-// ── Alphabetical gallery ─────────────────────────────────────────────
-let alphaBuilt = false;
-
-function openAlpha() {
-  if (!alphaBuilt) {
-    buildAlphaList();
-    alphaBuilt = true;
-  }
-  qs('#view-alpha').removeAttribute('hidden');
-}
-
-function closeAlpha() {
-  qs('#view-alpha').setAttribute('hidden', '');
-}
-
-function buildAlphaList() {
-  const container = qs('#alpha-list');
-  const stations = DATA.stations
-    .filter(s => s.image)
-    .sort((a, b) => a.name.localeCompare(b.name, 'no'));
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const img = e.target.querySelector('img[data-src]');
-      if (img) { img.src = img.dataset.src; delete img.dataset.src; }
-      observer.unobserve(e.target);
-    });
-  }, { root: container, rootMargin: '200px 0px' });
-
-  stations.forEach(s => {
-    const entry = document.createElement('div');
-    entry.className = 'alpha-entry';
-
-    const title = document.createElement('div');
-    title.className = 'alpha-station-name';
-    title.textContent = s.name;
-
-    const lineBadges = document.createElement('div');
-    lineBadges.className = 'alpha-station-meta';
-    lineBadges.innerHTML = s.lines.map(l =>
-      `<span class="alpha-line-tag" style="color:${LC[l]}">Linje ${l}</span>`
-    ).join('');
-
-    const img = document.createElement('img');
-    img.className = 'alpha-img';
-    img.alt = s.name;
-    img.dataset.src = `/tbanen/images/stations/${s.image}`;
-
-    entry.appendChild(title);
-    entry.appendChild(lineBadges);
-    entry.appendChild(img);
-
-    entry.addEventListener('click', () => {
-      enterAt(s.id, s.lines[0]);
-      closeAlpha();
-    });
-
-    container.appendChild(entry);
-    observer.observe(entry);
-  });
 }
 
 

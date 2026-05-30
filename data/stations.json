@@ -37,113 +37,1350 @@
     }
   ],
   "stations": [
-    { "id": "frognerseteren",   "name": "Frognerseteren",    "lines": [1],       "image": null,                    "terminus": true  },
-    { "id": "voksenkollen",     "name": "Voksenkollen",      "lines": [1],       "image": "voksenkollen.jpg",      "terminus": false },
-    { "id": "vettakollen",      "name": "Vettakollen",       "lines": [1],       "image": "vettakollen.jpg",       "terminus": false },
-    { "id": "besserud",         "name": "Besserud",          "lines": [1],       "image": "besserud.jpg",          "terminus": false },
-    { "id": "holmenkollen",     "name": "Holmenkollen",      "lines": [1],       "image": null,                    "terminus": false },
-    { "id": "midtstuen",        "name": "Midtstuen",         "lines": [1],       "image": null,                    "terminus": false },
-    { "id": "skadalen",         "name": "Skådalen",          "lines": [1],       "image": null,                    "terminus": false },
-    { "id": "lillevann",        "name": "Lillevann",         "lines": [1, 2],    "image": "lillevann.jpg",         "terminus": false },
-    { "id": "voksenlia",        "name": "Voksenlia",         "lines": [1],       "image": null,                    "terminus": false },
-    { "id": "gullerasen",       "name": "Gulleråsen",        "lines": [1],       "image": null,                    "terminus": false },
-    { "id": "graakammen",       "name": "Gråkammen",         "lines": [1],       "image": null,                    "terminus": false },
-    { "id": "slemdal",          "name": "Slemdal",           "lines": [1, 2],    "image": "slemdal.jpg",           "terminus": false },
-    { "id": "ris",              "name": "Ris",               "lines": [1, 2],    "image": null,                    "terminus": false },
-    { "id": "gaustad",          "name": "Gaustad",           "lines": [1, 2],    "image": null,                    "terminus": false },
-    { "id": "vinderen",         "name": "Vinderen",          "lines": [1],       "image": "vinderen.jpg",          "terminus": false },
-    { "id": "steinerud",        "name": "Steinerud",         "lines": [1],       "image": "steinerud.jpg",         "terminus": false },
-    { "id": "froen",            "name": "Frøen",             "lines": [1],       "image": "froen.jpg",             "terminus": false },
-    { "id": "majorstua",        "name": "Majorstua",         "lines": [1,2,3,4,5],"image": "majorstua.jpg",        "terminus": false },
-    { "id": "nationaltheateret","name": "Nationaltheateret", "lines": [1,2,3,4,5],"image": "nationaltheateret.jpg","terminus": false },
-    { "id": "stortinget",       "name": "Stortinget",        "lines": [1,2,3,4,5],"image": "stortinget.jpg",       "terminus": false },
-    { "id": "jernbanetorget",   "name": "Jernbanetorget",    "lines": [1,2,3,4,5],"image": "jernbanetorget.jpg",   "terminus": false },
-    { "id": "gronland",         "name": "Grønland",          "lines": [1,2,3,4,5],"image": "gronland.jpg",         "terminus": false },
-    { "id": "toyen",            "name": "Tøyen",             "lines": [1,2,3,4,5],"image": "toyen.jpg",            "terminus": false },
-    { "id": "ensjo",            "name": "Ensjø",             "lines": [1,2,3,4],  "image": "ensjo.jpg",            "terminus": false },
-    { "id": "helsfyr",          "name": "Helsfyr",           "lines": [1,2,3,4],  "image": "helsfyr.jpg",          "terminus": false },
-    { "id": "brynseng",         "name": "Brynseng",          "lines": [1,2,3,4],  "image": "brynseng.jpg",         "terminus": false },
-    { "id": "hoyenhall",        "name": "Høyenhall",         "lines": [1,4],      "image": "hoyenhall.jpg",        "terminus": false },
-    { "id": "manglerud",        "name": "Manglerud",         "lines": [1,4],      "image": "manglerud.jpg",        "terminus": false },
-    { "id": "ryen",             "name": "Ryen",              "lines": [1,4],      "image": "ryen.jpg",             "terminus": false },
-    { "id": "brattlikollen",    "name": "Brattlikollen",     "lines": [1,4],      "image": "brattlikollen.jpg",    "terminus": false },
-    { "id": "karlsrud",         "name": "Karlsrud",          "lines": [1,4],      "image": "karlsrud.jpg",         "terminus": false },
-    { "id": "lambertseter",     "name": "Lambertseter",      "lines": [1,4],      "image": "lambertseter.jpg",     "terminus": false },
-    { "id": "munkelia",         "name": "Munkelia",          "lines": [1,4],      "image": "munkelia.jpg",         "terminus": false },
-    { "id": "bergkrystallen",   "name": "Bergkrystallen",    "lines": [1,4],      "image": "bergkrystallen.jpg",   "terminus": true  },
-    { "id": "osteraas",         "name": "Østerås",           "lines": [2],        "image": "osteraas.jpg",         "terminus": true  },
-    { "id": "lijordet",         "name": "Lijordet",          "lines": [2],        "image": "lijordet.jpg",         "terminus": false },
-    { "id": "eiksmarka",        "name": "Eiksmarka",         "lines": [2],        "image": "eiksmarka.jpg",        "terminus": false },
-    { "id": "ekraveien",        "name": "Ekraveien",         "lines": [2],        "image": "ekraveien.jpg",        "terminus": false },
-    { "id": "roa",              "name": "Røa",               "lines": [2],        "image": "roa.jpg",              "terminus": false },
-    { "id": "hovseter",         "name": "Hovseter",          "lines": [2],        "image": "hovseter.jpg",         "terminus": false },
-    { "id": "holmen",           "name": "Holmen",            "lines": [2],        "image": "holmen.jpg",           "terminus": false },
-    { "id": "makrellbekken",    "name": "Makrellbekken",     "lines": [2],        "image": "makrellbekken.jpg",    "terminus": false },
-    { "id": "smestad",          "name": "Smestad",           "lines": [2,3],      "image": "smestad.jpg",          "terminus": false },
-    { "id": "borgen",           "name": "Borgen",            "lines": [2,3],      "image": "borgen.jpg",           "terminus": false },
-
-    { "id": "hellerud",         "name": "Hellerud",          "lines": [2,3],      "image": "hellerud.jpg",         "terminus": false },
-    { "id": "tveita",           "name": "Tveita",            "lines": [2],        "image": "tveita.jpg",                   "terminus": false },
-    { "id": "haugerud",         "name": "Haugerud",          "lines": [2],        "image": "haugerud.jpg",         "terminus": false },
-    { "id": "trosterud",        "name": "Trosterud",         "lines": [2],        "image": "trosterud.jpg",        "terminus": false },
-    { "id": "lindeberg",        "name": "Lindeberg",         "lines": [2],        "image": "lindeberg.jpg",        "terminus": false },
-    { "id": "furuset",          "name": "Furuset",           "lines": [2],        "image": "furuset.jpg",          "terminus": false },
-    { "id": "ellingsrudaasen",  "name": "Ellingsrudåsen",    "lines": [2],        "image": "ellingsrudaasen.jpg",  "terminus": true  },
-    { "id": "kolsas",           "name": "Kolsås",            "lines": [3],        "image": "kolsas.jpg",           "terminus": true  },
-    { "id": "hauger",           "name": "Hauger",            "lines": [3],        "image": "hauger.jpg",           "terminus": false },
-    { "id": "gjettum",          "name": "Gjettum",           "lines": [3],        "image": "gjettum.jpg",          "terminus": false },
-    { "id": "avlos",            "name": "Avløs",             "lines": [3],        "image": "avlos.jpg",            "terminus": false },
-    { "id": "haslum",           "name": "Haslum",            "lines": [3],        "image": "haslum.jpg",           "terminus": false },
-    { "id": "gjonnes",          "name": "Gjønnes",           "lines": [3],        "image": "gjonnes.jpg",          "terminus": false },
-    { "id": "bekkestua",        "name": "Bekkestua",         "lines": [3],        "image": "bekkestua.jpg",        "terminus": false },
-    { "id": "ringstabekk",      "name": "Ringstabekk",       "lines": [3],        "image": "ringstabekk.jpg",      "terminus": false },
-    { "id": "jar",              "name": "Jar",               "lines": [3],        "image": "jar.jpg",              "terminus": false },
-    { "id": "bjornsletta",      "name": "Bjørnsletta",       "lines": [3],        "image": "bjornsletta.jpg",      "terminus": false },
-    { "id": "aasjordet",        "name": "Åsjordet",          "lines": [3],        "image": "aasjordet.jpg",        "terminus": false },
-    { "id": "ullernaasen",      "name": "Ullernåsen",        "lines": [3],        "image": "ullernaasen.jpg",      "terminus": false },
-    { "id": "montebello",       "name": "Montebello",        "lines": [3],        "image": "montebello.jpg",       "terminus": false },
-    { "id": "godlia",           "name": "Godlia",            "lines": [3],        "image": "godlia.jpg",           "terminus": false },
-    { "id": "skoyenaasen",      "name": "Skøyenåsen",        "lines": [3],        "image": "skoyenaasen.jpg",      "terminus": false },
-    { "id": "oppsal",           "name": "Oppsal",            "lines": [3],        "image": "oppsal.jpg",           "terminus": false },
-    { "id": "ulsrud",           "name": "Ulsrud",            "lines": [3],        "image": "ulsrud.jpg",           "terminus": false },
-    { "id": "boler",            "name": "Bøler",             "lines": [3,5],      "image": "boler.jpg",            "terminus": false },
-    { "id": "bogerud",          "name": "Bogerud",           "lines": [3],        "image": "bogerud.jpg",          "terminus": false },
-    { "id": "skullerud",        "name": "Skullerud",         "lines": [3],        "image": "skullerud.jpg",        "terminus": false },
-    { "id": "mortensrud",       "name": "Mortensrud",        "lines": [3],        "image": "mortensrud.jpg",       "terminus": true  },
-    { "id": "vestli",           "name": "Vestli",            "lines": [4,5],      "image": "vestli.jpg",           "terminus": true  },
-    { "id": "stovner",          "name": "Stovner",           "lines": [4,5],      "image": "stovner.jpg",          "terminus": false },
-    { "id": "rommen",           "name": "Rommen",            "lines": [4,5],      "image": "rommen.jpg",           "terminus": false },
-    { "id": "romsos",           "name": "Romsås",            "lines": [4,5],      "image": "romsos.jpg",           "terminus": false },
-    { "id": "grorud",           "name": "Grorud",            "lines": [4,5],      "image": "grorud.jpg",           "terminus": false },
-    { "id": "ammerud",          "name": "Ammerud",           "lines": [4,5],      "image": "ammerud.jpg",          "terminus": false },
-    { "id": "kalbakken",        "name": "Kalbakken",         "lines": [4,5],      "image": "kalbakken.jpg",        "terminus": false },
-    { "id": "rodtvet",          "name": "Rødtvet",           "lines": [4,5],      "image": "rodtvet.jpg",          "terminus": false },
-    { "id": "veitvet",          "name": "Veitvet",           "lines": [4,5],      "image": "veitvet.jpg",          "terminus": false },
-    { "id": "linderud",         "name": "Linderud",          "lines": [4,5],      "image": "linderud.jpg",         "terminus": false },
-    { "id": "vollebekk",        "name": "Vollebekk",         "lines": [4,5],      "image": "vollebekk.jpg",        "terminus": false },
-    { "id": "hasle",            "name": "Hasle",             "lines": [4,5],      "image": null,                   "terminus": false },
-    { "id": "rislokka",         "name": "Risløkka",          "lines": [4,5],      "image": "rislokka.jpg",         "terminus": false },
-    { "id": "okern",            "name": "Økern",             "lines": [4,5],      "image": "okern.jpg",            "terminus": false },
-    { "id": "loren",            "name": "Løren",             "lines": [4,5],      "image": "loren.jpg",            "terminus": false },
-    { "id": "sinsen",           "name": "Sinsen",            "lines": [4,5],      "image": "sinsen.jpg",           "terminus": false },
-    { "id": "storo",            "name": "Storo",             "lines": [4,5],      "image": "storo.jpg",            "terminus": false },
-    { "id": "nydalen",          "name": "Nydalen",           "lines": [4,5],      "image": "nydalen.jpg",          "terminus": false },
-    { "id": "ullevaal",         "name": "Ullevål stadion",   "lines": [4,5],      "image": "ullevaal.jpg",         "terminus": false },
-    { "id": "forskningsparken", "name": "Forskningsparken",  "lines": [4,5],      "image": "forskningsparken.jpg", "terminus": false },
-    { "id": "blindern",         "name": "Blindern",          "lines": [4,5],      "image": "blindern.jpg",         "terminus": false },
-    { "id": "sognsvann",        "name": "Sognsvann",         "lines": [5],        "image": "sognsvann.jpg",        "terminus": true  },
-    { "id": "kringsjaa",        "name": "Kringsjå",          "lines": [5],        "image": "kringsjaa.jpg",        "terminus": false },
-    { "id": "holstein",         "name": "Holstein",          "lines": [5],        "image": "holstein.jpg",         "terminus": false },
-    { "id": "osthorn",          "name": "Østhorn",           "lines": [5],        "image": "osthorn.jpg",          "terminus": false },
-    { "id": "tasen",            "name": "Tåsen",             "lines": [5],        "image": "tasen.jpg",            "terminus": false },
-    { "id": "berg",             "name": "Berg",              "lines": [5],        "image": "berg.jpg",             "terminus": false },
-    { "id": "carlberner",       "name": "Carl Berners plass","lines": [5],        "image": "carlberner.jpg",       "terminus": false }
+    {
+      "id": "frognerseteren",
+      "name": "Frognerseteren",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": true,
+      "elevation": 396,
+      "year": 1916
+    },
+    {
+      "id": "voksenkollen",
+      "name": "Voksenkollen",
+      "lines": [
+        1
+      ],
+      "image": "voksenkollen.jpg",
+      "terminus": false,
+      "elevation": 324,
+      "year": 1916
+    },
+    {
+      "id": "vettakollen",
+      "name": "Vettakollen",
+      "lines": [
+        1
+      ],
+      "image": "vettakollen.jpg",
+      "terminus": false,
+      "elevation": 247,
+      "year": 1916
+    },
+    {
+      "id": "besserud",
+      "name": "Besserud",
+      "lines": [
+        1
+      ],
+      "image": "besserud.jpg",
+      "terminus": false,
+      "elevation": 258,
+      "year": 1898
+    },
+    {
+      "id": "holmenkollen",
+      "name": "Holmenkollen",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 247,
+      "year": 1916
+    },
+    {
+      "id": "midtstuen",
+      "name": "Midtstuen",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 157,
+      "year": 1898
+    },
+    {
+      "id": "skadalen",
+      "name": "Skådalen",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 163,
+      "year": 1898
+    },
+    {
+      "id": "lillevann",
+      "name": "Lillevann",
+      "lines": [
+        1,
+        2
+      ],
+      "image": "lillevann.jpg",
+      "terminus": false,
+      "elevation": 52,
+      "year": 1916
+    },
+    {
+      "id": "voksenlia",
+      "name": "Voksenlia",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 122,
+      "year": 1898
+    },
+    {
+      "id": "gullerasen",
+      "name": "Gulleråsen",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 99,
+      "year": 1898
+    },
+    {
+      "id": "graakammen",
+      "name": "Gråkammen",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 95,
+      "year": 1898
+    },
+    {
+      "id": "slemdal",
+      "name": "Slemdal",
+      "lines": [
+        1,
+        2
+      ],
+      "image": "slemdal.jpg",
+      "terminus": false,
+      "elevation": 70,
+      "year": 1898
+    },
+    {
+      "id": "ris",
+      "name": "Ris",
+      "lines": [
+        1,
+        2
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 56,
+      "year": 1898
+    },
+    {
+      "id": "gaustad",
+      "name": "Gaustad",
+      "lines": [
+        1,
+        2
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 57,
+      "year": 1898
+    },
+    {
+      "id": "vinderen",
+      "name": "Vinderen",
+      "lines": [
+        1
+      ],
+      "image": "vinderen.jpg",
+      "terminus": false,
+      "elevation": 45,
+      "year": 1898
+    },
+    {
+      "id": "steinerud",
+      "name": "Steinerud",
+      "lines": [
+        1
+      ],
+      "image": "steinerud.jpg",
+      "terminus": false,
+      "elevation": 46,
+      "year": 1898
+    },
+    {
+      "id": "froen",
+      "name": "Frøen",
+      "lines": [
+        1
+      ],
+      "image": "froen.jpg",
+      "terminus": false,
+      "elevation": 54,
+      "year": 1898
+    },
+    {
+      "id": "majorstua",
+      "name": "Majorstua",
+      "lines": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "image": "majorstua.jpg",
+      "terminus": false,
+      "elevation": 54,
+      "year": 1898
+    },
+    {
+      "id": "nationaltheateret",
+      "name": "Nationaltheateret",
+      "lines": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "image": "nationaltheateret.jpg",
+      "terminus": false,
+      "elevation": 7,
+      "year": 1928
+    },
+    {
+      "id": "stortinget",
+      "name": "Stortinget",
+      "lines": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "image": "stortinget.jpg",
+      "terminus": false,
+      "elevation": 7,
+      "year": 1966
+    },
+    {
+      "id": "jernbanetorget",
+      "name": "Jernbanetorget",
+      "lines": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "image": "jernbanetorget.jpg",
+      "terminus": false,
+      "elevation": 3,
+      "year": 1966
+    },
+    {
+      "id": "gronland",
+      "name": "Grønland",
+      "lines": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "image": "gronland.jpg",
+      "terminus": false,
+      "elevation": 8,
+      "year": 1966
+    },
+    {
+      "id": "toyen",
+      "name": "Tøyen",
+      "lines": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "image": "toyen.jpg",
+      "terminus": false,
+      "elevation": 14,
+      "year": 1966
+    },
+    {
+      "id": "ensjo",
+      "name": "Ensjø",
+      "lines": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "image": "ensjo.jpg",
+      "terminus": false,
+      "elevation": 26,
+      "year": 1966
+    },
+    {
+      "id": "helsfyr",
+      "name": "Helsfyr",
+      "lines": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "image": "helsfyr.jpg",
+      "terminus": false,
+      "elevation": 140,
+      "year": 1966
+    },
+    {
+      "id": "brynseng",
+      "name": "Brynseng",
+      "lines": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "image": "brynseng.jpg",
+      "terminus": false,
+      "elevation": 140,
+      "year": 1966
+    },
+    {
+      "id": "hoyenhall",
+      "name": "Høyenhall",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "hoyenhall.jpg",
+      "terminus": false,
+      "elevation": 133,
+      "year": 1966
+    },
+    {
+      "id": "manglerud",
+      "name": "Manglerud",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "manglerud.jpg",
+      "terminus": false,
+      "elevation": 138,
+      "year": 1966
+    },
+    {
+      "id": "ryen",
+      "name": "Ryen",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "ryen.jpg",
+      "terminus": false,
+      "elevation": 165,
+      "year": 1966
+    },
+    {
+      "id": "brattlikollen",
+      "name": "Brattlikollen",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "brattlikollen.jpg",
+      "terminus": false,
+      "elevation": 162,
+      "year": 1966
+    },
+    {
+      "id": "karlsrud",
+      "name": "Karlsrud",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "karlsrud.jpg",
+      "terminus": false,
+      "elevation": 91,
+      "year": 1966
+    },
+    {
+      "id": "lambertseter",
+      "name": "Lambertseter",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "lambertseter.jpg",
+      "terminus": false,
+      "elevation": 128,
+      "year": 1966
+    },
+    {
+      "id": "munkelia",
+      "name": "Munkelia",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "munkelia.jpg",
+      "terminus": false,
+      "elevation": 108,
+      "year": 1966
+    },
+    {
+      "id": "bergkrystallen",
+      "name": "Bergkrystallen",
+      "lines": [
+        1,
+        4
+      ],
+      "image": "bergkrystallen.jpg",
+      "terminus": true,
+      "elevation": 106,
+      "year": 1966
+    },
+    {
+      "id": "osteraas",
+      "name": "Østerås",
+      "lines": [
+        2
+      ],
+      "image": "osteraas.jpg",
+      "terminus": true,
+      "elevation": 143,
+      "year": 1948
+    },
+    {
+      "id": "lijordet",
+      "name": "Lijordet",
+      "lines": [
+        2
+      ],
+      "image": "lijordet.jpg",
+      "terminus": false,
+      "elevation": 113,
+      "year": 1951
+    },
+    {
+      "id": "eiksmarka",
+      "name": "Eiksmarka",
+      "lines": [
+        2
+      ],
+      "image": "eiksmarka.jpg",
+      "terminus": false,
+      "elevation": 92,
+      "year": 1951
+    },
+    {
+      "id": "ekraveien",
+      "name": "Ekraveien",
+      "lines": [
+        2
+      ],
+      "image": "ekraveien.jpg",
+      "terminus": false,
+      "elevation": 106,
+      "year": 1948
+    },
+    {
+      "id": "roa",
+      "name": "Røa",
+      "lines": [
+        2
+      ],
+      "image": "roa.jpg",
+      "terminus": false,
+      "elevation": 68,
+      "year": 1935
+    },
+    {
+      "id": "hovseter",
+      "name": "Hovseter",
+      "lines": [
+        2
+      ],
+      "image": "hovseter.jpg",
+      "terminus": false,
+      "elevation": 81,
+      "year": 1935
+    },
+    {
+      "id": "holmen",
+      "name": "Holmen",
+      "lines": [
+        2
+      ],
+      "image": "holmen.jpg",
+      "terminus": false,
+      "elevation": 35,
+      "year": 1935
+    },
+    {
+      "id": "makrellbekken",
+      "name": "Makrellbekken",
+      "lines": [
+        2
+      ],
+      "image": "makrellbekken.jpg",
+      "terminus": false,
+      "elevation": 11,
+      "year": 1935
+    },
+    {
+      "id": "smestad",
+      "name": "Smestad",
+      "lines": [
+        2,
+        3
+      ],
+      "image": "smestad.jpg",
+      "terminus": false,
+      "elevation": 31,
+      "year": 1935
+    },
+    {
+      "id": "borgen",
+      "name": "Borgen",
+      "lines": [
+        2,
+        3
+      ],
+      "image": "borgen.jpg",
+      "terminus": false,
+      "elevation": 36,
+      "year": 1912
+    },
+    {
+      "id": "hellerud",
+      "name": "Hellerud",
+      "lines": [
+        2,
+        3
+      ],
+      "image": "hellerud.jpg",
+      "terminus": false,
+      "elevation": 143,
+      "year": 1967
+    },
+    {
+      "id": "tveita",
+      "name": "Tveita",
+      "lines": [
+        2
+      ],
+      "image": "tveita.jpg",
+      "terminus": false,
+      "elevation": 165,
+      "year": 1967
+    },
+    {
+      "id": "haugerud",
+      "name": "Haugerud",
+      "lines": [
+        2
+      ],
+      "image": "haugerud.jpg",
+      "terminus": false,
+      "elevation": 233,
+      "year": 1970
+    },
+    {
+      "id": "trosterud",
+      "name": "Trosterud",
+      "lines": [
+        2
+      ],
+      "image": "trosterud.jpg",
+      "terminus": false,
+      "elevation": 336,
+      "year": 1978
+    },
+    {
+      "id": "lindeberg",
+      "name": "Lindeberg",
+      "lines": [
+        2
+      ],
+      "image": "lindeberg.jpg",
+      "terminus": false,
+      "elevation": 213,
+      "year": 1978
+    },
+    {
+      "id": "furuset",
+      "name": "Furuset",
+      "lines": [
+        2
+      ],
+      "image": "furuset.jpg",
+      "terminus": false,
+      "elevation": 219,
+      "year": 1978
+    },
+    {
+      "id": "ellingsrudaasen",
+      "name": "Ellingsrudåsen",
+      "lines": [
+        2
+      ],
+      "image": "ellingsrudaasen.jpg",
+      "terminus": true,
+      "elevation": 196,
+      "year": 1981
+    },
+    {
+      "id": "kolsas",
+      "name": "Kolsås",
+      "lines": [
+        3
+      ],
+      "image": "kolsas.jpg",
+      "terminus": true,
+      "elevation": 106,
+      "year": 1930
+    },
+    {
+      "id": "hauger",
+      "name": "Hauger",
+      "lines": [
+        3
+      ],
+      "image": "hauger.jpg",
+      "terminus": false,
+      "elevation": 85,
+      "year": 1930
+    },
+    {
+      "id": "gjettum",
+      "name": "Gjettum",
+      "lines": [
+        3
+      ],
+      "image": "gjettum.jpg",
+      "terminus": false,
+      "elevation": 54,
+      "year": 1930
+    },
+    {
+      "id": "avlos",
+      "name": "Avløs",
+      "lines": [
+        3
+      ],
+      "image": "avlos.jpg",
+      "terminus": false,
+      "elevation": 67,
+      "year": 1924
+    },
+    {
+      "id": "haslum",
+      "name": "Haslum",
+      "lines": [
+        3
+      ],
+      "image": "haslum.jpg",
+      "terminus": false,
+      "elevation": 61,
+      "year": 1924
+    },
+    {
+      "id": "gjonnes",
+      "name": "Gjønnes",
+      "lines": [
+        3
+      ],
+      "image": "gjonnes.jpg",
+      "terminus": false,
+      "elevation": 50,
+      "year": 1924
+    },
+    {
+      "id": "bekkestua",
+      "name": "Bekkestua",
+      "lines": [
+        3
+      ],
+      "image": "bekkestua.jpg",
+      "terminus": false,
+      "elevation": 49,
+      "year": 1924
+    },
+    {
+      "id": "ringstabekk",
+      "name": "Ringstabekk",
+      "lines": [
+        3
+      ],
+      "image": "ringstabekk.jpg",
+      "terminus": false,
+      "elevation": 20,
+      "year": 2011
+    },
+    {
+      "id": "jar",
+      "name": "Jar",
+      "lines": [
+        3
+      ],
+      "image": "jar.jpg",
+      "terminus": false,
+      "elevation": 6,
+      "year": 1942
+    },
+    {
+      "id": "bjornsletta",
+      "name": "Bjørnsletta",
+      "lines": [
+        3
+      ],
+      "image": "bjornsletta.jpg",
+      "terminus": false,
+      "elevation": 26,
+      "year": 2010
+    },
+    {
+      "id": "aasjordet",
+      "name": "Åsjordet",
+      "lines": [
+        3
+      ],
+      "image": "aasjordet.jpg",
+      "terminus": false,
+      "elevation": 31,
+      "year": 1942
+    },
+    {
+      "id": "ullernaasen",
+      "name": "Ullernåsen",
+      "lines": [
+        3
+      ],
+      "image": "ullernaasen.jpg",
+      "terminus": false,
+      "elevation": 37,
+      "year": 1942
+    },
+    {
+      "id": "montebello",
+      "name": "Montebello",
+      "lines": [
+        3
+      ],
+      "image": "montebello.jpg",
+      "terminus": false,
+      "elevation": 39,
+      "year": 1942
+    },
+    {
+      "id": "godlia",
+      "name": "Godlia",
+      "lines": [
+        3
+      ],
+      "image": "godlia.jpg",
+      "terminus": false,
+      "elevation": 107,
+      "year": 1966
+    },
+    {
+      "id": "skoyenaasen",
+      "name": "Skøyenåsen",
+      "lines": [
+        3
+      ],
+      "image": "skoyenaasen.jpg",
+      "terminus": false,
+      "elevation": 114,
+      "year": 1967
+    },
+    {
+      "id": "oppsal",
+      "name": "Oppsal",
+      "lines": [
+        3
+      ],
+      "image": "oppsal.jpg",
+      "terminus": false,
+      "elevation": 141,
+      "year": 1967
+    },
+    {
+      "id": "ulsrud",
+      "name": "Ulsrud",
+      "lines": [
+        3
+      ],
+      "image": "ulsrud.jpg",
+      "terminus": false,
+      "elevation": 122,
+      "year": 1967
+    },
+    {
+      "id": "boler",
+      "name": "Bøler",
+      "lines": [
+        3,
+        5
+      ],
+      "image": "boler.jpg",
+      "terminus": false,
+      "elevation": 143,
+      "year": 1967
+    },
+    {
+      "id": "bogerud",
+      "name": "Bogerud",
+      "lines": [
+        3
+      ],
+      "image": "bogerud.jpg",
+      "terminus": false,
+      "elevation": 157,
+      "year": 1967
+    },
+    {
+      "id": "skullerud",
+      "name": "Skullerud",
+      "lines": [
+        3
+      ],
+      "image": "skullerud.jpg",
+      "terminus": false,
+      "elevation": 130,
+      "year": 1967
+    },
+    {
+      "id": "mortensrud",
+      "name": "Mortensrud",
+      "lines": [
+        3
+      ],
+      "image": "mortensrud.jpg",
+      "terminus": true,
+      "elevation": 130,
+      "year": 1998
+    },
+    {
+      "id": "vestli",
+      "name": "Vestli",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "vestli.jpg",
+      "terminus": true,
+      "elevation": 257,
+      "year": 1966
+    },
+    {
+      "id": "stovner",
+      "name": "Stovner",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "stovner.jpg",
+      "terminus": false,
+      "elevation": 237,
+      "year": 1974
+    },
+    {
+      "id": "rommen",
+      "name": "Rommen",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "rommen.jpg",
+      "terminus": false,
+      "elevation": 195,
+      "year": 1974
+    },
+    {
+      "id": "romsos",
+      "name": "Romsås",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "romsos.jpg",
+      "terminus": false,
+      "elevation": 251,
+      "year": 1974
+    },
+    {
+      "id": "grorud",
+      "name": "Grorud",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "grorud.jpg",
+      "terminus": false,
+      "elevation": 230,
+      "year": 1966
+    },
+    {
+      "id": "ammerud",
+      "name": "Ammerud",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "ammerud.jpg",
+      "terminus": false,
+      "elevation": 166,
+      "year": 1966
+    },
+    {
+      "id": "kalbakken",
+      "name": "Kalbakken",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "kalbakken.jpg",
+      "terminus": false,
+      "elevation": 133,
+      "year": 1966
+    },
+    {
+      "id": "rodtvet",
+      "name": "Rødtvet",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "rodtvet.jpg",
+      "terminus": false,
+      "elevation": 104,
+      "year": 1966
+    },
+    {
+      "id": "veitvet",
+      "name": "Veitvet",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "veitvet.jpg",
+      "terminus": false,
+      "elevation": 97,
+      "year": 1966
+    },
+    {
+      "id": "linderud",
+      "name": "Linderud",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "linderud.jpg",
+      "terminus": false,
+      "elevation": 96,
+      "year": 1966
+    },
+    {
+      "id": "vollebekk",
+      "name": "Vollebekk",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "vollebekk.jpg",
+      "terminus": false,
+      "elevation": 113,
+      "year": 1966
+    },
+    {
+      "id": "hasle",
+      "name": "Hasle",
+      "lines": [
+        4,
+        5
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 97,
+      "year": 1966
+    },
+    {
+      "id": "rislokka",
+      "name": "Risløkka",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "rislokka.jpg",
+      "terminus": false,
+      "elevation": 108,
+      "year": 1966
+    },
+    {
+      "id": "okern",
+      "name": "Økern",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "okern.jpg",
+      "terminus": false,
+      "elevation": 108,
+      "year": 1966
+    },
+    {
+      "id": "loren",
+      "name": "Løren",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "loren.jpg",
+      "terminus": false,
+      "elevation": 101,
+      "year": 2016
+    },
+    {
+      "id": "sinsen",
+      "name": "Sinsen",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "sinsen.jpg",
+      "terminus": false,
+      "elevation": 92,
+      "year": 1966
+    },
+    {
+      "id": "storo",
+      "name": "Storo",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "storo.jpg",
+      "terminus": false,
+      "elevation": 86,
+      "year": 1966
+    },
+    {
+      "id": "nydalen",
+      "name": "Nydalen",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "nydalen.jpg",
+      "terminus": false,
+      "elevation": 88,
+      "year": 2003
+    },
+    {
+      "id": "ullevaal",
+      "name": "Ullevål stadion",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "ullevaal.jpg",
+      "terminus": false,
+      "elevation": 100,
+      "year": 1966
+    },
+    {
+      "id": "forskningsparken",
+      "name": "Forskningsparken",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "forskningsparken.jpg",
+      "terminus": false,
+      "elevation": 98,
+      "year": 1999
+    },
+    {
+      "id": "blindern",
+      "name": "Blindern",
+      "lines": [
+        4,
+        5
+      ],
+      "image": "blindern.jpg",
+      "terminus": false,
+      "elevation": 94,
+      "year": 1934
+    },
+    {
+      "id": "sognsvann",
+      "name": "Sognsvann",
+      "lines": [
+        5
+      ],
+      "image": "sognsvann.jpg",
+      "terminus": true,
+      "elevation": 222,
+      "year": 1934
+    },
+    {
+      "id": "kringsjaa",
+      "name": "Kringsjå",
+      "lines": [
+        5
+      ],
+      "image": "kringsjaa.jpg",
+      "terminus": false,
+      "elevation": 171,
+      "year": 1934
+    },
+    {
+      "id": "holstein",
+      "name": "Holstein",
+      "lines": [
+        5
+      ],
+      "image": "holstein.jpg",
+      "terminus": false,
+      "elevation": 127,
+      "year": 1934
+    },
+    {
+      "id": "osthorn",
+      "name": "Østhorn",
+      "lines": [
+        5
+      ],
+      "image": "osthorn.jpg",
+      "terminus": false,
+      "elevation": 97,
+      "year": 1934
+    },
+    {
+      "id": "tasen",
+      "name": "Tåsen",
+      "lines": [
+        5
+      ],
+      "image": "tasen.jpg",
+      "terminus": false,
+      "elevation": 95,
+      "year": 1934
+    },
+    {
+      "id": "berg",
+      "name": "Berg",
+      "lines": [
+        5
+      ],
+      "image": "berg.jpg",
+      "terminus": false,
+      "elevation": 89,
+      "year": 1934
+    },
+    {
+      "id": "carlberner",
+      "name": "Carl Berners plass",
+      "lines": [
+        5
+      ],
+      "image": "carlberner.jpg",
+      "terminus": false,
+      "elevation": 38,
+      "year": 1966
+    }
   ],
   "lineSequences": {
-    "1": ["frognerseteren","voksenkollen","vettakollen","besserud","holmenkollen","midtstuen","skadalen","voksenlia","gullerasen","graakammen","slemdal","ris","gaustad","vinderen","steinerud","froen","majorstua","nationaltheateret","stortinget","jernbanetorget","gronland","toyen","ensjo","helsfyr","brynseng","hoyenhall","manglerud","ryen","brattlikollen","karlsrud","lambertseter","munkelia","bergkrystallen"],
-    "2": ["osteraas","lijordet","eiksmarka","ekraveien","roa","hovseter","holmen","makrellbekken","smestad","borgen","majorstua","nationaltheateret","stortinget","jernbanetorget","gronland","toyen","ensjo","helsfyr","brynseng","hellerud","tveita","haugerud","trosterud","lindeberg","furuset","ellingsrudaasen"],
-    "3": ["kolsas","hauger","gjettum","avlos","haslum","gjonnes","bekkestua","ringstabekk","jar","bjornsletta","aasjordet","ullernaasen","montebello","smestad","borgen","majorstua","nationaltheateret","stortinget","jernbanetorget","gronland","toyen","ensjo","helsfyr","brynseng","hellerud","godlia","skoyenaasen","oppsal","ulsrud","boler","bogerud","skullerud","mortensrud"],
-    "4": ["vestli","stovner","rommen","romsos","grorud","ammerud","kalbakken","rodtvet","veitvet","linderud","vollebekk","hasle","rislokka","okern","loren","sinsen","storo","nydalen","ullevaal","forskningsparken","blindern","majorstua","nationaltheateret","stortinget","jernbanetorget","gronland","toyen","ensjo","helsfyr","brynseng","hoyenhall","manglerud","ryen","brattlikollen","karlsrud","lambertseter","munkelia","bergkrystallen"],
-    "5": ["sognsvann","kringsjaa","holstein","osthorn","tasen","berg","ullevaal","forskningsparken","blindern","majorstua","nationaltheateret","stortinget","jernbanetorget","gronland","toyen","carlberner","sinsen","storo","nydalen","okern","hasle","rislokka","vollebekk","linderud","veitvet","rodtvet","kalbakken","ammerud","grorud","romsos","rommen","stovner","vestli"]
+    "1": [
+      "frognerseteren",
+      "voksenkollen",
+      "vettakollen",
+      "besserud",
+      "holmenkollen",
+      "midtstuen",
+      "skadalen",
+      "voksenlia",
+      "gullerasen",
+      "graakammen",
+      "slemdal",
+      "ris",
+      "gaustad",
+      "vinderen",
+      "steinerud",
+      "froen",
+      "majorstua",
+      "nationaltheateret",
+      "stortinget",
+      "jernbanetorget",
+      "gronland",
+      "toyen",
+      "ensjo",
+      "helsfyr",
+      "brynseng",
+      "hoyenhall",
+      "manglerud",
+      "ryen",
+      "brattlikollen",
+      "karlsrud",
+      "lambertseter",
+      "munkelia",
+      "bergkrystallen"
+    ],
+    "2": [
+      "osteraas",
+      "lijordet",
+      "eiksmarka",
+      "ekraveien",
+      "roa",
+      "hovseter",
+      "holmen",
+      "makrellbekken",
+      "smestad",
+      "borgen",
+      "majorstua",
+      "nationaltheateret",
+      "stortinget",
+      "jernbanetorget",
+      "gronland",
+      "toyen",
+      "ensjo",
+      "helsfyr",
+      "brynseng",
+      "hellerud",
+      "tveita",
+      "haugerud",
+      "trosterud",
+      "lindeberg",
+      "furuset",
+      "ellingsrudaasen"
+    ],
+    "3": [
+      "kolsas",
+      "hauger",
+      "gjettum",
+      "avlos",
+      "haslum",
+      "gjonnes",
+      "bekkestua",
+      "ringstabekk",
+      "jar",
+      "bjornsletta",
+      "aasjordet",
+      "ullernaasen",
+      "montebello",
+      "smestad",
+      "borgen",
+      "majorstua",
+      "nationaltheateret",
+      "stortinget",
+      "jernbanetorget",
+      "gronland",
+      "toyen",
+      "ensjo",
+      "helsfyr",
+      "brynseng",
+      "hellerud",
+      "godlia",
+      "skoyenaasen",
+      "oppsal",
+      "ulsrud",
+      "boler",
+      "bogerud",
+      "skullerud",
+      "mortensrud"
+    ],
+    "4": [
+      "vestli",
+      "stovner",
+      "rommen",
+      "romsos",
+      "grorud",
+      "ammerud",
+      "kalbakken",
+      "rodtvet",
+      "veitvet",
+      "linderud",
+      "vollebekk",
+      "hasle",
+      "rislokka",
+      "okern",
+      "loren",
+      "sinsen",
+      "storo",
+      "nydalen",
+      "ullevaal",
+      "forskningsparken",
+      "blindern",
+      "majorstua",
+      "nationaltheateret",
+      "stortinget",
+      "jernbanetorget",
+      "gronland",
+      "toyen",
+      "ensjo",
+      "helsfyr",
+      "brynseng",
+      "hoyenhall",
+      "manglerud",
+      "ryen",
+      "brattlikollen",
+      "karlsrud",
+      "lambertseter",
+      "munkelia",
+      "bergkrystallen"
+    ],
+    "5": [
+      "sognsvann",
+      "kringsjaa",
+      "holstein",
+      "osthorn",
+      "tasen",
+      "berg",
+      "ullevaal",
+      "forskningsparken",
+      "blindern",
+      "majorstua",
+      "nationaltheateret",
+      "stortinget",
+      "jernbanetorget",
+      "gronland",
+      "toyen",
+      "carlberner",
+      "sinsen",
+      "storo",
+      "nydalen",
+      "okern",
+      "hasle",
+      "rislokka",
+      "vollebekk",
+      "linderud",
+      "veitvet",
+      "rodtvet",
+      "kalbakken",
+      "ammerud",
+      "grorud",
+      "romsos",
+      "rommen",
+      "stovner",
+      "vestli"
+    ]
   }
 }

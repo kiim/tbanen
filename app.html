@@ -8,54 +8,16 @@
   <meta name="theme-color" content="#080808">
   <meta property="og:title" content="T—BANEN / OSLO">
   <meta property="og:image" content="/tbanen/images/stations/nationaltheateret.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/tbanen/assets/css/style.css">
-  <!-- Matomo -->
-  <script>
-    var _paq = window._paq = window._paq || [];
-    _paq.push(['trackPageView']);
-    _paq.push(['enableLinkTracking']);
-    (function() {
-      var u='//stats.kiim.net/';
-      _paq.push(['setTrackerUrl', u + 'matomo.php']);
-      _paq.push(['setSiteId', '1']);
-      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-    })();
-  </script>
-  <!-- End Matomo -->
 </head>
 <body>
 
-  <!-- ═══════════════ LANDING ═══════════════ -->
-  <div id="view-landing">
-    <div class="landing-content">
-
-      <div class="landing-wordmark-row">
-        <div class="landing-wordmark">T—BANEN</div>
-        <svg class="landing-line-tail" viewBox="0 0 120 28" preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-          <line x1="0" y1="14" x2="92" y2="14" stroke="#3D9A5C" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="106" cy="14" r="9" fill="#3D9A5C"/>
-        </svg>
-      </div>
-
-      <p class="landing-subtitle" id="landing-count">— / — STASJONER DOKUMENTERT</p>
-
-      <div class="landing-lines" aria-hidden="true">
-        <span class="landing-line-bar" style="background:#5B9BD5"></span>
-        <span class="landing-line-bar" style="background:#E8751A"></span>
-        <span class="landing-line-bar" style="background:#8B5EA7"></span>
-        <span class="landing-line-bar" style="background:#C8102E"></span>
-        <span class="landing-line-bar" style="background:#3D9A5C"></span>
-      </div>
-
-      <button id="btn-enter" class="btn-enter">UTFORSK GALLERIET</button>
-
-    </div>
-  </div>
-
   <!-- ═══════════════ STATION VIEW ═══════════════ -->
   <div id="view-station" hidden>
-    <button id="btn-home" aria-label="Tilbake til forsiden">T—BANEN</button>
+    <a id="btn-home" href="/tbanen/" aria-label="Tilbake til forsiden">T—BANEN</a>
     <div id="immersive-label" aria-hidden="true"></div>
     <button id="btn-menu" aria-label="Meny">
       <svg id="menu-open-icon" width="18" height="14" viewBox="0 0 18 14" aria-hidden="true">
@@ -69,20 +31,22 @@
       </svg>
     </button>
 
-    <!-- Photo zone — clean, no overlays -->
     <div id="photo-zone">
       <div id="photo-loading" aria-hidden="true"><div class="dot"></div></div>
       <img id="photo-img" alt="">
-      <!-- Swipe/tap zones (invisible) -->
       <div id="tap-prev" aria-hidden="true"></div>
       <div id="tap-next" aria-hidden="true"></div>
     </div>
 
-    <!-- Control panel -->
     <div id="station-panel">
       <div id="station-info">
         <div id="station-name"></div>
+        <div id="station-meta"></div>
         <div id="line-indicator"></div>
+        <div id="nav-context" aria-hidden="true">
+          <span class="nav-dest nav-dest-prev"></span>
+          <span class="nav-dest nav-dest-next"></span>
+        </div>
       </div>
       <div id="panel-controls">
         <button id="btn-prev" disabled aria-label="Forrige stasjon">
@@ -117,7 +81,6 @@
         </button>
       </div>
     </div>
-
   </div>
 
   <!-- ═══════════════ MENU OVERLAY ═══════════════ -->
@@ -131,9 +94,7 @@
         </svg>
       </button>
     </div>
-
     <div id="menu-body">
-
       <section class="menu-section">
         <button id="menu-btn-map" class="menu-action">
           <span class="menu-action-label">Kart</span>
@@ -146,33 +107,28 @@
           </svg>
         </button>
       </section>
-
       <section class="menu-section">
         <h2 class="menu-section-title">Om prosjektet</h2>
-        <p class="menu-info-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. T-banenettet i Oslo består av fem linjer og over hundre stasjoner. Dette er et fotografisk arkiv som dokumenterer hver enkelt stasjon — arkitektur, lys, atmosfære og den hverdagslige stillheten mellom avgangene. Bildene er tatt over tid, i ulike årstider og lysforhold.</p>
+        <p class="menu-info-text">T-banenettet i Oslo består av fem linjer og 101 stasjoner. Dette er et fotografisk arkiv som dokumenterer hver enkelt — arkitektur, lys, atmosfære og stillheten mellom avgangene. Bildene er tatt over tid, i ulike årstider og lysforhold.</p>
       </section>
-
       <section class="menu-section">
         <button id="menu-btn-alpha" class="menu-action">
-          <span class="menu-action-label">Se alle stasjonene alfabetisk</span>
+          <span class="menu-action-label">Alle stasjoner</span>
           <svg width="16" height="10" viewBox="0 0 16 10" aria-hidden="true">
             <line x1="0" y1="5" x2="12" y2="5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
             <polyline points="8,1 13,5 8,9" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </button>
       </section>
-
       <section class="menu-section">
         <h2 class="menu-section-title" id="menu-missing-title"></h2>
         <div id="menu-missing-list"></div>
       </section>
-
     </div>
   </div>
 
   <!-- ═══════════════ NETWORK OVERLAY ═══════════════ -->
   <div id="view-network" hidden>
-
     <div id="network-header">
       <span class="network-title">Nettverk</span>
       <button id="btn-close-network" aria-label="Lukk">
@@ -182,37 +138,15 @@
         </svg>
       </button>
     </div>
-
-    <!-- Mobile: line tabs + scrollable station list -->
     <div id="network-list-view">
       <div id="line-tabs" role="tablist"></div>
       <div id="station-list" role="list"></div>
       <div id="list-footer"></div>
     </div>
-
-    <!-- Desktop: SVG map -->
     <div id="network-map-view">
       <nav id="map-legend" aria-label="Linjer"></nav>
       <svg id="network-svg" xmlns="http://www.w3.org/2000/svg"></svg>
       <div id="map-tooltip" aria-hidden="true"></div>
-    </div>
-
-  </div>
-
-  <!-- ═══════════════ ALPHA GALLERY ═══════════════ -->
-  <div id="view-alpha" hidden>
-    <div id="alpha-header">
-      <button id="btn-close-alpha" aria-label="Tilbake">
-        <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true">
-          <polyline points="9,1 1,7 9,13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="1" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <span class="alpha-header-title">Alle stasjoner</span>
-    </div>
-    <div id="alpha-list"></div>
-    <div id="alpha-footer">
-      <a href="/tbanen/" id="alpha-footer-logo">T—BANEN</a>
     </div>
   </div>
 
