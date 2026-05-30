@@ -5,9 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>T—BANEN / OSLO</title>
   <meta name="theme-color" content="#080808">
+  <meta name="description" content="Et fotografisk arkiv over alle stasjoner i Oslos T-banenettverk.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+  <!-- Matomo -->
+  <script>
+    var _paq = window._paq = window._paq || [];
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+      var u='//stats.kiim.net/';
+      _paq.push(['setTrackerUrl', u + 'matomo.php']);
+      _paq.push(['setSiteId', '1']);
+      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+    })();
+  </script>
+  <!-- End Matomo -->
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -26,276 +41,189 @@
       cursor: pointer;
     }
 
-    #network-bg {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
+    #c { position: fixed; inset: 0; width: 100%; height: 100%; }
 
-    /* ── Identity ── */
+    /* ── Identity — lower third, system label ── */
+    /* Grounded at the bottom of the network. The splash does not ask.  */
+    /* The network is the hero. Click anywhere to enter.                */
     #identity {
       position: fixed;
-      left: 20px;
-      top: calc(16px + env(safe-area-inset-top, 0px));
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 7px;
-      pointer-events: none;
-      user-select: none;
-    }
-
-    .wordmark-row {
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
-
-    .wordmark {
-      font-family: var(--mono);
-      font-size: 9px;
-      font-weight: 400;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #ffffff;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.8);
-      white-space: nowrap;
-    }
-
-    .wordmark-tail {
-      display: flex;
-      align-items: center;
-      margin-left: 6px;
-    }
-
-    .wordmark-line {
-      width: clamp(10px, 1.2vw, 16px);
-      height: 1px;
-      background: currentColor;
-      opacity: 0.38;
-    }
-
-    .wordmark-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      margin-left: 3px;
-      transition: background-color 2.4s ease;
-    }
-
-    /* ── Gateway ── */
-    #gateway {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) translateY(8vh);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 22px;
-      pointer-events: none;
-      user-select: none;
-      opacity: 0; /* starts hidden — JS fades in when online */
-      transition: opacity 2.8s ease;
-    }
-
-    #gateway.online {
-      pointer-events: all;
-      opacity: 1;
-    }
-
-    #gateway-rule {
-      width: 32px;
-      height: 1px;
-      background: rgba(175, 163, 143, 0.20);
-      transition: width 1.8s ease, opacity 1.8s ease;
-    }
-
-    #gateway:hover #gateway-rule {
-      width: 56px;
-      opacity: 0.38;
-    }
-
-    #gateway-cta {
-      font-family: var(--sans);
-      font-size: clamp(20px, 3.2vw, 44px);
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: rgba(200, 194, 182, 0.55);
-      text-decoration: none;
-      cursor: pointer;
-      transition: color 1.0s ease;
-      white-space: nowrap;
-      display: block;
-      text-align: center;
-      line-height: 1;
-    }
-
-    #gateway-cta:hover {
-      color: rgba(220, 214, 200, 0.85);
-    }
-
-    #gateway-sub {
-      font-family: var(--sans);
-      font-size: clamp(8px, 0.70vw, 10px);
-      font-weight: 400;
-      letter-spacing: 0.10em;
-      text-transform: uppercase;
-      color: rgba(105, 101, 95, 0.40);
-      text-align: center;
-      opacity: 0; /* hidden until count is ready */
-      transition: color 1.0s ease, opacity 2.0s ease;
-    }
-
-    #gateway-sub.ready {
-      opacity: 1;
-    }
-
-    #gateway:hover #gateway-sub {
-      color: rgba(138, 133, 124, 0.60);
-    }
-
-    /* ── System status — loading phase only ── */
-    #system-status {
-      position: fixed;
-      bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+      bottom: 18%;
       left: 50%;
       transform: translateX(-50%);
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.18);
+      z-index: 10;
+      text-align: center;
       pointer-events: none;
       user-select: none;
-      white-space: nowrap;
-      opacity: 1;
-      transition: opacity 1.8s ease;
-    }
-
-    #system-status.fade-out {
-      opacity: 0;
-    }
-
-    /* Blinking cursor after status text */
-    #system-status::after {
-      content: '_';
-      animation: blink 1.1s step-end infinite;
-      opacity: 0.5;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 0.5; }
-      50%       { opacity: 0; }
-    }
-
-    #realtime-note {
-      position: fixed;
-      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: var(--sans);
-      font-size: clamp(9px, 1vw, 11px);
-      font-weight: 400;
-      letter-spacing: 0.01em;
-      color: rgba(255, 255, 255, 0.18);
-      pointer-events: none;
-      user-select: none;
-      white-space: nowrap;
       opacity: 0;
       transition: opacity 2.4s ease;
     }
-    #realtime-note.visible {
-      opacity: 1;
+    #identity.visible { opacity: 1; }
+
+    /* System name — transport designation, not a headline */
+    .id-primary {
+      font-family: var(--mono);
+      font-size: clamp(18px, 1.95vw, 23px);
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.70);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 17px;
+    }
+    .id-line { width: 14px; height: 1px; background: currentColor; opacity: 0.28; }
+    .id-dot  { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; transition: background-color 2.4s ease; }
+
+    /* City — part of the identity system, not a subtitle */
+    .id-secondary {
+      font-family: var(--mono);
+      font-size: 15px;
+      font-weight: 400;
+      letter-spacing: 0.36em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.70);
+      margin-bottom: 38px;
+    }
+
+    /* Station count — archival status, not a tagline */
+    #id-count {
+      font-family: var(--mono);
+      font-size: 8px;
+      font-weight: 400;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+      opacity: 0;
+      transition: opacity 2.2s ease;
+      margin-bottom: 28px;
+    }
+    #id-count.ready { opacity: 1; }
+
+    /* Wayfinding indicator — direction only, no text, no button */
+    #id-indicator {
+      font-size: 11px;
+      color: rgba(255,255,255,0.18);
+      animation: breathe-down 3.2s ease-in-out infinite;
+      display: block;
+    }
+    @keyframes breathe-down {
+      0%, 100% { opacity: 0.12; transform: translateY(0); }
+      50%       { opacity: 0.28; transform: translateY(3px); }
+    }
+
+    /* Tunnel iris — departure transition */
+    #tunnel {
+      position: fixed; inset: 0; z-index: 50;
+      pointer-events: none; opacity: 0;
     }
   </style>
-  <!-- Matomo -->
-  <script>
-    var _paq = window._paq = window._paq || [];
-    _paq.push(['trackPageView']);
-    _paq.push(['enableLinkTracking']);
-    (function() {
-      var u='//stats.kiim.net/';
-      _paq.push(['setTrackerUrl', u + 'matomo.php']);
-      _paq.push(['setSiteId', '1']);
-      var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-      g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
-    })();
-  </script>
-  <!-- End Matomo -->
 </head>
 <body>
 
-  <canvas id="network-bg"></canvas>
+  <canvas id="c"></canvas>
 
+  <!-- Identity — lower third, system label. No CTA. Click anywhere to enter. -->
   <div id="identity">
-    <div class="wordmark-row">
-      <span class="wordmark">T—BANEN</span>
-      <div class="wordmark-tail">
-        <div class="wordmark-line" id="id-line"></div>
-        <div class="wordmark-dot" id="id-dot"></div>
-      </div>
+    <div class="id-primary">
+      T—BANEN
+      <span class="id-line" id="id-line"></span>
+      <span class="id-dot"  id="id-dot"></span>
     </div>
+    <div class="id-secondary">OSLO</div>
+    <div id="id-count"></div>
+    <span id="id-indicator">↓</span>
   </div>
 
-  <div id="gateway">
-    <div id="gateway-rule"></div>
-    <a id="gateway-cta" href="/tbanen/app.html?enter">T-BANEN OSLO</a>
-    <p id="gateway-sub"></p>
-  </div>
-
-  <div id="system-status">INITIALISERER</div>
-  <p id="realtime-note">De bevegelige signalene representerer T-baner som beveger seg i Oslo akkurat nå.</p>
+  <div id="tunnel"></div>
 
   <script>
   // ═══════════════════════════════════════════════════════════════════
-  //  T—BANEN SPLASH V2 — system boot + ambient network visualisation
+  //  T—BANEN — SPLASH V2 EXPERIMENT
+  //
+  //  Animation concept: Oslo's metro infrastructure coming online.
+  //  Seven phases, driven by a single animation clock:
+  //
+  //  Phase 1 — darkness
+  //  Phase 2 — central Oslo nodes activate (NT, Stortinget, JT)
+  //  Phase 3 — lines propagate outward from the center
+  //  Phase 4 — terminal stations connect, full network established
+  //  Phase 5 — realtime train signals begin moving
+  //  Phase 6 — line colors saturate in
+  //  Phase 7 — archive entry appears
   // ═══════════════════════════════════════════════════════════════════
 
   const LC = { 1:'#5B9BD5', 2:'#E8751A', 3:'#8B5EA7', 4:'#C8102E', 5:'#3D9A5C' };
 
-  // ── System state ─────────────────────────────────────────────────
-  // saturation 0 = monochrome/dead, 1 = full color/online
-  let systemSat    = 0;
-  let targetSat    = 0;
-  let systemOnline = false;
-  let countReady   = false;
+  // ── Animation timeline ────────────────────────────────────────────
+  // All phases driven by animTime — independent of async data loading.
 
-  // Scanning pulse (loading phase) — travels along L1 backbone
-  let scanProgress = 0;
-  const SCAN_SPEED = 0.10; // full traverse in ~10s, bounces
+  let animTime = 0;
 
-  // Node flashes — brief pings radiating from station dots during boot
-  // Each: { x, y, t } where t goes 0→1 as the ring expands and fades
-  let nodeFlashes = [];
-  let flashTimer  = 0;
-  const FLASH_INTERVAL = 0.9; // seconds between spawning a new flash
+  // Phase thresholds (seconds from first frame)
+  const PH_NODES  = 0.2;   // Phase 2: central nodes activate
+  const PH_LINES  = 0.6;   // Phase 3: propagation begins
+  const PH_PROP   = 2.6;   // duration: each segment takes this long to fully draw
+  const PH_TRAINS = 3.6;   // Phase 5: train signals appear
+  const PH_COLORS = 4.0;   // Phase 6: line colors saturate
+  const PH_CTA    = 5.5;   // Phase 7: archive entry appears
+
+  // Per-segment propagation stagger (seconds after PH_LINES)
+  // Inner/central segments start first, outlying branches last
+  const SEG_STAGGER = [0, 0.25, 0.45, 0.10, 0.40, 0.60, 0.80, 0.18, 0.85];
+
+  // The station each segment propagates outward from (the "activation node")
+  const SEG_CENTER_ID = [
+    'nationaltheateret',  // 0: L1 Frognerseteren–Bergkrystallen
+    'nationaltheateret',  // 1: L2 Østerås–Ellingsrudåsen
+    'nationaltheateret',  // 2: L3 Kolsås–Mortensrud
+    'nationaltheateret',  // 3: L4 Bergkrystallen–Nydalen
+    'nydalen',            // 4: L4 ring N (Nydalen–Tøyen)
+    'nydalen',            // 5: L4 east (Nydalen–Vestli)
+    'sinsen',             // 6: L4 branch (Sinsen–Lørен)
+    'nationaltheateret',  // 7: L5 Sognsvann–Vestli
+    'sinsen',             // 8: L5 branch (Sinsen–Lørен)
+  ];
+
+  // Animation state — computed each frame from animTime
+  let trainVis      = 0;     // 0→1: train signal opacity
+  let colorSat      = 0;     // 0→1: line color saturation (gray→full color)
+  let ctaShown      = false;
+  let identityShown = false;
+  let countReady    = false;
+
+  // Per-segment: how far the line has grown outward from center
+  // lp = leftProgress (center → terminus 0)
+  // rp = rightProgress (center → terminus end)
+  let segAnim = [];
+
+  // ── Departure transition state ───────────────────────────────────
+  let systemOnline   = false; // true once CTA is shown
+  let departing      = false;
+  let zooming        = false;
+  let zoomProgress   = 0;
+  let tunnelProgress = 0;
+  let speedMult      = 1;
+  let targetSpeedMult = 1;
+
+  let baseScale, baseOffsetX, baseOffsetY;
+  let zoomTargetScale, zoomTargetOffsetX, zoomTargetOffsetY;
 
   // ── Color utilities ───────────────────────────────────────────────
-  // Parse hex → [r,g,b]
-  function hexToRgb(hex) {
-    return [
-      parseInt(hex.slice(1,3), 16),
-      parseInt(hex.slice(3,5), 16),
-      parseInt(hex.slice(5,7), 16),
-    ];
+  function hexToRgb(h) {
+    return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
   }
-
-  // Lerp line color from its luminance-equivalent gray toward full color
   function saturateColor(hex, t) {
-    const [r, g, b] = hexToRgb(hex);
-    const lum = Math.round(0.299*r + 0.587*g + 0.114*b);
+    const [r,g,b] = hexToRgb(hex);
+    const lum = Math.round(0.299*r+0.587*g+0.114*b);
     return `rgb(${Math.round(lum+(r-lum)*t)},${Math.round(lum+(g-lum)*t)},${Math.round(lum+(b-lum)*t)})`;
   }
-
-  // rgba from hex + alpha, with optional saturation applied to hue
   function hexAlpha(hex, a, sat = 1) {
-    const [r, g, b] = hexToRgb(hex);
-    const lum = 0.299*r + 0.587*g + 0.114*b;
-    const fr = lum+(r-lum)*sat, fg = lum+(g-lum)*sat, fb = lum+(b-lum)*sat;
-    return `rgba(${Math.round(fr)},${Math.round(fg)},${Math.round(fb)},${a})`;
+    const [r,g,b] = hexToRgb(hex);
+    const lum = 0.299*r+0.587*g+0.114*b;
+    return `rgba(${Math.round(lum+(r-lum)*sat)},${Math.round(lum+(g-lum)*sat)},${Math.round(lum+(b-lum)*sat)},${a})`;
   }
 
   // ── Station coordinates ───────────────────────────────────────────
@@ -413,34 +341,37 @@
   };
 
   const LINE_SEGS = [
-    { line: 1, color: LC[1], ids: ['frognerseteren','voksenkollen','vettakollen','besserud','holmenkollen','midtstuen','skadalen','voksenlia','gullerasen','graakammen','slemdal','ris','gaustad','lillevann','vinderen','steinerud','froen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hoyenhall','manglerud','ryen','brattlikollen','karlsrud','lambertseter','munkelia','bergkrystallen'] },
-    { line: 2, color: LC[2], ids: ['osteraas','lijordet','eiksmarka','ekraveien','roa','hovseter','holmen','makrellbekken','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','tveita','haugerud','trosterud','lindeberg','furuset','ellingsrudaasen'] },
-    { line: 3, color: LC[3], ids: ['kolsas','hauger','gjettum','avlos','haslum','gjonnes','bekkestua','ringstabekk','jar','bjornsletta','aasjordet','ullernaasen','montebello','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','godlia','skoyenaasen','oppsal','ulsrud','boler','bogerud','skullerud','mortensrud'] },
-    { line: 4, color: LC[4], ids: ['bergkrystallen','munkelia','lambertseter','karlsrud','brattlikollen','ryen','manglerud','hoyenhall','brynseng','helsfyr','ensjo','toyen','gronland','jernbanetorget','stortinget','nationaltheateret','majorstua','blindern','forskningsparken','ullevaal','nydalen'] },
-    { line: 4, color: LC[4], ids: ['nydalen','storo','sinsen','carlberner','toyen'] },
-    { line: 4, color: LC[4], ids: ['nydalen','okern','hasle','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'] },
-    { line: 4, color: LC[4], ids: ['sinsen','loren'] },
-    { line: 5, color: LC[5], ids: ['sognsvann','kringsjaa','holstein','osthorn','tasen','berg','ullevaal','forskningsparken','blindern','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','carlberner','sinsen','storo','nydalen','okern','hasle','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'] },
-    { line: 5, color: LC[5], ids: ['sinsen','loren'] },
+    { line:1, color:LC[1], ids:['frognerseteren','voksenkollen','vettakollen','besserud','holmenkollen','midtstuen','skadalen','voksenlia','gullerasen','graakammen','slemdal','ris','gaustad','lillevann','vinderen','steinerud','froen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hoyenhall','manglerud','ryen','brattlikollen','karlsrud','lambertseter','munkelia','bergkrystallen'] },
+    { line:2, color:LC[2], ids:['osteraas','lijordet','eiksmarka','ekraveien','roa','hovseter','holmen','makrellbekken','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','tveita','haugerud','trosterud','lindeberg','furuset','ellingsrudaasen'] },
+    { line:3, color:LC[3], ids:['kolsas','hauger','gjettum','avlos','haslum','gjonnes','bekkestua','ringstabekk','jar','bjornsletta','aasjordet','ullernaasen','montebello','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','godlia','skoyenaasen','oppsal','ulsrud','boler','bogerud','skullerud','mortensrud'] },
+    { line:4, color:LC[4], ids:['bergkrystallen','munkelia','lambertseter','karlsrud','brattlikollen','ryen','manglerud','hoyenhall','brynseng','helsfyr','ensjo','toyen','gronland','jernbanetorget','stortinget','nationaltheateret','majorstua','blindern','forskningsparken','ullevaal','nydalen'] },
+    { line:4, color:LC[4], ids:['nydalen','storo','sinsen','carlberner','toyen'] },
+    { line:4, color:LC[4], ids:['nydalen','okern','hasle','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'] },
+    { line:4, color:LC[4], ids:['sinsen','loren'] },
+    { line:5, color:LC[5], ids:['sognsvann','kringsjaa','holstein','osthorn','tasen','berg','ullevaal','forskningsparken','blindern','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','carlberner','sinsen','storo','nydalen','okern','hasle','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'] },
+    { line:5, color:LC[5], ids:['sinsen','loren'] },
   ];
 
-  // L1 is the scan path during loading — full west→east spine
-  const SCAN_SEG_IDX = 0;
-
-  const SEG_DEPTH = [
-    0.55, 0.65, 0.58, 0.80, 0.95, 0.62, 0.28, 0.82, 0.28,
-  ];
-
-  const LINE_PHASE = { 1: 0.0, 2: 1.3, 3: 2.6, 4: 3.9, 5: 5.2 };
+  const SEG_DEPTH = [0.55, 0.65, 0.58, 0.80, 0.95, 0.62, 0.28, 0.82, 0.28];
+  const LINE_PHASE = { 1:0.0, 2:1.3, 3:2.6, 4:3.9, 5:5.2 };
 
   const TUNNEL_NODES = [
     'nationaltheateret','stortinget','jernbanetorget','gronland','toyen','carlberner','sinsen',
   ];
 
-  // ── Canvas ────────────────────────────────────────────────────────
-  const canvas = document.getElementById('network-bg');
+  // Central Oslo nodes that activate early in Phase 2
+  const BOOT_NODES = [
+    { id:'jernbanetorget',    delay:0.0 },
+    { id:'stortinget',        delay:0.28 },
+    { id:'nationaltheateret', delay:0.50 },
+    { id:'gronland',          delay:0.72 },
+    { id:'majorstua',         delay:0.95 },
+  ];
+
+  // ── Canvas setup ──────────────────────────────────────────────────
+  const canvas = document.getElementById('c');
   const ctx    = canvas.getContext('2d');
-  const VB_W = 1120, VB_H = 620;
+  const VB_W   = 1120, VB_H = 620;
 
   let scale, offsetX, offsetY;
 
@@ -450,11 +381,25 @@
     canvas.style.width  = window.innerWidth  + 'px';
     canvas.style.height = window.innerHeight + 'px';
     const pad = 0.08;
-    const scaleX = (window.innerWidth  * (1 - pad * 2)) / VB_W;
-    const scaleY = (window.innerHeight * (1 - pad * 2)) / VB_H;
-    scale   = Math.min(scaleX, scaleY) * devicePixelRatio;
+    scale   = Math.min(
+      (window.innerWidth  * (1-pad*2)) / VB_W,
+      (window.innerHeight * (1-pad*2)) / VB_H
+    ) * devicePixelRatio;
     offsetX = (canvas.width  - VB_W * scale) / 2;
     offsetY = (canvas.height - VB_H * scale) / 2;
+    storeBaseTransform();
+  }
+
+  function storeBaseTransform() {
+    baseScale   = scale;
+    baseOffsetX = offsetX;
+    baseOffsetY = offsetY;
+    const [ntx, nty] = COORDS['nationaltheateret'];
+    const [stx, sty] = COORDS['stortinget'];
+    const cx = (ntx + stx) / 2, cy = (nty + sty) / 2;
+    zoomTargetScale   = scale * 2.1;
+    zoomTargetOffsetX = canvas.width  / 2 - cx * zoomTargetScale;
+    zoomTargetOffsetY = canvas.height / 2 - cy * zoomTargetScale;
   }
 
   function toCanvas(id) {
@@ -469,6 +414,19 @@
       ...seg,
       pts: seg.ids.map(id => COORDS[id] ? toCanvas(id) : null).filter(Boolean),
     }));
+  }
+
+  // ── Seg anim setup ────────────────────────────────────────────────
+  // Each segment knows where its center is, and tracks how far left/right
+  // the line front has propagated.
+
+  function buildSegAnim() {
+    segAnim = LINE_SEGS.map((seg, i) => {
+      const cid = SEG_CENTER_ID[i];
+      let ci = seg.ids.indexOf(cid);
+      if (ci < 0) ci = Math.floor(seg.ids.length / 2);
+      return { ci, lp: 0, rp: 0 };
+    });
   }
 
   // ── Grain ─────────────────────────────────────────────────────────
@@ -489,363 +447,8 @@
     grainPattern = ctx.createPattern(off, 'repeat');
   }
 
-  // ── Draw atmosphere ───────────────────────────────────────────────
-  function drawAtmosphere(hover = 0) {
-    const w = canvas.width, h = canvas.height;
-    const cx = w / 2, cy = h / 2;
+  // ── Path utilities ────────────────────────────────────────────────
 
-    // Deeper vignette during loading (less warm center)
-    const vigMid = 0.15 + systemSat * 0.0;
-    const vig = ctx.createRadialGradient(cx, cy * 0.9, h * 0.1, cx, cy * 0.9, Math.max(w, h) * 0.78);
-    vig.addColorStop(0,   'rgba(0,0,0,0)');
-    vig.addColorStop(0.6, `rgba(0,0,0,${vigMid})`);
-    vig.addColorStop(1,   'rgba(0,0,0,0.72)');
-    ctx.fillStyle = vig; ctx.globalAlpha = 1;
-    ctx.fillRect(0, 0, w, h);
-
-    // Warm center only comes alive when online
-    const warmBase = (0.045 + hover * 0.025) * systemSat;
-    if (warmBase > 0.001) {
-      const warm = ctx.createRadialGradient(w*0.52, h*0.54, 0, w*0.52, h*0.54, h*(0.38+hover*0.08));
-      warm.addColorStop(0,   `rgba(160,130,90,${warmBase})`);
-      warm.addColorStop(0.5, `rgba(120,100,70,${warmBase*0.4})`);
-      warm.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = warm; ctx.globalAlpha = 1;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    // Gateway glow — only when online
-    const gwA = (0.018 + hover * 0.022) * systemSat;
-    if (gwA > 0.001) {
-      const gwGrd = ctx.createRadialGradient(w*0.50, h*0.60, 0, w*0.50, h*0.60, w*0.28);
-      gwGrd.addColorStop(0,   `rgba(175,158,132,${gwA})`);
-      gwGrd.addColorStop(0.5, `rgba(140,125,105,${gwA*0.4})`);
-      gwGrd.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = gwGrd; ctx.globalAlpha = 1;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    if (grainPattern) {
-      ctx.fillStyle = grainPattern;
-      ctx.globalAlpha = 0.028;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    ctx.globalAlpha = 1;
-  }
-
-  // ── Draw network ──────────────────────────────────────────────────
-  // During loading (systemSat=0): lines are dim gray
-  // As systemSat→1: line colors saturate in, opacity rises
-  function drawNetwork(t, hover = 0) {
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    // Base opacity during loading is lower, rises as system comes online
-    const opacityBoost = 0.5 + 0.5 * systemSat;
-
-    LINE_SEGS.forEach((seg, i) => {
-      const pts = segPoints[i].pts;
-      if (pts.length < 2) return;
-      const depth  = SEG_DEPTH[i] ?? 0.6;
-      const rhythm = 0.75 + 0.25 * Math.sin(t * 0.18 + LINE_PHASE[seg.line]);
-      const alpha  = 0.088 * depth * rhythm * opacityBoost;
-      const weight = (0.65 + 0.55 * depth) * scale;
-      const color  = saturateColor(seg.color, systemSat);
-
-      ctx.beginPath();
-      ctx.moveTo(pts[0][0], pts[0][1]);
-      for (let k = 1; k < pts.length; k++) ctx.lineTo(pts[k][0], pts[k][1]);
-      ctx.strokeStyle = color;
-      ctx.lineWidth   = weight;
-      ctx.globalAlpha = alpha;
-      ctx.stroke();
-    });
-
-    // Station dots — desaturated during loading
-    const drawn = new Set();
-    LINE_SEGS.forEach((seg, i) => {
-      const depth = SEG_DEPTH[i] ?? 0.6;
-      seg.ids.forEach(id => {
-        if (drawn.has(id) || !COORDS[id]) return;
-        drawn.add(id);
-        const [cx, cy] = toCanvas(id);
-        const r = (0.7 + 0.8 * depth) * scale;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle   = '#ffffff';
-        ctx.globalAlpha = (0.04 + 0.08 * depth) * opacityBoost;
-        ctx.fill();
-      });
-    });
-
-    // Tunnel glow — only when online
-    if (systemSat > 0.05) {
-      TUNNEL_NODES.forEach((id, ti) => {
-        if (!COORDS[id]) return;
-        const [cx, cy] = toCanvas(id);
-        const sat = systemSat;
-        const gr1 = (90 + hover * 18) * scale;
-        const oa1 = (0.038 + hover * 0.018) * sat;
-        const grd1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr1);
-        grd1.addColorStop(0, `rgba(200,185,160,${oa1})`);
-        grd1.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, gr1, 0, Math.PI * 2);
-        ctx.fillStyle = grd1; ctx.globalAlpha = 1;
-        ctx.fill();
-        if (ti >= 1 && ti <= 5) {
-          const gr2 = 32 * scale;
-          const oa2 = (0.055 + hover * 0.028) * sat;
-          const grd2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr2);
-          grd2.addColorStop(0, `rgba(220,200,170,${oa2})`);
-          grd2.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.beginPath();
-          ctx.arc(cx, cy, gr2, 0, Math.PI * 2);
-          ctx.fillStyle = grd2; ctx.globalAlpha = 1;
-          ctx.fill();
-        }
-      });
-    }
-
-    ctx.globalAlpha = 1;
-  }
-
-  // ── Draw loading activity ─────────────────────────────────────────
-  // Scan pulse + node flashes — both fade out as system comes online.
-  let scanDir = 1;
-
-  // All station IDs used across segments, for random flash targeting
-  const ALL_STATION_IDS = [...new Set(LINE_SEGS.flatMap(s => s.ids))];
-  // Weight toward city-centre nodes for a more organic feel
-  const CENTRE_IDS = ['nationaltheateret','stortinget','jernbanetorget','gronland',
-                      'toyen','majorstua','carlberner','sinsen','nydalen'];
-
-  function spawnNodeFlash() {
-    // 60% chance to pick a centre station, 40% random
-    const pool = Math.random() < 0.6 ? CENTRE_IDS : ALL_STATION_IDS;
-    const id   = pool[Math.floor(Math.random() * pool.length)];
-    if (!COORDS[id]) return;
-    const [x, y] = toCanvas(id);
-    nodeFlashes.push({ x, y, t: 0 });
-  }
-
-  function drawLoadingActivity(dt) {
-    const loadingAlpha = Math.max(0, 1 - systemSat * 2.5);
-    if (loadingAlpha < 0.01) return;
-
-    // ── Scan pulse along L1 ─────────────────────────────────────
-    const pts = segPoints[SCAN_SEG_IDX]?.pts;
-    if (pts && pts.length >= 2) {
-      const pos = interpolateAlongPath(pts, scanProgress);
-      if (pos) {
-        const [x, y] = pos;
-        const r = 1.6 * scale;
-
-        const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 8);
-        grd.addColorStop(0,   `rgba(205,215,225,${0.10 * loadingAlpha})`);
-        grd.addColorStop(0.4, `rgba(185,200,215,${0.04 * loadingAlpha})`);
-        grd.addColorStop(1,   'rgba(0,0,0,0)');
-        ctx.beginPath();
-        ctx.arc(x, y, r * 8, 0, Math.PI * 2);
-        ctx.fillStyle = grd; ctx.globalAlpha = 1;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle   = `rgba(218,226,234,${0.50 * loadingAlpha})`;
-        ctx.globalAlpha = 1;
-        ctx.fill();
-
-        for (let i = 1; i <= 5; i++) {
-          const frac = i / 6;
-          const tp   = scanProgress - scanDir * 0.014 * frac;
-          const tpos = interpolateAlongPath(pts, Math.max(0, Math.min(1, tp)));
-          if (!tpos) continue;
-          ctx.beginPath();
-          ctx.arc(tpos[0], tpos[1], r * (1 - frac * 0.7), 0, Math.PI * 2);
-          ctx.fillStyle   = `rgba(200,212,222,${0.18 * (1-frac) * loadingAlpha})`;
-          ctx.globalAlpha = 1;
-          ctx.fill();
-        }
-      }
-    }
-
-    // ── Node flashes — expand and fade out ──────────────────────
-    nodeFlashes = nodeFlashes.filter(f => f.t < 1);
-    nodeFlashes.forEach(f => {
-      f.t += dt * 0.55; // ~1.8s to complete
-      const ease = 1 - Math.pow(1 - f.t, 2); // ease-out
-      const maxR  = 22 * scale;
-      const r     = maxR * ease;
-      const alpha = (1 - f.t) * 0.13 * loadingAlpha;
-
-      ctx.beginPath();
-      ctx.arc(f.x, f.y, r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(190,205,218,${alpha})`;
-      ctx.lineWidth   = 0.8 * scale;
-      ctx.globalAlpha = 1;
-      ctx.stroke();
-    });
-
-    ctx.globalAlpha = 1;
-  }
-
-  // ── Entur realtime ────────────────────────────────────────────────
-  const ENTUR_GQL    = 'https://api.entur.io/journey-planner/v3/graphql';
-  const ENTUR_CLIENT = 'kiim-tbanen';
-  const POLL_INTERVAL = 30000;
-  const AVG_STATION_S = 90;
-
-  const QUERY_STATIONS = [
-    { nsr: 'NSR:StopPlace:58366', id: 'jernbanetorget' },
-    { nsr: 'NSR:StopPlace:59768', id: 'frognerseteren' },
-    { nsr: 'NSR:StopPlace:58243', id: 'bergkrystallen' },
-    { nsr: 'NSR:StopPlace:59705', id: 'sognsvann'      },
-    { nsr: 'NSR:StopPlace:58277', id: 'osteraas'       },
-    { nsr: 'NSR:StopPlace:58284', id: 'kolsas'         },
-    { nsr: 'NSR:StopPlace:58218', id: 'vestli'         },
-    { nsr: 'NSR:StopPlace:58228', id: 'mortensrud'     },
-    { nsr: 'NSR:StopPlace:58220', id: 'ellingsrudaasen'},
-  ];
-
-  const DEST_TO_ID = {
-    'frognerseteren': 'frognerseteren',
-    'bergkrystallen': 'bergkrystallen',
-    'ellingsrudåsen': 'ellingsrudaasen',
-    'østerås': 'osteraas',
-    'kolsås': 'kolsas',
-    'mortensrud': 'mortensrud',
-    'sognsvann': 'sognsvann',
-    'vestli': 'vestli',
-    'helsfyr': 'helsfyr',
-    'ryen': 'ryen',
-    'brynseng': 'brynseng',
-    'nydalen': 'nydalen',
-    'majorstua': 'majorstua',
-    'nationaltheateret': 'nationaltheateret',
-    'ringen via tøyen': 'toyen',
-    'ringen via majorstuen': 'majorstua',
-  };
-
-  const SEG_IDX_OF = LINE_SEGS.map(seg => {
-    const m = {};
-    seg.ids.forEach((id, i) => { m[id] = i; });
-    return m;
-  });
-
-  function findInSegments(lineNum, stationId) {
-    for (let si = 0; si < LINE_SEGS.length; si++) {
-      if (LINE_SEGS[si].line !== lineNum) continue;
-      const idx = SEG_IDX_OF[si][stationId];
-      if (idx !== undefined) return { si, idx };
-    }
-    return null;
-  }
-
-  function buildQuery() {
-    const startTime = new Date(Date.now() - 12 * 60 * 1000).toISOString();
-    const fields = `estimatedCalls(numberOfDepartures:25 startTime:"${startTime}" timeRange:1500 whiteListedModes:[metro]){realtime expectedDepartureTime destinationDisplay{frontText} serviceJourney{id line{publicCode}}}`;
-    const aliases = QUERY_STATIONS.map(({ nsr, id }) => `${id}:stopPlace(id:"${nsr}"){${fields}}`).join('\n');
-    return `{${aliases}}`;
-  }
-
-  let usingRealtime = false;
-  const seenJourneys = new Set();
-
-  async function fetchEnturTrains() {
-    try {
-      const res = await fetch(ENTUR_GQL, {
-        method: 'POST',
-        headers: { 'ET-Client-Name': ENTUR_CLIENT, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: buildQuery() }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const { data } = await res.json();
-      if (!data) throw new Error('no data');
-
-      const now = Date.now();
-      const newTrains = [];
-      seenJourneys.clear();
-      let totalReal = 0;
-
-      for (const qs of QUERY_STATIONS) {
-        const stop = data[qs.id];
-        if (!stop?.estimatedCalls?.length) continue;
-        for (const call of stop.estimatedCalls) {
-          if (!call.realtime) continue;
-          const journeyId = call.serviceJourney?.id;
-          if (!journeyId || seenJourneys.has(journeyId)) continue;
-          const lineNum = parseInt(call.serviceJourney?.line?.publicCode);
-          if (isNaN(lineNum) || lineNum < 1 || lineNum > 5) continue;
-          const secsUntil = (new Date(call.expectedDepartureTime).getTime() - now) / 1000;
-          if (secsUntil < -600 || secsUntil > 1200) continue;
-          const qsLoc = findInSegments(lineNum, qs.id);
-          if (!qsLoc) continue;
-          const { si: segIdx, idx: qsIdx } = qsLoc;
-          const seg = LINE_SEGS[segIdx];
-          const nStations = seg.ids.length;
-          const destText = (call.destinationDisplay?.frontText ?? '').toLowerCase();
-          const destId   = DEST_TO_ID[destText];
-          let dir = 0;
-          if (destId) {
-            const destLoc = findInSegments(lineNum, destId);
-            if (destLoc?.si === segIdx) dir = destLoc.idx > qsIdx ? +1 : -1;
-          }
-          if (dir === 0 && qsIdx === 0)             dir = +1;
-          if (dir === 0 && qsIdx === nStations - 1) dir = -1;
-          if (dir === 0) dir = +1;
-          const posIdx = qsIdx - dir * (secsUntil / AVG_STATION_S);
-          const t = Math.max(0, Math.min(1, posIdx / (nStations - 1)));
-          seenJourneys.add(journeyId);
-          totalReal++;
-          newTrains.push({
-            segIdx, progress: t, targetProgress: t,
-            color: LC[lineNum], pulse: Math.random() * Math.PI * 2,
-            r: 2.5, real: true, dir, speed: 1/(nStations*AVG_STATION_S), journeyId,
-          });
-        }
-      }
-
-      if (totalReal === 0) return false;
-
-      const incomingById = new Map(newTrains.map(t => [t.journeyId, t]));
-      const existingById = new Map(trains.filter(t => t.real && t.journeyId).map(t => [t.journeyId, t]));
-      for (const [jid, inc] of incomingById) {
-        const ex = existingById.get(jid);
-        if (ex) { ex.targetProgress = inc.targetProgress; ex.dir = inc.dir; ex.speed = inc.speed; }
-      }
-      for (const [jid, inc] of incomingById) {
-        if (!existingById.has(jid)) { inc.pulse = 0; trains.push(inc); }
-      }
-      trains = trains.filter(t => !t.real || !t.journeyId || incomingById.has(t.journeyId));
-      usingRealtime = true;
-      return true;
-    } catch(e) {
-      return false;
-    }
-  }
-
-  let trains = [];
-
-  function spawnSimulatedTrains() {
-    trains = [];
-    LINE_SEGS.forEach((seg, segIdx) => {
-      if (seg.ids.length < 3) return;
-      const count = seg.ids.length > 20 ? 3 : seg.ids.length > 10 ? 2 : 1;
-      for (let i = 0; i < count; i++) {
-        trains.push({
-          segIdx, progress: i / count, targetProgress: null,
-          speed: 0.0018 + Math.random() * 0.0008,
-          dir: Math.random() > 0.5 ? 1 : -1,
-          color: seg.color, pulse: Math.random() * Math.PI * 2,
-          r: 2.2 + Math.random() * 0.8, real: false,
-        });
-      }
-    });
-  }
-
-  // ── Path interpolation ────────────────────────────────────────────
   function interpolateAlongPath(pts, t) {
     if (!pts?.length) return null;
     if (pts.length === 1) return pts[0];
@@ -869,45 +472,470 @@
     return pts[pts.length-1];
   }
 
+  // Draw a path from pts[0] to a point `progress` fraction along its length.
+  // Used to propagate lines outward from their center activation point.
+  function drawPartialPath(pts, progress) {
+    if (!pts || pts.length < 2 || progress <= 0) return;
+    if (progress >= 1) {
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+      return;
+    }
+    let total = 0;
+    const segLens = [];
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i][0]-pts[i-1][0], dy = pts[i][1]-pts[i-1][1];
+      const len = Math.sqrt(dx*dx+dy*dy);
+      total += len;
+      segLens.push(len);
+    }
+    const target = progress * total;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    let acc = 0;
+    for (let i = 0; i < segLens.length; i++) {
+      if (acc + segLens[i] >= target) {
+        const t = (target - acc) / segLens[i];
+        ctx.lineTo(
+          pts[i][0] + (pts[i+1][0] - pts[i][0]) * t,
+          pts[i][1] + (pts[i+1][1] - pts[i][1]) * t
+        );
+        break;
+      }
+      acc += segLens[i];
+      ctx.lineTo(pts[i+1][0], pts[i+1][1]);
+    }
+    ctx.stroke();
+  }
+
+  // ── Animation phase update ────────────────────────────────────────
+  // Called each frame to advance the timeline and update all state.
+
+  function updateAnimPhases(dt) {
+    animTime += dt;
+
+    // Phase 3-4: line propagation — each segment grows outward from center
+    if (animTime >= PH_LINES) {
+      const t0 = animTime - PH_LINES;
+      segAnim.forEach((a, i) => {
+        const t = Math.max(0, t0 - SEG_STAGGER[i]) / PH_PROP;
+        a.lp = Math.min(1, t);
+        a.rp = Math.min(1, t);
+      });
+    }
+
+    // Phase 5: train signals fade in
+    trainVis = animTime >= PH_TRAINS
+      ? Math.min(1, (animTime - PH_TRAINS) / 2.2)
+      : 0;
+
+
+    // Phase 6: line colors saturate from gray to full
+    colorSat = animTime >= PH_COLORS
+      ? Math.min(1, (animTime - PH_COLORS) / 2.8)
+      : 0;
+
+    // Phase 7: system becomes interactive — no CTA, just clickable
+    if (animTime >= PH_CTA && !ctaShown) {
+      ctaShown = true;
+      systemOnline = true;
+      setTimeout(() => {
+        const c = document.getElementById('id-count');
+        if (c && countReady) c.classList.add('ready');
+      }, 400);
+    }
+  }
+
+  // ── Draw: atmosphere ──────────────────────────────────────────────
+  // The atmosphere builds as the network establishes.
+  // Warm central glow tied to colorSat (alive = warm).
+
+  function drawAtmosphere(hover = 0) {
+    const w = canvas.width, h = canvas.height;
+    const cx = w * 0.50, cy = h * 0.52;
+
+    // Vignette — always present, keeps edges dark like a tunnel system
+    const vig = ctx.createRadialGradient(cx, cy*0.88, h*0.05, cx, cy*0.88, Math.max(w,h)*0.88);
+    vig.addColorStop(0,   'rgba(0,0,0,0)');
+    vig.addColorStop(0.5, 'rgba(0,0,0,0.14)');
+    vig.addColorStop(1,   'rgba(0,0,0,0.84)');
+    ctx.fillStyle = vig; ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, w, h);
+
+    // Warm amber central glow — rises as system comes alive
+    const warmStrength = colorSat;
+    if (warmStrength > 0.005) {
+      const warmBase = (0.045 + hover * 0.028) * warmStrength;
+      const warm = ctx.createRadialGradient(cx*1.04, cy*1.06, 0, cx*1.04, cy*1.06, h*(0.44+hover*0.1));
+      warm.addColorStop(0,    `rgba(150,120,82,${warmBase})`);
+      warm.addColorStop(0.45, `rgba(110,88,60,${warmBase*0.32})`);
+      warm.addColorStop(1,    'rgba(0,0,0,0)');
+      ctx.fillStyle = warm; ctx.globalAlpha = 1;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    // Propagation pulse — a subtle ambient halo around central Oslo
+    // builds during Phase 3 as lines spread, before colors arrive
+    const propStrength = Math.max(0, Math.min(1, (animTime - PH_LINES) / 4.0));
+    if (propStrength > 0.01 && colorSat < 0.99) {
+      const [ntx, nty] = toCanvas('nationaltheateret');
+      const pulse = 0.82 + 0.18 * Math.sin(globalTime * 0.9);
+      const ga = 0.022 * propStrength * pulse * (1 - colorSat * 0.6);
+      const gr = ctx.createRadialGradient(ntx, nty, 0, ntx, nty, 200*scale);
+      gr.addColorStop(0, `rgba(185,175,158,${ga})`);
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(ntx, nty, 200*scale, 0, Math.PI*2);
+      ctx.fillStyle = gr; ctx.globalAlpha = 1;
+      ctx.fill();
+    }
+
+    if (grainPattern) {
+      ctx.fillStyle = grainPattern;
+      ctx.globalAlpha = 0.026;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Draw: Phase 2 — central node activation ───────────────────────
+  // Before any lines appear, three anchor points wake up quietly.
+
+  function drawBootNodes() {
+    const t0 = animTime - PH_NODES;
+    if (t0 <= 0) return;
+
+    // Fade these out as line propagation completes their reveal
+    const fadeOut = Math.max(0, 1 - Math.max(0, animTime - (PH_LINES + 1.5)) / 1.2);
+    if (fadeOut <= 0) return;
+
+    BOOT_NODES.forEach(({ id, delay }) => {
+      const a = Math.max(0, Math.min(1, (t0 - delay) / 0.55)) * fadeOut;
+      if (a <= 0 || !COORDS[id]) return;
+      const [cx, cy] = toCanvas(id);
+
+      // Soft halo — like a lamp coming on in a dark room
+      const hr = 36 * scale;
+      const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, hr);
+      grd.addColorStop(0, `rgba(205,192,170,${0.06 * a})`);
+      grd.addColorStop(0.5, `rgba(180,168,148,${0.03 * a})`);
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, hr, 0, Math.PI*2);
+      ctx.fillStyle = grd; ctx.globalAlpha = 1;
+      ctx.fill();
+
+      // Node dot
+      const r = 2.0 * scale;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.fillStyle = '#ffffff';
+      ctx.globalAlpha = a * 0.18;
+      ctx.fill();
+    });
+
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Draw: Phase 3-4 — network propagation ─────────────────────────
+  // Lines grow outward from their center station.
+  // Station dots appear as the line front reaches them.
+  // Tunnel glow builds around the central corridor.
+
+  function drawNetworkPropagating(t, hover = 0) {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Draw each line segment — split at center, grow outward in both directions
+    LINE_SEGS.forEach((seg, i) => {
+      const anim = segAnim[i];
+      const pts  = segPoints[i].pts;
+      if (!anim || pts.length < 2) return;
+
+      const { ci, lp, rp } = anim;
+      if (lp <= 0 && rp <= 0) return;
+
+      const depth  = SEG_DEPTH[i] ?? 0.6;
+      const rhythm = 0.78 + 0.22 * Math.sin(t * 0.18 + LINE_PHASE[seg.line]);
+      // Opacity rises as propagation progresses, then settles
+      const propAlpha = Math.min(lp + rp, 1);
+      const alpha  = 0.092 * depth * rhythm * propAlpha;
+      const weight = (0.65 + 0.55 * depth) * scale;
+      const color  = saturateColor(seg.color, colorSat);
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = weight;
+      ctx.globalAlpha = alpha;
+
+      // Right half: center → right terminus
+      const rightPts = pts.slice(ci);
+      if (rp > 0 && rightPts.length >= 2) drawPartialPath(rightPts, rp);
+
+      // Left half: center → left terminus (reversed so drawing goes outward)
+      const leftPts = pts.slice(0, ci + 1).reverse();
+      if (lp > 0 && leftPts.length >= 2) drawPartialPath(leftPts, lp);
+    });
+
+    // Station dots — appear as the line front reaches them
+    const drawn = new Set();
+    LINE_SEGS.forEach((seg, i) => {
+      const anim  = segAnim[i];
+      const depth = SEG_DEPTH[i] ?? 0.6;
+      if (!anim) return;
+      const { ci, lp, rp } = anim;
+      const nPts = seg.ids.length;
+
+      seg.ids.forEach((id, idx) => {
+        if (drawn.has(id) || !COORDS[id]) return;
+
+        let revealed = false;
+        if (idx === ci) {
+          revealed = lp > 0 || rp > 0;
+        } else if (idx < ci && ci > 0) {
+          const needed = (ci - idx) / ci;
+          revealed = lp >= needed;
+        } else if (idx > ci) {
+          const needed = (idx - ci) / Math.max(1, nPts - 1 - ci);
+          revealed = rp >= needed;
+        }
+
+        if (!revealed) return;
+        drawn.add(id);
+
+        const [dx, dy] = toCanvas(id);
+        const r = (0.72 + 0.82 * depth) * scale;
+        ctx.beginPath();
+        ctx.arc(dx, dy, r, 0, Math.PI*2);
+        ctx.fillStyle   = '#ffffff';
+        ctx.globalAlpha = (0.05 + 0.09 * depth) * Math.min((lp + rp) * 1.5, 1);
+        ctx.fill();
+      });
+    });
+
+    // Tunnel glow — builds around central corridor as lines propagate,
+    // intensifies as colors come in
+    const tunnelBase = Math.max(0, Math.min(1, (animTime - PH_LINES) / 3.5));
+    if (tunnelBase > 0.01) {
+      TUNNEL_NODES.forEach((id, ti) => {
+        if (!COORDS[id]) return;
+        const [cx, cy] = toCanvas(id);
+        const boost = 1 + colorSat * 0.5;
+        const gr1 = (88 + hover * 18) * scale;
+        const oa1 = (0.036 + hover * 0.016) * tunnelBase * boost;
+        const grd1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr1);
+        grd1.addColorStop(0, `rgba(200,180,152,${oa1})`);
+        grd1.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.beginPath();
+        ctx.arc(cx, cy, gr1, 0, Math.PI*2);
+        ctx.fillStyle = grd1; ctx.globalAlpha = 1;
+        ctx.fill();
+        if (ti >= 1 && ti <= 5) {
+          const gr2 = 30 * scale;
+          const oa2 = (0.052 + hover * 0.024) * tunnelBase * boost;
+          const grd2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr2);
+          grd2.addColorStop(0, `rgba(218,196,162,${oa2})`);
+          grd2.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(cx, cy, gr2, 0, Math.PI*2);
+          ctx.fillStyle = grd2; ctx.globalAlpha = 1;
+          ctx.fill();
+        }
+      });
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Entur realtime ────────────────────────────────────────────────
+  const ENTUR_GQL    = 'https://api.entur.io/journey-planner/v3/graphql';
+  const ENTUR_CLIENT = 'kiim-tbanen';
+  const POLL_INTERVAL = 30000;
+  const AVG_STATION_S = 90;
+
+  const QUERY_STATIONS = [
+    { nsr:'NSR:StopPlace:58366', id:'jernbanetorget'   },
+    { nsr:'NSR:StopPlace:59768', id:'frognerseteren'   },
+    { nsr:'NSR:StopPlace:58243', id:'bergkrystallen'   },
+    { nsr:'NSR:StopPlace:59705', id:'sognsvann'        },
+    { nsr:'NSR:StopPlace:58277', id:'osteraas'         },
+    { nsr:'NSR:StopPlace:58284', id:'kolsas'           },
+    { nsr:'NSR:StopPlace:58218', id:'vestli'           },
+    { nsr:'NSR:StopPlace:58228', id:'mortensrud'       },
+    { nsr:'NSR:StopPlace:58220', id:'ellingsrudaasen'  },
+  ];
+
+  const DEST_TO_ID = {
+    'frognerseteren':'frognerseteren','bergkrystallen':'bergkrystallen',
+    'ellingsrudåsen':'ellingsrudaasen','østerås':'osteraas','kolsås':'kolsas',
+    'mortensrud':'mortensrud','sognsvann':'sognsvann','vestli':'vestli',
+    'helsfyr':'helsfyr','ryen':'ryen','brynseng':'brynseng','nydalen':'nydalen',
+    'majorstua':'majorstua','nationaltheateret':'nationaltheateret',
+    'ringen via tøyen':'toyen','ringen via majorstuen':'majorstua',
+  };
+
+  const SEG_IDX_OF = LINE_SEGS.map(seg => {
+    const m = {};
+    seg.ids.forEach((id, i) => { m[id] = i; });
+    return m;
+  });
+
+  function findInSegments(lineNum, stationId) {
+    for (let si = 0; si < LINE_SEGS.length; si++) {
+      if (LINE_SEGS[si].line !== lineNum) continue;
+      const idx = SEG_IDX_OF[si][stationId];
+      if (idx !== undefined) return { si, idx };
+    }
+    return null;
+  }
+
+  function buildQuery() {
+    const startTime = new Date(Date.now() - 12*60*1000).toISOString();
+    const fields = `estimatedCalls(numberOfDepartures:25 startTime:"${startTime}" timeRange:1500 whiteListedModes:[metro]){realtime expectedDepartureTime destinationDisplay{frontText} serviceJourney{id line{publicCode}}}`;
+    return `{${QUERY_STATIONS.map(({nsr,id})=>`${id}:stopPlace(id:"${nsr}"){${fields}}`).join('\n')}}`;
+  }
+
+  let usingRealtime = false;
+  const seenJourneys = new Set();
+
+  async function fetchEnturTrains() {
+    try {
+      const res = await fetch(ENTUR_GQL, {
+        method:'POST',
+        headers:{'ET-Client-Name':ENTUR_CLIENT,'Content-Type':'application/json'},
+        body:JSON.stringify({query:buildQuery()}),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const {data} = await res.json();
+      if (!data) throw new Error('no data');
+
+      const now = Date.now();
+      const newTrains = [];
+      seenJourneys.clear();
+      let totalReal = 0;
+
+      for (const qs of QUERY_STATIONS) {
+        const stop = data[qs.id];
+        if (!stop?.estimatedCalls?.length) continue;
+        for (const call of stop.estimatedCalls) {
+          if (!call.realtime) continue;
+          const journeyId = call.serviceJourney?.id;
+          if (!journeyId || seenJourneys.has(journeyId)) continue;
+          const lineNum = parseInt(call.serviceJourney?.line?.publicCode);
+          if (isNaN(lineNum) || lineNum < 1 || lineNum > 5) continue;
+          const secsUntil = (new Date(call.expectedDepartureTime).getTime() - now) / 1000;
+          if (secsUntil < -600 || secsUntil > 1200) continue;
+          const qsLoc = findInSegments(lineNum, qs.id);
+          if (!qsLoc) continue;
+          const {si:segIdx, idx:qsIdx} = qsLoc;
+          const seg = LINE_SEGS[segIdx];
+          const nStations = seg.ids.length;
+          const destText = (call.destinationDisplay?.frontText ?? '').toLowerCase();
+          const destId   = DEST_TO_ID[destText];
+          let dir = 0;
+          if (destId) {
+            const destLoc = findInSegments(lineNum, destId);
+            if (destLoc?.si === segIdx) dir = destLoc.idx > qsIdx ? +1 : -1;
+          }
+          if (dir === 0 && qsIdx === 0)             dir = +1;
+          if (dir === 0 && qsIdx === nStations - 1) dir = -1;
+          if (dir === 0) dir = +1;
+          const posIdx = qsIdx - dir * (secsUntil / AVG_STATION_S);
+          const t = Math.max(0, Math.min(1, posIdx / (nStations - 1)));
+          seenJourneys.add(journeyId);
+          totalReal++;
+          newTrains.push({
+            segIdx, progress:t, targetProgress:t,
+            color:LC[lineNum], pulse:Math.random()*Math.PI*2,
+            r:2.5, real:true, dir, speed:1/(nStations*AVG_STATION_S), journeyId,
+          });
+        }
+      }
+
+      if (totalReal === 0) return false;
+      const incomingById = new Map(newTrains.map(t=>[t.journeyId,t]));
+      const existingById = new Map(trains.filter(t=>t.real&&t.journeyId).map(t=>[t.journeyId,t]));
+      for (const [jid,inc] of incomingById) {
+        const ex = existingById.get(jid);
+        if (ex) { ex.targetProgress = inc.targetProgress; ex.dir = inc.dir; ex.speed = inc.speed; }
+      }
+      for (const [jid,inc] of incomingById) {
+        if (!existingById.has(jid)) { inc.pulse = 0; trains.push(inc); }
+      }
+      trains = trains.filter(t=>!t.real||!t.journeyId||incomingById.has(t.journeyId));
+      usingRealtime = true;
+      return true;
+    } catch(e) { return false; }
+  }
+
+  let trains = [];
+
+  function spawnSimulatedTrains() {
+    trains = [];
+    LINE_SEGS.forEach((seg, segIdx) => {
+      if (seg.ids.length < 3) return;
+      const count = seg.ids.length > 20 ? 3 : seg.ids.length > 10 ? 2 : 1;
+      for (let i = 0; i < count; i++) {
+        trains.push({
+          segIdx, progress: i / count, targetProgress: null,
+          speed: 0.0018 + Math.random() * 0.0008,
+          dir: Math.random() > 0.5 ? 1 : -1,
+          color: seg.color, pulse: Math.random() * Math.PI * 2,
+          r: 2.2 + Math.random() * 0.8, real: false,
+        });
+      }
+    });
+  }
+
   // ── Render loop ───────────────────────────────────────────────────
   let lastTime = 0, globalTime = 0;
   let gatewayHover = 0, gatewayOver = false;
+  const tunnelEl = document.getElementById('tunnel');
 
   function render(now) {
     const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
     globalTime += dt;
 
-    // Lerp saturation toward target (slow — 0→1 takes ~3s)
-    systemSat += (targetSat - systemSat) * Math.min(dt * 0.32, 1);
+    // Speed multiplier lerp (accelerates during departure)
+    speedMult += (targetSpeedMult - speedMult) * Math.min(dt * 2.8, 1);
 
-    // Advance scan pulse (bounces)
-    scanProgress += SCAN_SPEED * dt * scanDir;
-    if (scanProgress >= 1) { scanProgress = 1; scanDir = -1; }
-    if (scanProgress <= 0) { scanProgress = 0; scanDir =  1; }
-
-    // Spawn node flashes during loading
-    if (!systemOnline || systemSat < 0.8) {
-      flashTimer += dt;
-      if (flashTimer >= FLASH_INTERVAL) {
-        flashTimer = 0;
-        spawnNodeFlash();
-      }
-    }
-
-    // Gateway hover
     gatewayHover += ((gatewayOver ? 1 : 0) - gatewayHover) * Math.min(dt * 2.2, 1);
+
+    // Advance animation phases
+    updateAnimPhases(dt);
+
+    // Departure zoom toward central Oslo
+    if (zooming) {
+      zoomProgress = Math.min(1, zoomProgress + dt / 0.7);
+      const ease = 1 - Math.pow(1 - zoomProgress, 3);
+      scale   = baseScale   + (zoomTargetScale   - baseScale)   * ease;
+      offsetX = baseOffsetX + (zoomTargetOffsetX - baseOffsetX) * ease;
+      offsetY = baseOffsetY + (zoomTargetOffsetY - baseOffsetY) * ease;
+      buildSegPoints();
+
+      // Tunnel iris closes from edges inward
+      tunnelProgress = Math.min(1, tunnelProgress + dt / 0.65);
+      const te = 1 - Math.pow(1 - tunnelProgress, 2.5);
+      const innerPct = Math.max(0, Math.round(46 - te * 48));
+      const outerPct = innerPct + 22;
+      tunnelEl.style.background =
+        `radial-gradient(ellipse at center, transparent ${innerPct}%, rgba(0,0,0,0.97) ${outerPct}%)`;
+      tunnelEl.style.opacity = String(Math.min(te * 1.1, 1));
+    }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawAtmosphere(gatewayHover);
-    drawNetwork(globalTime, gatewayHover);
-    drawLoadingActivity(dt);
+    drawBootNodes();
+    drawNetworkPropagating(globalTime, gatewayHover);
 
-    // Trains — alpha gated by systemSat (invisible until online)
+    // Phase 5: train signals — hidden until trainVis > 0
     trains.forEach(train => {
       train.pulse += dt * 0.8;
-      train.progress += train.speed * dt * train.dir;
+      train.progress += train.speed * speedMult * dt * train.dir;
       if (train.real) {
         if (train.targetProgress !== null)
           train.progress += (train.targetProgress - train.progress) * dt * 0.05;
@@ -917,8 +945,7 @@
         if (train.progress < 0) { train.progress = 0; train.dir =  1; }
       }
 
-      const trainAlpha = systemSat; // 0 during loading, 1 online
-      if (trainAlpha < 0.02) return;
+      if (trainVis < 0.02) return;
 
       const pts = segPoints[train.segIdx]?.pts;
       if (!pts || pts.length < 2) return;
@@ -929,6 +956,7 @@
       const pulse = (0.7 + 0.3 * Math.sin(train.pulse)) * (1 + gatewayHover * 0.28);
       const r     = train.r * scale;
       const color = train.color;
+      const alpha = trainVis;
 
       // Trail
       for (let i = 1; i <= 5; i++) {
@@ -939,42 +967,42 @@
         ctx.beginPath();
         ctx.arc(tpos[0], tpos[1], Math.max(r*(1-frac*0.55), 0.5), 0, Math.PI*2);
         ctx.fillStyle   = color;
-        ctx.globalAlpha = 0.22 * pulse * (1-frac) * trainAlpha;
+        ctx.globalAlpha = 0.22 * pulse * (1-frac) * alpha;
         ctx.fill();
       }
 
       // Bloom
       const bloom = ctx.createRadialGradient(x, y, 0, x, y, r*5.5);
-      bloom.addColorStop(0,   hexAlpha(color, 0.14*pulse, systemSat));
-      bloom.addColorStop(0.4, hexAlpha(color, 0.06*pulse, systemSat));
-      bloom.addColorStop(1,   hexAlpha(color, 0,          systemSat));
+      bloom.addColorStop(0,   hexAlpha(color, 0.14*pulse, colorSat));
+      bloom.addColorStop(0.4, hexAlpha(color, 0.06*pulse, colorSat));
+      bloom.addColorStop(1,   hexAlpha(color, 0, colorSat));
       ctx.beginPath();
       ctx.arc(x, y, r*5.5, 0, Math.PI*2);
-      ctx.fillStyle = bloom; ctx.globalAlpha = trainAlpha;
+      ctx.fillStyle = bloom; ctx.globalAlpha = alpha;
       ctx.fill();
 
       // Tight glow
       const grd = ctx.createRadialGradient(x, y, 0, x, y, r*2.5);
-      grd.addColorStop(0,   hexAlpha(color, 0.38*pulse, systemSat));
-      grd.addColorStop(0.5, hexAlpha(color, 0.15*pulse, systemSat));
-      grd.addColorStop(1,   hexAlpha(color, 0,          systemSat));
+      grd.addColorStop(0,   hexAlpha(color, 0.38*pulse, colorSat));
+      grd.addColorStop(0.5, hexAlpha(color, 0.15*pulse, colorSat));
+      grd.addColorStop(1,   hexAlpha(color, 0, colorSat));
       ctx.beginPath();
       ctx.arc(x, y, r*2.5, 0, Math.PI*2);
-      ctx.fillStyle = grd; ctx.globalAlpha = trainAlpha;
+      ctx.fillStyle = grd; ctx.globalAlpha = alpha;
       ctx.fill();
 
       // Core
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI*2);
       ctx.fillStyle   = color;
-      ctx.globalAlpha = 0.82 * pulse * trainAlpha;
+      ctx.globalAlpha = 0.82 * pulse * alpha;
       ctx.fill();
 
       // Specular
       ctx.beginPath();
       ctx.arc(x, y, r*0.42, 0, Math.PI*2);
       ctx.fillStyle   = '#ffffff';
-      ctx.globalAlpha = 0.30 * pulse * trainAlpha;
+      ctx.globalAlpha = 0.30 * pulse * alpha;
       ctx.fill();
 
       ctx.globalAlpha = 1;
@@ -983,105 +1011,37 @@
     requestAnimationFrame(render);
   }
 
-  // ── Boot sequence ─────────────────────────────────────────────────
-  const STATUS_MSGS = [
-    'INITIALISERER',
-    'LASTER NETTVERKET',
-    'HENTER SANNTIDSDATA',
-    'SYSTEMET STARTER',
-  ];
-  let statusIdx = 0;
-  const statusEl = document.getElementById('system-status');
+  // ── Boot: load data asynchronously ───────────────────────────────
+  // Visual animation runs on its own clock (animTime).
+  // Data loading happens in parallel — trains update when data arrives.
 
-  const subEl = document.getElementById('gateway-sub');
-
-  async function bootSystem() {
-    // Cycle status messages while loading
-    const msgTimer = setInterval(() => {
-      statusIdx = (statusIdx + 1) % STATUS_MSGS.length;
-      if (statusEl) statusEl.textContent = STATUS_MSGS[statusIdx];
-    }, 1600);
-
-    const BOOT_TIMEOUT = 5000;
-
-    // Stations load: sets count text independently, does NOT block online transition
-    const stationsLoad = fetch('/tbanen/data/stations.json')
+  async function bootData() {
+    fetch('/tbanen/data/stations.json')
       .then(r => r.json())
       .then(data => {
         const total = data.stations.length;
         const done  = data.stations.filter(s => s.image).length;
         countReady = true;
-        if (subEl) {
-          subEl.textContent = `${done} / ${total} stasjoner dokumentert`;
-          // Fade the sub in after gateway is visible — triggered from goOnline()
+        const c = document.getElementById('id-count');
+        if (c) {
+          c.textContent = `${done} / ${total} stasjoner dokumentert`;
+          if (ctaShown) c.classList.add('ready');
         }
       })
-      .catch(() => {
-        // Fallback: show hardcoded if fetch fails
-        if (subEl) subEl.textContent = 'oslo t-bane · 5 linjer';
-        countReady = true;
-      });
+      .catch(() => { countReady = true; });
 
-    const enturLoad = fetchEnturTrains()
-      .then(ok => { if (!ok) spawnSimulatedTrains(); })
-      .catch(() => { spawnSimulatedTrains(); });
+    // Entur — try realtime, fall back to simulated
+    const ok = await fetchEnturTrains().catch(() => false);
+    if (!ok) spawnSimulatedTrains();
 
-    const imageLoad = new Promise(res => {
-      const img = new Image();
-      img.onload = img.onerror = () => res();
-      img.src = '/tbanen/images/stations/nationaltheateret.jpg';
-    });
-
-    const timeout = new Promise(res => setTimeout(res, BOOT_TIMEOUT));
-
-    // Go online when entur + image ready, OR timeout — whichever is first
-    // (stations load updates the sub text separately whenever it resolves)
-    await Promise.race([
-      Promise.all([enturLoad, imageLoad]),
-      timeout,
-    ]);
-
-    clearInterval(msgTimer);
-    goOnline();
-
-    // If stations data hasn't arrived yet, wait for it and then show sub
-    stationsLoad.then(() => {
-      if (systemOnline && subEl && countReady) {
-        subEl.classList.add('ready');
-      }
-    });
-
-    // Keep polling Entur after boot
+    // Keep polling
     setInterval(async () => {
-      const ok = await fetchEnturTrains();
-      if (!ok && !usingRealtime) spawnSimulatedTrains();
+      const r = await fetchEnturTrains().catch(() => false);
+      if (!r && !usingRealtime) spawnSimulatedTrains();
     }, POLL_INTERVAL);
   }
 
-  function goOnline() {
-    systemOnline = true;
-    targetSat = 1; // trigger color saturation in render loop
-
-    // Fade out status text
-    if (statusEl) statusEl.classList.add('fade-out');
-
-    // Fade in gateway after a short beat, then sub after another beat
-    setTimeout(() => {
-      document.getElementById('gateway').classList.add('online');
-      // Fade in count if already ready, otherwise stationsLoad.then() handles it
-      setTimeout(() => {
-        if (subEl && countReady) subEl.classList.add('ready');
-      }, 1000);
-    }, 600);
-
-    // Realtime note — arrives late, as a small discovery
-    setTimeout(() => {
-      const note = document.getElementById('realtime-note');
-      if (note) note.classList.add('visible');
-    }, 4200);
-  }
-
-  // ── Identity dot ──────────────────────────────────────────────────
+  // ── Identity dot cycling ──────────────────────────────────────────
   const LINE_COLORS = Object.values(LC);
   let colorIdx = 4;
 
@@ -1097,47 +1057,48 @@
   cycleIdentityColor();
   setInterval(cycleIdentityColor, 7200);
 
-  // ── Gateway hover ──────────────────────────────────────────────────
-  const gatewayCta = document.getElementById('gateway-cta');
-  gatewayCta.addEventListener('mouseenter', () => { gatewayOver = true; });
-  gatewayCta.addEventListener('mouseleave', () => { gatewayOver = false; });
+  // ── Departure: entering the network ──────────────────────────────
+  function startDeparture() {
+    if (departing || !systemOnline) return;
+    departing = true;
+
+    document.getElementById('identity').style.transition = 'opacity 0.3s ease';
+    document.getElementById('identity').style.opacity   = '0';
+
+    zooming = true;
+    targetSpeedMult = 3.8;
+
+    setTimeout(() => {
+      document.body.style.transition = 'opacity 0.40s ease';
+      document.body.style.opacity    = '0';
+      setTimeout(() => { window.location.href = '/tbanen/app.html?enter'; }, 380);
+    }, 650);
+  }
+
+  // Click anywhere to enter
+  document.body.addEventListener('click', () => startDeparture());
+
+  // Keyboard: Enter or Space
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); startDeparture(); }
+  });
+
+  window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
 
   // ── Start ─────────────────────────────────────────────────────────
   window.addEventListener('resize', () => { resize(); buildSegPoints(); buildGrain(); });
 
   resize();
   buildSegPoints();
+  buildSegAnim();
   buildGrain();
-  spawnSimulatedTrains(); // visible immediately (but hidden by systemSat=0)
+  spawnSimulatedTrains();
 
-  // Force full reload when restored from bfcache (back button from archive)
-  window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
-
-  // Start render loop first, then boot (render is always running)
   requestAnimationFrame(t => { lastTime = t; requestAnimationFrame(render); });
-  bootSystem();
-
-  // Depart — fade to black, then enter the archive
-  let departing = false;
-  function departToArchive() {
-    if (departing || !systemOnline) return;
-    departing = true;
-    document.body.style.transition = 'opacity 0.38s ease';
-    document.body.style.opacity = '0';
-    setTimeout(() => { window.location.href = '/tbanen/app.html?enter'; }, 350);
-  }
-
-  // CTA link — intercept and use cinematic transition instead
-  gatewayCta.addEventListener('click', (e) => {
-    e.preventDefault();
-    departToArchive();
-  });
-
-  // Anywhere else on the body
-  document.body.addEventListener('click', (e) => {
-    if (e.target.closest('#gateway-cta')) return; // handled above
-    departToArchive();
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.getElementById('identity').classList.add('visible');
+  }));
+  bootData();
   </script>
 
 </body>
