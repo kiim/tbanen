@@ -7,13 +7,13 @@
   <meta name="theme-color" content="#080808">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --black: #080808;
-      --sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+      --sans: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
       --mono: 'IBM Plex Mono', 'Courier New', Courier, monospace;
     }
 
@@ -120,8 +120,8 @@
     #gateway-cta {
       font-family: var(--sans);
       font-size: clamp(20px, 3.2vw, 44px);
-      font-weight: 400;
-      letter-spacing: 0.14em;
+      font-weight: 500;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       color: rgba(200, 194, 182, 0.55);
       text-decoration: none;
@@ -190,6 +190,26 @@
       0%, 100% { opacity: 0.5; }
       50%       { opacity: 0; }
     }
+
+    #realtime-note {
+      position: fixed;
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--sans);
+      font-size: clamp(9px, 1vw, 11px);
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: rgba(255, 255, 255, 0.18);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 2.4s ease;
+    }
+    #realtime-note.visible {
+      opacity: 1;
+    }
   </style>
   <!-- Matomo -->
   <script>
@@ -227,6 +247,7 @@
   </div>
 
   <div id="system-status">INITIALISERER</div>
+  <p id="realtime-note">De bevegelige signalene representerer T-baner som beveger seg i Oslo akkurat nå.</p>
 
   <script>
   // ═══════════════════════════════════════════════════════════════════
@@ -1052,6 +1073,12 @@
         if (subEl && countReady) subEl.classList.add('ready');
       }, 1000);
     }, 600);
+
+    // Realtime note — arrives late, as a small discovery
+    setTimeout(() => {
+      const note = document.getElementById('realtime-note');
+      if (note) note.classList.add('visible');
+    }, 4200);
   }
 
   // ── Identity dot ──────────────────────────────────────────────────

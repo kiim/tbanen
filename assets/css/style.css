@@ -21,9 +21,9 @@
   --l4: #C8102E;
   --l5: #3D9A5C;
 
-  /* IBM Plex Sans: designed for technical/systems contexts — infrastructure, not branding.
+  /* Barlow: humanist sans inspired by highway/transport signage — institutional, calm, legible.
      IBM Plex Mono: clean technical mono — control-room data, not typewriter. */
-  --sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --sans: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
   --mono: 'IBM Plex Mono', 'Courier New', Courier, monospace;
 
   --safe-top:    env(safe-area-inset-top, 0px);
@@ -227,8 +227,8 @@ body.immersive #immersive-label {
 /* Station name — reads as a destination sign, not a headline or brand */
 #station-name {
   font-size: clamp(22px, 6vw, 30px);
-  font-weight: 400;          /* was 300 — regular weight, like a station board */
-  letter-spacing: 0.12em;   /* was 0.08em — uppercase signage rhythm, not fashion tracking */
+  font-weight: 500;
+  letter-spacing: 0.10em;
   text-transform: uppercase;
   color: var(--white);
   line-height: 1.0;
@@ -431,7 +431,7 @@ body.immersive #immersive-label {
 
 .menu-action-label {
   font-size: 17px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.02em;
 }
 
@@ -487,6 +487,7 @@ body.immersive #immersive-label {
 
 .menu-station-name {
   font-size: 13px;
+  font-weight: 500;
   letter-spacing: 0.02em;
 }
 
