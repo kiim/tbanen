@@ -29,41 +29,64 @@
 
     #c { position: fixed; inset: 0; width: 100%; height: 100%; }
 
-    /* System identifier — institutional label, not a logo */
-    #sys-label {
+    /* ── Identity block — upper third, map-title position ── */
+    /* Anchored above the network activity. Reveals when system comes alive. */
+    #identity {
       position: fixed;
-      top: calc(18px + env(safe-area-inset-top, 0px));
-      left: 22px;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       z-index: 10;
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0);
+      text-align: center;
       pointer-events: none;
       user-select: none;
+      opacity: 0;
+      transition: opacity 2.2s ease;
+    }
+    #identity.visible { opacity: 1; }
+
+    /* Primary — the system designation */
+    .id-primary {
+      font-family: var(--mono);
+      font-size: clamp(11px, 1.2vw, 14px);
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.82);
       display: flex;
       align-items: center;
-      gap: 7px;
-      transition: color 1.8s ease;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 11px;
     }
-    #sys-label.visible { color: rgba(255,255,255,0.22); }
-    .sys-line { width: 12px; height: 1px; background: currentColor; opacity: 0.35; }
-    .sys-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; transition: background-color 2.4s ease; }
+    .id-line { width: 14px; height: 1px; background: currentColor; opacity: 0.30; }
+    .id-dot  { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; transition: background-color 2.4s ease; }
 
-    /* Gateway CTA — centered, appears when network is alive */
+    /* Secondary — geographic context */
+    .id-secondary {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+    }
+
+    /* ── Gateway CTA — lower third, directional invitation ── */
+    /* Appears after identity settles. Action, not branding. */
     #gateway {
       position: fixed;
-      top: calc(50% + 60px); left: 50%;
+      top: 70%;
+      left: 50%;
       transform: translate(-50%, -50%);
       z-index: 10;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 2.2s ease;
+      transition: opacity 2.0s ease;
     }
     #gateway.online {
       opacity: 1;
@@ -72,24 +95,29 @@
 
     #dep-cta {
       font-family: var(--sans);
-      font-size: clamp(20px, 3.2vw, 44px);
+      font-size: clamp(16px, 2.2vw, 28px);
       font-weight: 500;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.07em;
       text-transform: uppercase;
-      color: rgba(200,194,182,0.55);
+      color: rgba(198,190,178,0.58);
       text-decoration: none;
       white-space: nowrap;
-      transition: color 1.0s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: color 0.9s ease;
     }
-    #dep-cta:hover { color: rgba(220,214,200,0.88); }
+    #dep-cta:hover { color: rgba(220,212,200,0.90); }
+    #dep-arrow { opacity: 0.36; transition: transform 0.55s ease, opacity 0.55s ease; }
+    #dep-cta:hover #dep-arrow { transform: translateX(5px); opacity: 0.68; }
 
     #dep-count {
-      font-family: var(--sans);
-      font-size: clamp(8px, 0.70vw, 10px);
+      font-family: var(--mono);
+      font-size: 8px;
       font-weight: 400;
       letter-spacing: 0.10em;
       text-transform: uppercase;
-      color: rgba(105,101,95,0.40);
+      color: rgba(255,255,255,0.16);
       text-align: center;
       opacity: 0;
       transition: opacity 2.0s ease;
@@ -107,14 +135,22 @@
 
   <canvas id="c"></canvas>
 
-  <div id="sys-label">
-    <span>T—BANEN</span>
-    <span class="sys-line" id="id-line"></span>
-    <span class="sys-dot" id="id-dot"></span>
+  <!-- Identity — anchored in upper third, reveals when system comes alive -->
+  <div id="identity">
+    <div class="id-primary">
+      T—BANEN
+      <span class="id-line" id="id-line"></span>
+      <span class="id-dot"  id="id-dot"></span>
+    </div>
+    <div class="id-secondary">OSLO</div>
   </div>
 
+  <!-- CTA — lower third, directional invitation -->
   <div id="gateway">
-    <a id="dep-cta" href="/tbanen/app.html?enter">T-BANEN OSLO</a>
+    <a id="dep-cta" href="/tbanen/app.html?enter">
+      UTFORSK STASJONENE
+      <span id="dep-arrow">→</span>
+    </a>
     <div id="dep-count"></div>
   </div>
 
@@ -169,10 +205,11 @@
   ];
 
   // Animation state — computed each frame from animTime
-  let trainVis  = 0;   // 0→1: train signal opacity
-  let colorSat  = 0;   // 0→1: line color saturation (gray→full color)
-  let ctaShown  = false;
-  let countReady = false;
+  let trainVis      = 0;     // 0→1: train signal opacity
+  let colorSat      = 0;     // 0→1: line color saturation (gray→full color)
+  let ctaShown      = false;
+  let identityShown = false;
+  let countReady    = false;
 
   // Per-segment: how far the line has grown outward from center
   // lp = leftProgress (center → terminus 0)
@@ -511,12 +548,20 @@
       ? Math.min(1, (animTime - PH_TRAINS) / 2.2)
       : 0;
 
+    // Phase 5: identity reveals when the system comes alive
+    // The network names itself as trains begin moving
+    if (animTime >= PH_TRAINS && !identityShown) {
+      identityShown = true;
+      const id = document.getElementById('identity');
+      if (id) id.classList.add('visible');
+    }
+
     // Phase 6: line colors saturate from gray to full
     colorSat = animTime >= PH_COLORS
       ? Math.min(1, (animTime - PH_COLORS) / 2.8)
       : 0;
 
-    // Phase 7: archive entry appears — show CTA, enable interaction
+    // Phase 7: CTA appears — the invitation, after identity has settled
     if (animTime >= PH_CTA && !ctaShown) {
       ctaShown = true;
       systemOnline = true;
@@ -528,9 +573,6 @@
         const c = document.getElementById('dep-count');
         if (c && countReady) c.classList.add('ready');
       }, 900);
-
-      // System label fades in with the CTA
-      document.getElementById('sys-label').classList.add('visible');
     }
   }
 
@@ -1049,10 +1091,10 @@
     if (departing || !systemOnline) return;
     departing = true;
 
-    document.getElementById('gateway').style.transition = 'opacity 0.3s ease';
-    document.getElementById('gateway').style.opacity   = '0';
-    document.getElementById('sys-label').style.transition = 'opacity 0.3s ease';
-    document.getElementById('sys-label').style.opacity   = '0';
+    document.getElementById('gateway').style.transition  = 'opacity 0.3s ease';
+    document.getElementById('gateway').style.opacity    = '0';
+    document.getElementById('identity').style.transition = 'opacity 0.3s ease';
+    document.getElementById('identity').style.opacity   = '0';
 
     zooming = true;
     targetSpeedMult = 3.8;
