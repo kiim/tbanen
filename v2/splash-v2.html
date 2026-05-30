@@ -27,13 +27,9 @@
       cursor: pointer;
     }
 
-    #c {
-      position: fixed; inset: 0;
-      width: 100%; height: 100%;
-    }
+    #c { position: fixed; inset: 0; width: 100%; height: 100%; }
 
-    /* ── System identifier — top left ──────────────────────────────── */
-    /* Not a logo. A system label. Like a sign on a control room wall. */
+    /* System identifier — institutional label, not a logo */
     #sys-label {
       position: fixed;
       top: calc(18px + env(safe-area-inset-top, 0px));
@@ -43,54 +39,26 @@
       font-size: 8px;
       letter-spacing: 0.13em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.22);
+      color: rgba(255,255,255,0);
       pointer-events: none;
       user-select: none;
       display: flex;
       align-items: center;
       gap: 7px;
-      transition: opacity 0.6s ease;
+      transition: color 1.8s ease;
     }
-    .sys-line {
-      width: 12px; height: 1px;
-      background: currentColor;
-      opacity: 0.35;
-    }
-    .sys-dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      transition: background-color 2.4s ease;
-    }
+    #sys-label.visible { color: rgba(255,255,255,0.22); }
+    .sys-line { width: 12px; height: 1px; background: currentColor; opacity: 0.35; }
+    .sys-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; transition: background-color 2.4s ease; }
 
-    /* ── Boot status — top right ────────────────────────────────────── */
-    #boot-status {
-      position: fixed;
-      top: calc(18px + env(safe-area-inset-top, 0px));
-      right: 22px;
-      z-index: 10;
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.14);
-      pointer-events: none;
-      user-select: none;
-      white-space: nowrap;
-      transition: opacity 1.8s ease;
-    }
-    #boot-status.fade-out { opacity: 0; }
-
-    /* ── Departure board — the entry threshold ──────────────────────── */
-    /* Positioned at the bottom like a platform departure sign.         */
-    /* Not a button. A direction. The threshold.                        */
+    /* Departure board */
     #departure {
       position: fixed;
       left: 0; right: 0; bottom: 0;
       z-index: 10;
       opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 2.4s ease, transform 2.4s ease;
+      transform: translateY(4px);
+      transition: opacity 2.0s ease, transform 2.0s ease;
       pointer-events: none;
     }
     #departure.online {
@@ -99,14 +67,13 @@
       pointer-events: all;
     }
 
-    /* The platform line — a physical threshold */
     #dep-rule {
       height: 1px;
       background: linear-gradient(
         to right,
         transparent,
-        rgba(255,255,255,0.08) 15%,
-        rgba(255,255,255,0.08) 85%,
+        rgba(255,255,255,0.07) 15%,
+        rgba(255,255,255,0.07) 85%,
         transparent
       );
     }
@@ -120,14 +87,13 @@
       padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
     }
 
-    /* Destination — platform sign, not a button */
     #dep-cta {
       font-family: var(--sans);
       font-size: clamp(14px, 1.8vw, 20px);
       font-weight: 500;
       letter-spacing: 0.07em;
       text-transform: uppercase;
-      color: rgba(195, 188, 175, 0.60);
+      color: rgba(195,188,175,0.60);
       text-decoration: none;
       display: flex;
       align-items: center;
@@ -135,38 +101,26 @@
       transition: color 0.8s ease;
       white-space: nowrap;
     }
-    #dep-cta:hover { color: rgba(218, 210, 197, 0.90); }
-    #dep-arrow {
-      opacity: 0.38;
-      transition: transform 0.55s ease, opacity 0.55s ease;
-    }
-    #dep-cta:hover #dep-arrow {
-      transform: translateX(5px);
-      opacity: 0.65;
-    }
+    #dep-cta:hover { color: rgba(218,210,197,0.90); }
+    #dep-arrow { opacity: 0.38; transition: transform 0.55s ease, opacity 0.55s ease; }
+    #dep-cta:hover #dep-arrow { transform: translateX(5px); opacity: 0.65; }
 
-    /* Station count — right side, quiet secondary info */
     #dep-count {
       font-family: var(--mono);
       font-size: 8px;
       letter-spacing: 0.09em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.13);
+      color: rgba(255,255,255,0.13);
       text-align: right;
-      flex: 1;
       opacity: 0;
       transition: opacity 2.2s ease;
     }
     #dep-count.ready { opacity: 1; }
 
-    /* ── Realtime note — small discovery ────────────────────────────── */
-    /* ── Tunnel vignette — departure transition ─────────────────────── */
+    /* Tunnel iris — departure transition */
     #tunnel {
-      position: fixed; inset: 0;
-      z-index: 50;
-      pointer-events: none;
-      opacity: 0;
-      /* drawn via JS radial-gradient */
+      position: fixed; inset: 0; z-index: 50;
+      pointer-events: none; opacity: 0;
     }
   </style>
 </head>
@@ -174,17 +128,12 @@
 
   <canvas id="c"></canvas>
 
-  <!-- System identifier -->
   <div id="sys-label">
     <span>T—BANEN</span>
     <span class="sys-line" id="id-line"></span>
     <span class="sys-dot" id="id-dot"></span>
   </div>
 
-  <!-- Boot status -->
-  <div id="boot-status">INITIALISERER</div>
-
-  <!-- Departure board — the threshold between outside and inside -->
   <div id="departure">
     <div id="dep-rule"></div>
     <div id="dep-inner">
@@ -196,66 +145,91 @@
     </div>
   </div>
 
-  <!-- Tunnel iris overlay (populated by JS) -->
   <div id="tunnel"></div>
 
   <script>
   // ═══════════════════════════════════════════════════════════════════
   //  T—BANEN — SPLASH V2 EXPERIMENT
-  //  Concept: entering a metro system, not a website.
-  //  Key differences from V1 splash:
-  //   - Network is protagonist, not background
-  //   - CTA is a departure sign at the bottom threshold
-  //   - Entry = zoom toward central Oslo + tunnel iris close
-  //   - No centered title-card composition
+  //
+  //  Animation concept: Oslo's metro infrastructure coming online.
+  //  Seven phases, driven by a single animation clock:
+  //
+  //  Phase 1 — darkness
+  //  Phase 2 — central Oslo nodes activate (NT, Stortinget, JT)
+  //  Phase 3 — lines propagate outward from the center
+  //  Phase 4 — terminal stations connect, full network established
+  //  Phase 5 — realtime train signals begin moving
+  //  Phase 6 — line colors saturate in
+  //  Phase 7 — archive entry appears
   // ═══════════════════════════════════════════════════════════════════
 
   const LC = { 1:'#5B9BD5', 2:'#E8751A', 3:'#8B5EA7', 4:'#C8102E', 5:'#3D9A5C' };
 
-  // ── System state ─────────────────────────────────────────────────
-  let systemSat    = 0;
-  let targetSat    = 0;
-  let systemOnline = false;
-  let countReady   = false;
+  // ── Animation timeline ────────────────────────────────────────────
+  // All phases driven by animTime — independent of async data loading.
 
-  let scanProgress = 0;
-  const SCAN_SPEED = 0.10;
-  let scanDir = 1;
+  let animTime = 0;
 
-  let nodeFlashes = [];
-  let flashTimer  = 0;
-  const FLASH_INTERVAL = 0.9;
+  // Phase thresholds (seconds from first frame)
+  const PH_NODES  = 0.7;   // Phase 2: central nodes activate
+  const PH_LINES  = 1.5;   // Phase 3: propagation begins
+  const PH_PROP   = 4.5;   // duration: each segment takes this long to fully draw
+  const PH_TRAINS = 6.5;   // Phase 5: train signals appear
+  const PH_COLORS = 7.2;   // Phase 6: line colors saturate
+  const PH_CTA    = 9.0;   // Phase 7: archive entry appears
+
+  // Per-segment propagation stagger (seconds after PH_LINES)
+  // Inner/central segments start first, outlying branches last
+  const SEG_STAGGER = [0, 0.25, 0.45, 0.10, 0.40, 0.60, 0.80, 0.18, 0.85];
+
+  // The station each segment propagates outward from (the "activation node")
+  const SEG_CENTER_ID = [
+    'nationaltheateret',  // 0: L1 Frognerseteren–Bergkrystallen
+    'nationaltheateret',  // 1: L2 Østerås–Ellingsrudåsen
+    'nationaltheateret',  // 2: L3 Kolsås–Mortensrud
+    'nationaltheateret',  // 3: L4 Bergkrystallen–Nydalen
+    'nydalen',            // 4: L4 ring N (Nydalen–Tøyen)
+    'nydalen',            // 5: L4 east (Nydalen–Vestli)
+    'sinsen',             // 6: L4 branch (Sinsen–Lørен)
+    'nationaltheateret',  // 7: L5 Sognsvann–Vestli
+    'sinsen',             // 8: L5 branch (Sinsen–Lørен)
+  ];
+
+  // Animation state — computed each frame from animTime
+  let trainVis  = 0;   // 0→1: train signal opacity
+  let colorSat  = 0;   // 0→1: line color saturation (gray→full color)
+  let ctaShown  = false;
+  let countReady = false;
+
+  // Per-segment: how far the line has grown outward from center
+  // lp = leftProgress (center → terminus 0)
+  // rp = rightProgress (center → terminus end)
+  let segAnim = [];
 
   // ── Departure transition state ───────────────────────────────────
-  let departing     = false;
-  let zooming       = false;
-  let zoomProgress  = 0;
+  let systemOnline   = false; // true once CTA is shown
+  let departing      = false;
+  let zooming        = false;
+  let zoomProgress   = 0;
   let tunnelProgress = 0;
-  let speedMult     = 1;
+  let speedMult      = 1;
   let targetSpeedMult = 1;
 
-  // Base transform — stored after resize, used as lerp start during zoom
   let baseScale, baseOffsetX, baseOffsetY;
   let zoomTargetScale, zoomTargetOffsetX, zoomTargetOffsetY;
 
   // ── Color utilities ───────────────────────────────────────────────
-  function hexToRgb(hex) {
-    return [
-      parseInt(hex.slice(1,3),16),
-      parseInt(hex.slice(3,5),16),
-      parseInt(hex.slice(5,7),16),
-    ];
+  function hexToRgb(h) {
+    return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
   }
-
   function saturateColor(hex, t) {
     const [r,g,b] = hexToRgb(hex);
-    const lum = Math.round(0.299*r + 0.587*g + 0.114*b);
+    const lum = Math.round(0.299*r+0.587*g+0.114*b);
     return `rgb(${Math.round(lum+(r-lum)*t)},${Math.round(lum+(g-lum)*t)},${Math.round(lum+(b-lum)*t)})`;
   }
-
   function hexAlpha(hex, a, sat = 1) {
     const [r,g,b] = hexToRgb(hex);
-    const lum = 0.299*r + 0.587*g + 0.114*b;
+    const lum = 0.299*r+0.587*g+0.114*b;
     return `rgba(${Math.round(lum+(r-lum)*sat)},${Math.round(lum+(g-lum)*sat)},${Math.round(lum+(b-lum)*sat)},${a})`;
   }
 
@@ -385,16 +359,20 @@
     { line:5, color:LC[5], ids:['sinsen','loren'] },
   ];
 
-  const SCAN_SEG_IDX = 0;
-
-  const SEG_DEPTH = [
-    0.55, 0.65, 0.58, 0.80, 0.95, 0.62, 0.28, 0.82, 0.28,
-  ];
-
+  const SEG_DEPTH = [0.55, 0.65, 0.58, 0.80, 0.95, 0.62, 0.28, 0.82, 0.28];
   const LINE_PHASE = { 1:0.0, 2:1.3, 3:2.6, 4:3.9, 5:5.2 };
 
   const TUNNEL_NODES = [
     'nationaltheateret','stortinget','jernbanetorget','gronland','toyen','carlberner','sinsen',
+  ];
+
+  // Central Oslo nodes that activate early in Phase 2
+  const BOOT_NODES = [
+    { id:'jernbanetorget',    delay:0.0 },
+    { id:'stortinget',        delay:0.28 },
+    { id:'nationaltheateret', delay:0.50 },
+    { id:'gronland',          delay:0.72 },
+    { id:'majorstua',         delay:0.95 },
   ];
 
   // ── Canvas setup ──────────────────────────────────────────────────
@@ -410,9 +388,10 @@
     canvas.style.width  = window.innerWidth  + 'px';
     canvas.style.height = window.innerHeight + 'px';
     const pad = 0.08;
-    const scaleX = (window.innerWidth  * (1 - pad * 2)) / VB_W;
-    const scaleY = (window.innerHeight * (1 - pad * 2)) / VB_H;
-    scale   = Math.min(scaleX, scaleY) * devicePixelRatio;
+    scale   = Math.min(
+      (window.innerWidth  * (1-pad*2)) / VB_W,
+      (window.innerHeight * (1-pad*2)) / VB_H
+    ) * devicePixelRatio;
     offsetX = (canvas.width  - VB_W * scale) / 2;
     offsetY = (canvas.height - VB_H * scale) / 2;
     storeBaseTransform();
@@ -422,12 +401,9 @@
     baseScale   = scale;
     baseOffsetX = offsetX;
     baseOffsetY = offsetY;
-    // Zoom target: 2x zoom toward the central Oslo tunnel
     const [ntx, nty] = COORDS['nationaltheateret'];
-    // Shift target slightly toward stortinget (the heart of the crossing)
     const [stx, sty] = COORDS['stortinget'];
-    const cx = (ntx + stx) / 2;
-    const cy = (nty + sty) / 2;
+    const cx = (ntx + stx) / 2, cy = (nty + sty) / 2;
     zoomTargetScale   = scale * 2.1;
     zoomTargetOffsetX = canvas.width  / 2 - cx * zoomTargetScale;
     zoomTargetOffsetY = canvas.height / 2 - cy * zoomTargetScale;
@@ -445,6 +421,19 @@
       ...seg,
       pts: seg.ids.map(id => COORDS[id] ? toCanvas(id) : null).filter(Boolean),
     }));
+  }
+
+  // ── Seg anim setup ────────────────────────────────────────────────
+  // Each segment knows where its center is, and tracks how far left/right
+  // the line front has propagated.
+
+  function buildSegAnim() {
+    segAnim = LINE_SEGS.map((seg, i) => {
+      const cid = SEG_CENTER_ID[i];
+      let ci = seg.ids.indexOf(cid);
+      if (ci < 0) ci = Math.floor(seg.ids.length / 2);
+      return { ci, lp: 0, rp: 0 };
+    });
   }
 
   // ── Grain ─────────────────────────────────────────────────────────
@@ -465,129 +454,7 @@
     grainPattern = ctx.createPattern(off, 'repeat');
   }
 
-  // ── Atmosphere ────────────────────────────────────────────────────
-  function drawAtmosphere(hover = 0) {
-    const w = canvas.width, h = canvas.height;
-    const cx = w * 0.50, cy = h * 0.52;
-
-    // Deeper vignette — darker corners feel more like underground tunnels
-    const vig = ctx.createRadialGradient(cx, cy * 0.88, h * 0.05, cx, cy * 0.88, Math.max(w, h) * 0.85);
-    vig.addColorStop(0,   'rgba(0,0,0,0)');
-    vig.addColorStop(0.5, `rgba(0,0,0,${0.12 + (1 - systemSat) * 0.08})`);
-    vig.addColorStop(1,   'rgba(0,0,0,0.80)');
-    ctx.fillStyle = vig; ctx.globalAlpha = 1;
-    ctx.fillRect(0, 0, w, h);
-
-    // Warm amber glow around central Oslo — the heat of the underground
-    const warmBase = (0.05 + hover * 0.03) * systemSat;
-    if (warmBase > 0.001) {
-      const warm = ctx.createRadialGradient(cx * 1.04, cy * 1.08, 0, cx * 1.04, cy * 1.08, h * (0.42 + hover * 0.1));
-      warm.addColorStop(0,   `rgba(155, 125, 85, ${warmBase})`);
-      warm.addColorStop(0.45, `rgba(115, 95,  65, ${warmBase * 0.35})`);
-      warm.addColorStop(1,   'rgba(0,0,0,0)');
-      ctx.fillStyle = warm; ctx.globalAlpha = 1;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    if (grainPattern) {
-      ctx.fillStyle = grainPattern;
-      ctx.globalAlpha = 0.028;
-      ctx.fillRect(0, 0, w, h);
-    }
-
-    ctx.globalAlpha = 1;
-  }
-
-  // ── Network ───────────────────────────────────────────────────────
-  function drawNetwork(t, hover = 0) {
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-
-    const opacityBoost = 0.5 + 0.5 * systemSat;
-
-    // Draw lines — slightly heavier during departure (feel them wake up)
-    const departureBoost = zooming ? 1 + zoomProgress * 0.5 : 1;
-
-    LINE_SEGS.forEach((seg, i) => {
-      const pts = segPoints[i].pts;
-      if (pts.length < 2) return;
-      const depth  = SEG_DEPTH[i] ?? 0.6;
-      const rhythm = 0.75 + 0.25 * Math.sin(t * 0.18 + LINE_PHASE[seg.line]);
-      const alpha  = 0.088 * depth * rhythm * opacityBoost * departureBoost;
-      const weight = (0.65 + 0.55 * depth) * scale;
-      const color  = saturateColor(seg.color, systemSat);
-
-      ctx.beginPath();
-      ctx.moveTo(pts[0][0], pts[0][1]);
-      for (let k = 1; k < pts.length; k++) ctx.lineTo(pts[k][0], pts[k][1]);
-      ctx.strokeStyle = color;
-      ctx.lineWidth   = weight;
-      ctx.globalAlpha = alpha;
-      ctx.stroke();
-    });
-
-    // Station dots
-    const drawn = new Set();
-    LINE_SEGS.forEach((seg, i) => {
-      const depth = SEG_DEPTH[i] ?? 0.6;
-      seg.ids.forEach(id => {
-        if (drawn.has(id) || !COORDS[id]) return;
-        drawn.add(id);
-        const [cx, cy] = toCanvas(id);
-        const r = (0.7 + 0.8 * depth) * scale;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
-        ctx.fillStyle   = '#ffffff';
-        ctx.globalAlpha = (0.04 + 0.08 * depth) * opacityBoost;
-        ctx.fill();
-      });
-    });
-
-    // Tunnel glow around central stations — warmer and stronger during departure
-    if (systemSat > 0.05) {
-      const tunnelBoost = 1 + zoomProgress * 0.6;
-      TUNNEL_NODES.forEach((id, ti) => {
-        if (!COORDS[id]) return;
-        const [cx, cy] = toCanvas(id);
-        const sat = systemSat;
-        const gr1 = (90 + hover * 18) * scale;
-        const oa1 = (0.038 + hover * 0.018) * sat * tunnelBoost;
-        const grd1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr1);
-        grd1.addColorStop(0, `rgba(200,182,155,${oa1})`);
-        grd1.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.beginPath();
-        ctx.arc(cx, cy, gr1, 0, Math.PI * 2);
-        ctx.fillStyle = grd1; ctx.globalAlpha = 1;
-        ctx.fill();
-        if (ti >= 1 && ti <= 5) {
-          const gr2 = 32 * scale;
-          const oa2 = (0.055 + hover * 0.028) * sat * tunnelBoost;
-          const grd2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr2);
-          grd2.addColorStop(0, `rgba(220,198,165,${oa2})`);
-          grd2.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.beginPath();
-          ctx.arc(cx, cy, gr2, 0, Math.PI * 2);
-          ctx.fillStyle = grd2; ctx.globalAlpha = 1;
-          ctx.fill();
-        }
-      });
-    }
-
-    ctx.globalAlpha = 1;
-  }
-
-  // ── Loading activity ──────────────────────────────────────────────
-  const ALL_STATION_IDS = [...new Set(LINE_SEGS.flatMap(s => s.ids))];
-  const CENTRE_IDS = ['nationaltheateret','stortinget','jernbanetorget','gronland',
-                      'toyen','majorstua','carlberner','sinsen','nydalen'];
-
-  function spawnNodeFlash() {
-    const pool = Math.random() < 0.6 ? CENTRE_IDS : ALL_STATION_IDS;
-    const id   = pool[Math.floor(Math.random() * pool.length)];
-    if (!COORDS[id]) return;
-    const [x, y] = toCanvas(id);
-    nodeFlashes.push({ x, y, t: 0 });
-  }
+  // ── Path utilities ────────────────────────────────────────────────
 
   function interpolateAlongPath(pts, t) {
     if (!pts?.length) return null;
@@ -612,59 +479,285 @@
     return pts[pts.length-1];
   }
 
-  function drawLoadingActivity(dt) {
-    const loadingAlpha = Math.max(0, 1 - systemSat * 2.5);
-    if (loadingAlpha < 0.01) return;
-
-    // Scan pulse along L1
-    const pts = segPoints[SCAN_SEG_IDX]?.pts;
-    if (pts && pts.length >= 2) {
-      const pos = interpolateAlongPath(pts, scanProgress);
-      if (pos) {
-        const [x, y] = pos;
-        const r = 1.6 * scale;
-        const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 8);
-        grd.addColorStop(0,   `rgba(205,215,225,${0.10 * loadingAlpha})`);
-        grd.addColorStop(0.4, `rgba(185,200,215,${0.04 * loadingAlpha})`);
-        grd.addColorStop(1,   'rgba(0,0,0,0)');
-        ctx.beginPath();
-        ctx.arc(x, y, r * 8, 0, Math.PI * 2);
-        ctx.fillStyle = grd; ctx.globalAlpha = 1;
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle   = `rgba(218,226,234,${0.50 * loadingAlpha})`;
-        ctx.globalAlpha = 1;
-        ctx.fill();
-        for (let i = 1; i <= 5; i++) {
-          const frac = i / 6;
-          const tp   = scanProgress - scanDir * 0.014 * frac;
-          const tpos = interpolateAlongPath(pts, Math.max(0, Math.min(1, tp)));
-          if (!tpos) continue;
-          ctx.beginPath();
-          ctx.arc(tpos[0], tpos[1], r * (1 - frac * 0.7), 0, Math.PI * 2);
-          ctx.fillStyle   = `rgba(200,212,222,${0.18 * (1-frac) * loadingAlpha})`;
-          ctx.globalAlpha = 1;
-          ctx.fill();
-        }
+  // Draw a path from pts[0] to a point `progress` fraction along its length.
+  // Used to propagate lines outward from their center activation point.
+  function drawPartialPath(pts, progress) {
+    if (!pts || pts.length < 2 || progress <= 0) return;
+    if (progress >= 1) {
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+      return;
+    }
+    let total = 0;
+    const segLens = [];
+    for (let i = 1; i < pts.length; i++) {
+      const dx = pts[i][0]-pts[i-1][0], dy = pts[i][1]-pts[i-1][1];
+      const len = Math.sqrt(dx*dx+dy*dy);
+      total += len;
+      segLens.push(len);
+    }
+    const target = progress * total;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    let acc = 0;
+    for (let i = 0; i < segLens.length; i++) {
+      if (acc + segLens[i] >= target) {
+        const t = (target - acc) / segLens[i];
+        ctx.lineTo(
+          pts[i][0] + (pts[i+1][0] - pts[i][0]) * t,
+          pts[i][1] + (pts[i+1][1] - pts[i][1]) * t
+        );
+        break;
       }
+      acc += segLens[i];
+      ctx.lineTo(pts[i+1][0], pts[i+1][1]);
+    }
+    ctx.stroke();
+  }
+
+  // ── Animation phase update ────────────────────────────────────────
+  // Called each frame to advance the timeline and update all state.
+
+  function updateAnimPhases(dt) {
+    animTime += dt;
+
+    // Phase 3-4: line propagation — each segment grows outward from center
+    if (animTime >= PH_LINES) {
+      const t0 = animTime - PH_LINES;
+      segAnim.forEach((a, i) => {
+        const t = Math.max(0, t0 - SEG_STAGGER[i]) / PH_PROP;
+        a.lp = Math.min(1, t);
+        a.rp = Math.min(1, t);
+      });
     }
 
-    // Node flashes
-    nodeFlashes = nodeFlashes.filter(f => f.t < 1);
-    nodeFlashes.forEach(f => {
-      f.t += dt * 0.55;
-      const ease = 1 - Math.pow(1 - f.t, 2);
-      const maxR  = 22 * scale;
-      const r     = maxR * ease;
-      const alpha = (1 - f.t) * 0.13 * loadingAlpha;
+    // Phase 5: train signals fade in
+    trainVis = animTime >= PH_TRAINS
+      ? Math.min(1, (animTime - PH_TRAINS) / 2.2)
+      : 0;
+
+    // Phase 6: line colors saturate from gray to full
+    colorSat = animTime >= PH_COLORS
+      ? Math.min(1, (animTime - PH_COLORS) / 2.8)
+      : 0;
+
+    // Phase 7: archive entry appears — show CTA, enable interaction
+    if (animTime >= PH_CTA && !ctaShown) {
+      ctaShown = true;
+      systemOnline = true;
+
+      const dep = document.getElementById('departure');
+      dep.classList.add('online');
+
+      setTimeout(() => {
+        const c = document.getElementById('dep-count');
+        if (c && countReady) c.classList.add('ready');
+      }, 900);
+
+      // System label fades in with the CTA
+      document.getElementById('sys-label').classList.add('visible');
+    }
+  }
+
+  // ── Draw: atmosphere ──────────────────────────────────────────────
+  // The atmosphere builds as the network establishes.
+  // Warm central glow tied to colorSat (alive = warm).
+
+  function drawAtmosphere(hover = 0) {
+    const w = canvas.width, h = canvas.height;
+    const cx = w * 0.50, cy = h * 0.52;
+
+    // Vignette — always present, keeps edges dark like a tunnel system
+    const vig = ctx.createRadialGradient(cx, cy*0.88, h*0.05, cx, cy*0.88, Math.max(w,h)*0.88);
+    vig.addColorStop(0,   'rgba(0,0,0,0)');
+    vig.addColorStop(0.5, 'rgba(0,0,0,0.14)');
+    vig.addColorStop(1,   'rgba(0,0,0,0.84)');
+    ctx.fillStyle = vig; ctx.globalAlpha = 1;
+    ctx.fillRect(0, 0, w, h);
+
+    // Warm amber central glow — rises as system comes alive
+    const warmStrength = colorSat;
+    if (warmStrength > 0.005) {
+      const warmBase = (0.045 + hover * 0.028) * warmStrength;
+      const warm = ctx.createRadialGradient(cx*1.04, cy*1.06, 0, cx*1.04, cy*1.06, h*(0.44+hover*0.1));
+      warm.addColorStop(0,    `rgba(150,120,82,${warmBase})`);
+      warm.addColorStop(0.45, `rgba(110,88,60,${warmBase*0.32})`);
+      warm.addColorStop(1,    'rgba(0,0,0,0)');
+      ctx.fillStyle = warm; ctx.globalAlpha = 1;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    // Propagation pulse — a subtle ambient halo around central Oslo
+    // builds during Phase 3 as lines spread, before colors arrive
+    const propStrength = Math.max(0, Math.min(1, (animTime - PH_LINES) / 4.0));
+    if (propStrength > 0.01 && colorSat < 0.99) {
+      const [ntx, nty] = toCanvas('nationaltheateret');
+      const pulse = 0.82 + 0.18 * Math.sin(globalTime * 0.9);
+      const ga = 0.022 * propStrength * pulse * (1 - colorSat * 0.6);
+      const gr = ctx.createRadialGradient(ntx, nty, 0, ntx, nty, 200*scale);
+      gr.addColorStop(0, `rgba(185,175,158,${ga})`);
+      gr.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.beginPath();
-      ctx.arc(f.x, f.y, r, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(190,205,218,${alpha})`;
-      ctx.lineWidth   = 0.8 * scale;
-      ctx.globalAlpha = 1;
-      ctx.stroke();
+      ctx.arc(ntx, nty, 200*scale, 0, Math.PI*2);
+      ctx.fillStyle = gr; ctx.globalAlpha = 1;
+      ctx.fill();
+    }
+
+    if (grainPattern) {
+      ctx.fillStyle = grainPattern;
+      ctx.globalAlpha = 0.026;
+      ctx.fillRect(0, 0, w, h);
+    }
+
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Draw: Phase 2 — central node activation ───────────────────────
+  // Before any lines appear, three anchor points wake up quietly.
+
+  function drawBootNodes() {
+    const t0 = animTime - PH_NODES;
+    if (t0 <= 0) return;
+
+    // Fade these out as line propagation completes their reveal
+    const fadeOut = Math.max(0, 1 - Math.max(0, animTime - (PH_LINES + 1.5)) / 1.2);
+    if (fadeOut <= 0) return;
+
+    BOOT_NODES.forEach(({ id, delay }) => {
+      const a = Math.max(0, Math.min(1, (t0 - delay) / 0.55)) * fadeOut;
+      if (a <= 0 || !COORDS[id]) return;
+      const [cx, cy] = toCanvas(id);
+
+      // Soft halo — like a lamp coming on in a dark room
+      const hr = 36 * scale;
+      const grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, hr);
+      grd.addColorStop(0, `rgba(205,192,170,${0.06 * a})`);
+      grd.addColorStop(0.5, `rgba(180,168,148,${0.03 * a})`);
+      grd.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath();
+      ctx.arc(cx, cy, hr, 0, Math.PI*2);
+      ctx.fillStyle = grd; ctx.globalAlpha = 1;
+      ctx.fill();
+
+      // Node dot
+      const r = 2.0 * scale;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.fillStyle = '#ffffff';
+      ctx.globalAlpha = a * 0.18;
+      ctx.fill();
     });
+
+    ctx.globalAlpha = 1;
+  }
+
+  // ── Draw: Phase 3-4 — network propagation ─────────────────────────
+  // Lines grow outward from their center station.
+  // Station dots appear as the line front reaches them.
+  // Tunnel glow builds around the central corridor.
+
+  function drawNetworkPropagating(t, hover = 0) {
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    // Draw each line segment — split at center, grow outward in both directions
+    LINE_SEGS.forEach((seg, i) => {
+      const anim = segAnim[i];
+      const pts  = segPoints[i].pts;
+      if (!anim || pts.length < 2) return;
+
+      const { ci, lp, rp } = anim;
+      if (lp <= 0 && rp <= 0) return;
+
+      const depth  = SEG_DEPTH[i] ?? 0.6;
+      const rhythm = 0.78 + 0.22 * Math.sin(t * 0.18 + LINE_PHASE[seg.line]);
+      // Opacity rises as propagation progresses, then settles
+      const propAlpha = Math.min(lp + rp, 1);
+      const alpha  = 0.092 * depth * rhythm * propAlpha;
+      const weight = (0.65 + 0.55 * depth) * scale;
+      const color  = saturateColor(seg.color, colorSat);
+
+      ctx.strokeStyle = color;
+      ctx.lineWidth   = weight;
+      ctx.globalAlpha = alpha;
+
+      // Right half: center → right terminus
+      const rightPts = pts.slice(ci);
+      if (rp > 0 && rightPts.length >= 2) drawPartialPath(rightPts, rp);
+
+      // Left half: center → left terminus (reversed so drawing goes outward)
+      const leftPts = pts.slice(0, ci + 1).reverse();
+      if (lp > 0 && leftPts.length >= 2) drawPartialPath(leftPts, lp);
+    });
+
+    // Station dots — appear as the line front reaches them
+    const drawn = new Set();
+    LINE_SEGS.forEach((seg, i) => {
+      const anim  = segAnim[i];
+      const depth = SEG_DEPTH[i] ?? 0.6;
+      if (!anim) return;
+      const { ci, lp, rp } = anim;
+      const nPts = seg.ids.length;
+
+      seg.ids.forEach((id, idx) => {
+        if (drawn.has(id) || !COORDS[id]) return;
+
+        let revealed = false;
+        if (idx === ci) {
+          revealed = lp > 0 || rp > 0;
+        } else if (idx < ci && ci > 0) {
+          const needed = (ci - idx) / ci;
+          revealed = lp >= needed;
+        } else if (idx > ci) {
+          const needed = (idx - ci) / Math.max(1, nPts - 1 - ci);
+          revealed = rp >= needed;
+        }
+
+        if (!revealed) return;
+        drawn.add(id);
+
+        const [dx, dy] = toCanvas(id);
+        const r = (0.72 + 0.82 * depth) * scale;
+        ctx.beginPath();
+        ctx.arc(dx, dy, r, 0, Math.PI*2);
+        ctx.fillStyle   = '#ffffff';
+        ctx.globalAlpha = (0.05 + 0.09 * depth) * Math.min((lp + rp) * 1.5, 1);
+        ctx.fill();
+      });
+    });
+
+    // Tunnel glow — builds around central corridor as lines propagate,
+    // intensifies as colors come in
+    const tunnelBase = Math.max(0, Math.min(1, (animTime - PH_LINES) / 3.5));
+    if (tunnelBase > 0.01) {
+      TUNNEL_NODES.forEach((id, ti) => {
+        if (!COORDS[id]) return;
+        const [cx, cy] = toCanvas(id);
+        const boost = 1 + colorSat * 0.5;
+        const gr1 = (88 + hover * 18) * scale;
+        const oa1 = (0.036 + hover * 0.016) * tunnelBase * boost;
+        const grd1 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr1);
+        grd1.addColorStop(0, `rgba(200,180,152,${oa1})`);
+        grd1.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.beginPath();
+        ctx.arc(cx, cy, gr1, 0, Math.PI*2);
+        ctx.fillStyle = grd1; ctx.globalAlpha = 1;
+        ctx.fill();
+        if (ti >= 1 && ti <= 5) {
+          const gr2 = 30 * scale;
+          const oa2 = (0.052 + hover * 0.024) * tunnelBase * boost;
+          const grd2 = ctx.createRadialGradient(cx, cy, 0, cx, cy, gr2);
+          grd2.addColorStop(0, `rgba(218,196,162,${oa2})`);
+          grd2.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.beginPath();
+          ctx.arc(cx, cy, gr2, 0, Math.PI*2);
+          ctx.fillStyle = grd2; ctx.globalAlpha = 1;
+          ctx.fill();
+        }
+      });
+    }
 
     ctx.globalAlpha = 1;
   }
@@ -676,26 +769,24 @@
   const AVG_STATION_S = 90;
 
   const QUERY_STATIONS = [
-    { nsr: 'NSR:StopPlace:58366', id: 'jernbanetorget' },
-    { nsr: 'NSR:StopPlace:59768', id: 'frognerseteren' },
-    { nsr: 'NSR:StopPlace:58243', id: 'bergkrystallen' },
-    { nsr: 'NSR:StopPlace:59705', id: 'sognsvann'      },
-    { nsr: 'NSR:StopPlace:58277', id: 'osteraas'       },
-    { nsr: 'NSR:StopPlace:58284', id: 'kolsas'         },
-    { nsr: 'NSR:StopPlace:58218', id: 'vestli'         },
-    { nsr: 'NSR:StopPlace:58228', id: 'mortensrud'     },
-    { nsr: 'NSR:StopPlace:58220', id: 'ellingsrudaasen'},
+    { nsr:'NSR:StopPlace:58366', id:'jernbanetorget'   },
+    { nsr:'NSR:StopPlace:59768', id:'frognerseteren'   },
+    { nsr:'NSR:StopPlace:58243', id:'bergkrystallen'   },
+    { nsr:'NSR:StopPlace:59705', id:'sognsvann'        },
+    { nsr:'NSR:StopPlace:58277', id:'osteraas'         },
+    { nsr:'NSR:StopPlace:58284', id:'kolsas'           },
+    { nsr:'NSR:StopPlace:58218', id:'vestli'           },
+    { nsr:'NSR:StopPlace:58228', id:'mortensrud'       },
+    { nsr:'NSR:StopPlace:58220', id:'ellingsrudaasen'  },
   ];
 
   const DEST_TO_ID = {
-    'frognerseteren': 'frognerseteren', 'bergkrystallen': 'bergkrystallen',
-    'ellingsrudåsen': 'ellingsrudaasen', 'østerås': 'osteraas',
-    'kolsås': 'kolsas', 'mortensrud': 'mortensrud',
-    'sognsvann': 'sognsvann', 'vestli': 'vestli',
-    'helsfyr': 'helsfyr', 'ryen': 'ryen', 'brynseng': 'brynseng',
-    'nydalen': 'nydalen', 'majorstua': 'majorstua',
-    'nationaltheateret': 'nationaltheateret',
-    'ringen via tøyen': 'toyen', 'ringen via majorstuen': 'majorstua',
+    'frognerseteren':'frognerseteren','bergkrystallen':'bergkrystallen',
+    'ellingsrudåsen':'ellingsrudaasen','østerås':'osteraas','kolsås':'kolsas',
+    'mortensrud':'mortensrud','sognsvann':'sognsvann','vestli':'vestli',
+    'helsfyr':'helsfyr','ryen':'ryen','brynseng':'brynseng','nydalen':'nydalen',
+    'majorstua':'majorstua','nationaltheateret':'nationaltheateret',
+    'ringen via tøyen':'toyen','ringen via majorstuen':'majorstua',
   };
 
   const SEG_IDX_OF = LINE_SEGS.map(seg => {
@@ -714,10 +805,9 @@
   }
 
   function buildQuery() {
-    const startTime = new Date(Date.now() - 12 * 60 * 1000).toISOString();
+    const startTime = new Date(Date.now() - 12*60*1000).toISOString();
     const fields = `estimatedCalls(numberOfDepartures:25 startTime:"${startTime}" timeRange:1500 whiteListedModes:[metro]){realtime expectedDepartureTime destinationDisplay{frontText} serviceJourney{id line{publicCode}}}`;
-    const aliases = QUERY_STATIONS.map(({nsr,id}) => `${id}:stopPlace(id:"${nsr}"){${fields}}`).join('\n');
-    return `{${aliases}}`;
+    return `{${QUERY_STATIONS.map(({nsr,id})=>`${id}:stopPlace(id:"${nsr}"){${fields}}`).join('\n')}}`;
   }
 
   let usingRealtime = false;
@@ -726,12 +816,12 @@
   async function fetchEnturTrains() {
     try {
       const res = await fetch(ENTUR_GQL, {
-        method: 'POST',
-        headers: { 'ET-Client-Name': ENTUR_CLIENT, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: buildQuery() }),
+        method:'POST',
+        headers:{'ET-Client-Name':ENTUR_CLIENT,'Content-Type':'application/json'},
+        body:JSON.stringify({query:buildQuery()}),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const { data } = await res.json();
+      const {data} = await res.json();
       if (!data) throw new Error('no data');
 
       const now = Date.now();
@@ -752,7 +842,7 @@
           if (secsUntil < -600 || secsUntil > 1200) continue;
           const qsLoc = findInSegments(lineNum, qs.id);
           if (!qsLoc) continue;
-          const { si: segIdx, idx: qsIdx } = qsLoc;
+          const {si:segIdx, idx:qsIdx} = qsLoc;
           const seg = LINE_SEGS[segIdx];
           const nStations = seg.ids.length;
           const destText = (call.destinationDisplay?.frontText ?? '').toLowerCase();
@@ -770,30 +860,27 @@
           seenJourneys.add(journeyId);
           totalReal++;
           newTrains.push({
-            segIdx, progress: t, targetProgress: t,
-            color: LC[lineNum], pulse: Math.random() * Math.PI * 2,
-            r: 2.5, real: true, dir, speed: 1/(nStations*AVG_STATION_S), journeyId,
+            segIdx, progress:t, targetProgress:t,
+            color:LC[lineNum], pulse:Math.random()*Math.PI*2,
+            r:2.5, real:true, dir, speed:1/(nStations*AVG_STATION_S), journeyId,
           });
         }
       }
 
       if (totalReal === 0) return false;
-
-      const incomingById = new Map(newTrains.map(t => [t.journeyId, t]));
-      const existingById = new Map(trains.filter(t => t.real && t.journeyId).map(t => [t.journeyId, t]));
-      for (const [jid, inc] of incomingById) {
+      const incomingById = new Map(newTrains.map(t=>[t.journeyId,t]));
+      const existingById = new Map(trains.filter(t=>t.real&&t.journeyId).map(t=>[t.journeyId,t]));
+      for (const [jid,inc] of incomingById) {
         const ex = existingById.get(jid);
         if (ex) { ex.targetProgress = inc.targetProgress; ex.dir = inc.dir; ex.speed = inc.speed; }
       }
-      for (const [jid, inc] of incomingById) {
+      for (const [jid,inc] of incomingById) {
         if (!existingById.has(jid)) { inc.pulse = 0; trains.push(inc); }
       }
-      trains = trains.filter(t => !t.real || !t.journeyId || incomingById.has(t.journeyId));
+      trains = trains.filter(t=>!t.real||!t.journeyId||incomingById.has(t.journeyId));
       usingRealtime = true;
       return true;
-    } catch(e) {
-      return false;
-    }
+    } catch(e) { return false; }
   }
 
   let trains = [];
@@ -825,35 +912,24 @@
     lastTime = now;
     globalTime += dt;
 
-    // Saturation lerp
-    systemSat += (targetSat - systemSat) * Math.min(dt * 0.32, 1);
-
     // Speed multiplier lerp (accelerates during departure)
     speedMult += (targetSpeedMult - speedMult) * Math.min(dt * 2.8, 1);
 
-    // Scan pulse
-    scanProgress += SCAN_SPEED * dt * scanDir;
-    if (scanProgress >= 1) { scanProgress = 1; scanDir = -1; }
-    if (scanProgress <= 0) { scanProgress = 0; scanDir =  1; }
-
-    if (!systemOnline || systemSat < 0.8) {
-      flashTimer += dt;
-      if (flashTimer >= FLASH_INTERVAL) { flashTimer = 0; spawnNodeFlash(); }
-    }
-
     gatewayHover += ((gatewayOver ? 1 : 0) - gatewayHover) * Math.min(dt * 2.2, 1);
 
-    // Zoom toward central Oslo during departure
+    // Advance animation phases
+    updateAnimPhases(dt);
+
+    // Departure zoom toward central Oslo
     if (zooming) {
       zoomProgress = Math.min(1, zoomProgress + dt / 0.7);
       const ease = 1 - Math.pow(1 - zoomProgress, 3);
-
       scale   = baseScale   + (zoomTargetScale   - baseScale)   * ease;
       offsetX = baseOffsetX + (zoomTargetOffsetX - baseOffsetX) * ease;
       offsetY = baseOffsetY + (zoomTargetOffsetY - baseOffsetY) * ease;
       buildSegPoints();
 
-      // Tunnel iris closing: transparent center shrinks as darkness closes in
+      // Tunnel iris closes from edges inward
       tunnelProgress = Math.min(1, tunnelProgress + dt / 0.65);
       const te = 1 - Math.pow(1 - tunnelProgress, 2.5);
       const innerPct = Math.max(0, Math.round(46 - te * 48));
@@ -866,10 +942,10 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     drawAtmosphere(gatewayHover);
-    drawNetwork(globalTime, gatewayHover);
-    drawLoadingActivity(dt);
+    drawBootNodes();
+    drawNetworkPropagating(globalTime, gatewayHover);
 
-    // Train signals
+    // Phase 5: train signals — hidden until trainVis > 0
     trains.forEach(train => {
       train.pulse += dt * 0.8;
       train.progress += train.speed * speedMult * dt * train.dir;
@@ -882,8 +958,7 @@
         if (train.progress < 0) { train.progress = 0; train.dir =  1; }
       }
 
-      const trainAlpha = systemSat;
-      if (trainAlpha < 0.02) return;
+      if (trainVis < 0.02) return;
 
       const pts = segPoints[train.segIdx]?.pts;
       if (!pts || pts.length < 2) return;
@@ -894,6 +969,7 @@
       const pulse = (0.7 + 0.3 * Math.sin(train.pulse)) * (1 + gatewayHover * 0.28);
       const r     = train.r * scale;
       const color = train.color;
+      const alpha = trainVis;
 
       // Trail
       for (let i = 1; i <= 5; i++) {
@@ -904,42 +980,42 @@
         ctx.beginPath();
         ctx.arc(tpos[0], tpos[1], Math.max(r*(1-frac*0.55), 0.5), 0, Math.PI*2);
         ctx.fillStyle   = color;
-        ctx.globalAlpha = 0.22 * pulse * (1-frac) * trainAlpha;
+        ctx.globalAlpha = 0.22 * pulse * (1-frac) * alpha;
         ctx.fill();
       }
 
       // Bloom
       const bloom = ctx.createRadialGradient(x, y, 0, x, y, r*5.5);
-      bloom.addColorStop(0,   hexAlpha(color, 0.14*pulse, systemSat));
-      bloom.addColorStop(0.4, hexAlpha(color, 0.06*pulse, systemSat));
-      bloom.addColorStop(1,   hexAlpha(color, 0, systemSat));
+      bloom.addColorStop(0,   hexAlpha(color, 0.14*pulse, colorSat));
+      bloom.addColorStop(0.4, hexAlpha(color, 0.06*pulse, colorSat));
+      bloom.addColorStop(1,   hexAlpha(color, 0, colorSat));
       ctx.beginPath();
       ctx.arc(x, y, r*5.5, 0, Math.PI*2);
-      ctx.fillStyle = bloom; ctx.globalAlpha = trainAlpha;
+      ctx.fillStyle = bloom; ctx.globalAlpha = alpha;
       ctx.fill();
 
       // Tight glow
       const grd = ctx.createRadialGradient(x, y, 0, x, y, r*2.5);
-      grd.addColorStop(0,   hexAlpha(color, 0.38*pulse, systemSat));
-      grd.addColorStop(0.5, hexAlpha(color, 0.15*pulse, systemSat));
-      grd.addColorStop(1,   hexAlpha(color, 0, systemSat));
+      grd.addColorStop(0,   hexAlpha(color, 0.38*pulse, colorSat));
+      grd.addColorStop(0.5, hexAlpha(color, 0.15*pulse, colorSat));
+      grd.addColorStop(1,   hexAlpha(color, 0, colorSat));
       ctx.beginPath();
       ctx.arc(x, y, r*2.5, 0, Math.PI*2);
-      ctx.fillStyle = grd; ctx.globalAlpha = trainAlpha;
+      ctx.fillStyle = grd; ctx.globalAlpha = alpha;
       ctx.fill();
 
       // Core
       ctx.beginPath();
       ctx.arc(x, y, r, 0, Math.PI*2);
       ctx.fillStyle   = color;
-      ctx.globalAlpha = 0.82 * pulse * trainAlpha;
+      ctx.globalAlpha = 0.82 * pulse * alpha;
       ctx.fill();
 
       // Specular
       ctx.beginPath();
       ctx.arc(x, y, r*0.42, 0, Math.PI*2);
       ctx.fillStyle   = '#ffffff';
-      ctx.globalAlpha = 0.30 * pulse * trainAlpha;
+      ctx.globalAlpha = 0.30 * pulse * alpha;
       ctx.fill();
 
       ctx.globalAlpha = 1;
@@ -948,74 +1024,35 @@
     requestAnimationFrame(render);
   }
 
-  // ── Boot sequence ─────────────────────────────────────────────────
-  const STATUS_MSGS = ['LASTER','OSLO T-BANE','T-BANEN'];
-  let statusIdx = 0;
-  const statusEl  = document.getElementById('boot-status');
-  const countEl   = document.getElementById('dep-count');
-  const departureEl = document.getElementById('departure');
+  // ── Boot: load data asynchronously ───────────────────────────────
+  // Visual animation runs on its own clock (animTime).
+  // Data loading happens in parallel — trains update when data arrives.
 
-  async function bootSystem() {
-    const msgTimer = setInterval(() => {
-      statusIdx = (statusIdx + 1) % STATUS_MSGS.length;
-      if (statusEl) statusEl.textContent = STATUS_MSGS[statusIdx];
-    }, 1600);
-
-    const BOOT_TIMEOUT = 5000;
-
-    const stationsLoad = fetch('/tbanen/data/stations.json')
+  async function bootData() {
+    // Station count for the departure board
+    fetch('/tbanen/data/stations.json')
       .then(r => r.json())
       .then(data => {
         const total = data.stations.length;
         const done  = data.stations.filter(s => s.image).length;
         countReady = true;
-        if (countEl) countEl.textContent = `${done} / ${total} stasjoner`;
+        const c = document.getElementById('dep-count');
+        if (c) {
+          c.textContent = `${done} / ${total} stasjoner`;
+          if (ctaShown) c.classList.add('ready');
+        }
       })
-      .catch(() => {
-        if (countEl) countEl.textContent = '5 linjer · 101 stasjoner';
-        countReady = true;
-      });
+      .catch(() => { countReady = true; });
 
-    const enturLoad = fetchEnturTrains()
-      .then(ok => { if (!ok) spawnSimulatedTrains(); })
-      .catch(() => { spawnSimulatedTrains(); });
+    // Entur — try realtime, fall back to simulated
+    const ok = await fetchEnturTrains().catch(() => false);
+    if (!ok) spawnSimulatedTrains();
 
-    const imageLoad = new Promise(res => {
-      const img = new Image();
-      img.onload = img.onerror = () => res();
-      img.src = '/tbanen/images/stations/nationaltheateret.jpg';
-    });
-
-    const timeout = new Promise(res => setTimeout(res, BOOT_TIMEOUT));
-
-    await Promise.race([Promise.all([enturLoad, imageLoad]), timeout]);
-
-    clearInterval(msgTimer);
-    goOnline();
-
-    stationsLoad.then(() => {
-      if (systemOnline && countEl && countReady) countEl.classList.add('ready');
-    });
-
+    // Keep polling
     setInterval(async () => {
-      const ok = await fetchEnturTrains();
-      if (!ok && !usingRealtime) spawnSimulatedTrains();
+      const r = await fetchEnturTrains().catch(() => false);
+      if (!r && !usingRealtime) spawnSimulatedTrains();
     }, POLL_INTERVAL);
-  }
-
-  function goOnline() {
-    systemOnline = true;
-    targetSat = 1;
-
-    if (statusEl) statusEl.classList.add('fade-out');
-
-    setTimeout(() => {
-      departureEl.classList.add('online');
-      setTimeout(() => {
-        if (countEl && countReady) countEl.classList.add('ready');
-      }, 900);
-    }, 500);
-
   }
 
   // ── Identity dot cycling ──────────────────────────────────────────
@@ -1034,46 +1071,36 @@
   cycleIdentityColor();
   setInterval(cycleIdentityColor, 7200);
 
-  // ── Departure — the actual entry into the network ─────────────────
-  // Zooms toward central Oslo + tunnel iris closes + fade to black
+  // ── Departure: entering the network ──────────────────────────────
   function startDeparture() {
     if (departing || !systemOnline) return;
     departing = true;
 
-    // Hide the departure board and system label
-    departureEl.style.transition = 'opacity 0.3s ease';
-    departureEl.style.opacity = '0';
-    document.getElementById('sys-label').style.opacity = '0';
-    // Start zoom and tunnel
+    document.getElementById('departure').style.transition = 'opacity 0.3s ease';
+    document.getElementById('departure').style.opacity   = '0';
+    document.getElementById('sys-label').style.transition = 'opacity 0.3s ease';
+    document.getElementById('sys-label').style.opacity   = '0';
+
     zooming = true;
     targetSpeedMult = 3.8;
 
-    // Fade to black and navigate after zoom completes
     setTimeout(() => {
       document.body.style.transition = 'opacity 0.40s ease';
-      document.body.style.opacity = '0';
+      document.body.style.opacity    = '0';
       setTimeout(() => { window.location.href = '/tbanen/app.html?enter'; }, 380);
     }, 650);
   }
 
-  // ── Gateway hover ─────────────────────────────────────────────────
   const ctaEl = document.getElementById('dep-cta');
   ctaEl.addEventListener('mouseenter', () => { gatewayOver = true; });
   ctaEl.addEventListener('mouseleave', () => { gatewayOver = false; });
+  ctaEl.addEventListener('click', e => { e.preventDefault(); startDeparture(); });
 
-  // CTA intercept
-  ctaEl.addEventListener('click', e => {
-    e.preventDefault();
-    startDeparture();
-  });
-
-  // Click anywhere
   document.body.addEventListener('click', e => {
     if (e.target.closest('#dep-cta')) return;
     startDeparture();
   });
 
-  // ── bfcache ───────────────────────────────────────────────────────
   window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
 
   // ── Start ─────────────────────────────────────────────────────────
@@ -1081,11 +1108,12 @@
 
   resize();
   buildSegPoints();
+  buildSegAnim();
   buildGrain();
   spawnSimulatedTrains();
 
   requestAnimationFrame(t => { lastTime = t; requestAnimationFrame(render); });
-  bootSystem();
+  bootData();
   </script>
 
 </body>
