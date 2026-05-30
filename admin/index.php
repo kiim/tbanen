@@ -65,7 +65,7 @@ function process_upload(string $tmp, string $station_id): array {
     $id  = preg_replace('/[^a-z0-9_-]/', '', $station_id);
     $ts  = time();
 
-    foreach ([IMG_ORIGINALS, IMG_STATIONS, IMG_THUMBS] as $dir) {
+    foreach ([IMG_ORIGINALS, IMG_STATIONS, IMG_MEDIUM, IMG_THUMBS] as $dir) {
         if (!is_dir($dir)) mkdir($dir, 0755, true);
     }
 
@@ -90,32 +90,45 @@ function process_upload(string $tmp, string $station_id): array {
     $sw = imagesx($src);
     $sh = imagesy($src);
 
-    // Large version — max 1920px wide
-    $maxW = 1920;
-    $lw = min($sw, $maxW);
-    $lh = (int)round($sh * $lw / $sw);
-    $large = imagecreatetruecolor($lw, $lh);
-    // White background (for PNG transparency → JPG conversion)
-    imagefill($large, 0, 0, imagecolorallocate($large, 255, 255, 255));
-    imagecopyresampled($large, $src, 0, 0, 0, 0, $lw, $lh, $sw, $sh);
+    // Helper: resize + white background (handles PNG transparency)
+    $resize = function(int $targetW) use ($src, $sw, $sh): GdImage {
+        $w = min($sw, $targetW);
+        $h = (int)round($sh * $w / $sw);
+        $dst = imagecreatetruecolor($w, $h);
+        imagefill($dst, 0, 0, imagecolorallocate($dst, 8, 8, 8)); // dark bg for photos
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $w, $h, $sw, $sh);
+        return $dst;
+    };
+
+    // Large — 2400px wide (served on desktop / high-DPR)
+    $large = $resize(2400);
     imagejpeg($large, IMG_STATIONS . $id . '.jpg', 88);
-    if (function_exists('imagewebp')) {
-        imagewebp($large, IMG_STATIONS . $id . '.webp', 82);
-    }
-
-    // Thumbnail — 400px wide for admin preview
-    $tw = 400;
-    $th = (int)round($sh * $tw / $sw);
-    $thumb = imagecreatetruecolor($tw, $th);
-    imagefill($thumb, 0, 0, imagecolorallocate($thumb, 8, 8, 8));
-    imagecopyresampled($thumb, $src, 0, 0, 0, 0, $tw, $th, $sw, $sh);
-    imagejpeg($thumb, IMG_THUMBS . $id . '.jpg', 78);
-
-    imagedestroy($src);
+    if (function_exists('imagewebp')) imagewebp($large, IMG_STATIONS . $id . '.webp', 82);
     imagedestroy($large);
+
+    // Medium — 1400px wide (served on mobile / low-DPR desktop)
+    $medium = $resize(1400);
+    imagejpeg($medium, IMG_MEDIUM . $id . '.jpg', 85);
+    if (function_exists('imagewebp')) imagewebp($medium, IMG_MEDIUM . $id . '.webp', 80);
+    imagedestroy($medium);
+
+    // Thumb — 500px wide (admin list, network overlay)
+    $thumb = $resize(500);
+    imagejpeg($thumb, IMG_THUMBS . $id . '.jpg', 78);
     imagedestroy($thumb);
 
-    return ['filename' => $id . '.jpg', 'ts' => $ts];
+    // Blur placeholder — 24px wide, stored as base64 in JSON
+    // Produces ~300–500 byte data URI; CSS blur hides the pixelation
+    $blur = $resize(24);
+    ob_start();
+    imagejpeg($blur, null, 25);
+    $blurBytes = ob_get_clean();
+    $placeholder = 'data:image/jpeg;base64,' . base64_encode($blurBytes);
+    imagedestroy($blur);
+
+    imagedestroy($src);
+
+    return ['filename' => $id . '.jpg', 'ts' => $ts, 'placeholder' => $placeholder];
 }
 
 // ── Request routing ───────────────────────────────────────────────
@@ -168,7 +181,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: ?station=' . urlencode($id) . '&err=' . urlencode($result['error'])); exit;
         }
         $data = load_data();
-        update_station($data, $id, ['image' => $result['filename']]);
+        update_station($data, $id, [
+            'image'            => $result['filename'],
+            'imageVersion'     => $result['ts'],
+            'imagePlaceholder' => $result['placeholder'],
+        ]);
         save_data($data);
         header('Location: ?station=' . urlencode($id) . '&uploaded=1'); exit;
 

@@ -14,6 +14,56 @@ const LINE_ORDER = [1, 2, 3, 4, 5];
 // True only for the first photo load when arriving from the splash
 let isEntryLoad = location.search.includes('enter');
 
+// ── Image utilities ──────────────────────────────────────────────────
+// Detect WebP support once; falls back to jpg if unavailable
+const WEBP = (() => {
+  const c = document.createElement('canvas');
+  c.width = 1; c.height = 1;
+  return c.toDataURL('image/webp').startsWith('data:image/webp');
+})();
+
+// Return the best image URL for a station given the viewport and DPR.
+// New stations (have imageVersion) get size-specific paths + cache-busting.
+// Legacy stations (no imageVersion) fall back to stations/ jpg.
+function imgUrl(s, size = 'auto') {
+  if (!s?.image) return null;
+  const id  = s.image.replace(/\.[^.]+$/, '');
+  const ext = WEBP ? 'webp' : 'jpg';
+  const v   = s.imageVersion ? `?v=${s.imageVersion}` : '';
+
+  if (!s.imageVersion) {
+    // Legacy: only stations/id.jpg exists
+    return `/tbanen/images/stations/${s.image}`;
+  }
+
+  // Choose size based on viewport × DPR, unless overridden
+  const effectivePx = window.innerWidth * (window.devicePixelRatio || 1);
+  const useLarge = size === 'large' || (size === 'auto' && effectivePx > 1400);
+  const dir = useLarge ? 'stations' : 'medium';
+  return `/tbanen/images/${dir}/${id}.${ext}${v}`;
+}
+
+function thumbUrl(s) {
+  if (!s?.image) return null;
+  const id = s.image.replace(/\.[^.]+$/, '');
+  const v  = s.imageVersion ? `?v=${s.imageVersion}` : '';
+  return `/tbanen/images/thumbs/${id}.jpg${v}`;
+}
+
+// Preload images for adjacent stations so navigation feels instant.
+// Uses low-priority Image() objects — browser fetches in background.
+const _preloaded = new Set();
+function preloadAdjacent(prevId, nextId) {
+  [prevId, nextId].filter(Boolean).forEach(id => {
+    if (_preloaded.has(id)) return;
+    const s = stationMap[id];
+    if (!s?.image) return;
+    _preloaded.add(id);
+    const url = imgUrl(s, 'auto');
+    if (url) { const img = new Image(); img.src = url; }
+  });
+}
+
 // ── Init ────────────────────────────────────────────────────────────
 async function init() {
   // Reveal the page — fades in from black (tunnel entry from splash)
@@ -176,6 +226,25 @@ function renderStationMeta(prevId, nextId) {
     nextDest.textContent = nextId && endName ? `${endName} →` : '';
     nextDest.classList.toggle('has-target', !!nextId);
   }
+
+  // Preload adjacent station images in background for instant navigation
+  preloadAdjacent(prevId, nextId);
+}
+
+function showBlurPlaceholder(s) {
+  const blur = qs('#photo-blur');
+  if (!blur) return;
+  if (s.imagePlaceholder) {
+    blur.style.backgroundImage = `url(${s.imagePlaceholder})`;
+    blur.classList.add('active');
+  } else {
+    blur.classList.remove('active');
+  }
+}
+
+function hideBlurPlaceholder() {
+  const blur = qs('#photo-blur');
+  if (blur) blur.classList.remove('active');
 }
 
 function loadPhoto(s) {
@@ -184,13 +253,14 @@ function loadPhoto(s) {
 
   img.classList.remove('loaded', 'exit-left', 'exit-right', 'enter-left', 'enter-right');
   ldr.classList.remove('hidden');
+  showBlurPlaceholder(s);
 
   img.alt = s.name;
-  img.src = `/tbanen/images/stations/${s.image}`;
+  img.src = imgUrl(s);
   img.onload = () => {
     img.classList.add('loaded');
     ldr.classList.add('hidden');
-    // On entry from splash: panel arrives after photo breathes in
+    hideBlurPlaceholder();
     if (isEntryLoad) {
       isEntryLoad = false;
       setTimeout(() => {
@@ -200,33 +270,33 @@ function loadPhoto(s) {
       }, 650);
     }
   };
-  img.onerror = () => { ldr.classList.add('hidden'); };
+  img.onerror = () => { ldr.classList.add('hidden'); hideBlurPlaceholder(); };
 }
 
 function loadPhotoDir(s, dir) {
   const img = qs('#photo-img');
   const ldr = qs('#photo-loading');
 
-  // Pre-position: enter from opposite side
   img.classList.remove('loaded', 'exit-left', 'exit-right', 'enter-left', 'enter-right');
   if (dir === 'next') img.classList.add('enter-right');
   else if (dir === 'prev') img.classList.add('enter-left');
 
   ldr.classList.remove('hidden');
+  showBlurPlaceholder(s);
 
   img.alt = s.name;
-  img.src = `/tbanen/images/stations/${s.image}`;
+  img.src = imgUrl(s);
   img.onload = () => {
-    // Small rAF delay to ensure enter class is painted before removing it
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         img.classList.remove('enter-left', 'enter-right');
         img.classList.add('loaded');
         ldr.classList.add('hidden');
+        hideBlurPlaceholder();
       });
     });
   };
-  img.onerror = () => { ldr.classList.add('hidden'); };
+  img.onerror = () => { ldr.classList.add('hidden'); hideBlurPlaceholder(); };
 }
 
 

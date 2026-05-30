@@ -126,12 +126,27 @@ body.immersive #immersive-label {
   background: var(--black);
 }
 
+/* Blur placeholder — tiny base64 JPEG scaled up with CSS blur.
+   Visible while the full image loads, fades out once loaded. */
+#photo-blur {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(16px);
+  transform: scale(1.06);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+#photo-blur.active { opacity: 1; }
+
 #photo-img {
   width: 100%; height: 100%;
   object-fit: contain;
   display: block;
   opacity: 0;
-  /* V2: longer, smoother fade with directional hint */
+  position: relative; z-index: 2;
   transition: opacity var(--photo-fade) ease, transform var(--photo-fade) ease;
   transform: translateX(0);
 }
