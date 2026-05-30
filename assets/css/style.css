@@ -193,14 +193,36 @@ body.immersive #immersive-label {
   z-index: 10;
   font-family: var(--mono);
   font-size: 9px;
-  letter-spacing: 0.15em;   /* was 0.24em — system label, not branding */
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: #fff;
   text-shadow: 0 1px 6px rgba(0,0,0,0.8);
   text-decoration: none;
   transition: opacity 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 0;
 }
 #btn-home:hover { opacity: 0.7; }
+
+.wordmark-tail {
+  display: flex;
+  align-items: center;
+  margin-left: 6px;
+}
+.wordmark-line {
+  width: 12px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.38;
+}
+.wordmark-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  margin-left: 3px;
+  transition: background-color 2.4s ease;
+}
 
 /* Station name — reads as a destination sign, not a headline or brand */
 #station-name {

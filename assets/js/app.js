@@ -151,6 +151,9 @@ function renderStationMeta(prevId, nextId) {
     `<span style="color:${LC[l]}">Linje ${l}</span>`
   ).join('<span class="line-ind-sep">·</span>');
 
+  const homeDot = qs('#home-dot');
+  if (homeDot) homeDot.style.backgroundColor = LC[cur.line] || '#fff';
+
   const pb = qs('#btn-prev');
   if (prevId) { pb.dataset.target = prevId; pb.disabled = false; }
   else        { pb.dataset.target = '';     pb.disabled = true;  }
