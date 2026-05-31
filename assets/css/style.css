@@ -176,6 +176,7 @@ body.immersive #immersive-label {
 /* Tap zones */
 #tap-prev, #tap-next {
   position: absolute; top: 0; bottom: 0; width: 38%;
+  z-index: 3;
 }
 #tap-prev { left: 0; cursor: w-resize; }
 #tap-next { right: 0; cursor: e-resize; }
