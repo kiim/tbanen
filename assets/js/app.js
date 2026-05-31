@@ -79,7 +79,7 @@ async function init() {
   qs('#btn-menu').addEventListener('click', openMenu);
   qs('#btn-close-menu').addEventListener('click', closeMenu);
   qs('#menu-btn-map').addEventListener('click', () => { closeMenu(); openNetwork(); });
-  qs('#menu-btn-alpha').addEventListener('click', () => { window.location.href = '/tbanen/alle.html'; });
+  qs('#menu-btn-alpha').addEventListener('click', () => { closeMenu(); openNetwork(); });
   qs('#btn-network').addEventListener('click', openNetwork);
   qs('#btn-close-network').addEventListener('click', closeNetwork);
   qs('#btn-prev').addEventListener('click', () => { stopSlideshow(); navPrev(); });
