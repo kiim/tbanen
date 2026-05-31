@@ -541,12 +541,14 @@ const COORDS = {
 
   frognerseteren:    [120, 68],
   voksenkollen:      [148, 98],
-  vettakollen:       [178, 128],
-  besserud:          [208, 158],
-  holmenkollen:      [236, 186],
+  lillevann:         [166, 116],
+  skogen:            [184, 134],
+  voksenlia:         [202, 152],
+  holmenkollen:      [220, 170],
+  besserud:          [238, 188],
   midtstuen:         [256, 206],
   skadalen:          [274, 224],
-  voksenlia:         [292, 242],
+  vettakollen:       [292, 242],
   gullerasen:        [308, 258],
   graakammen:        [324, 274],
   slemdal:           [340, 288],
@@ -645,7 +647,7 @@ const COORDS = {
 };
 
 const LINE_PATHS = {
-  1: ['frognerseteren','voksenkollen','vettakollen','besserud','holmenkollen','midtstuen','skadalen','voksenlia','gullerasen','graakammen','slemdal','ris','gaustad','vinderen','steinerud','froen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hoyenhall','manglerud','ryen','brattlikollen','karlsrud','lambertseter','munkelia','bergkrystallen'],
+  1: ['frognerseteren','voksenkollen','lillevann','skogen','voksenlia','holmenkollen','besserud','midtstuen','skadalen','vettakollen','gullerasen','graakammen','slemdal','ris','gaustad','vinderen','steinerud','froen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hoyenhall','manglerud','ryen','brattlikollen','karlsrud','lambertseter','munkelia','bergkrystallen'],
   2: ['osteraas','lijordet','eiksmarka','ekraveien','roa','hovseter','holmen','makrellbekken','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','tveita','haugerud','trosterud','lindeberg','furuset','ellingsrudaasen'],
   3: ['kolsas','hauger','gjettum','avlos','haslum','gjonnes','bekkestua','ringstabekk','jar','bjornsletta','aasjordet','ullernaasen','montebello','smestad','borgen','majorstua','nationaltheateret','stortinget','jernbanetorget','gronland','toyen','ensjo','helsfyr','brynseng','hellerud','godlia','skoyenaasen','oppsal','ulsrud','boler','bogerud','skullerud','mortensrud'],
   4: ['vestli','stovner','rommen','romsos','grorud','ammerud','kalbakken','rodtvet','veitvet','linderud','vollebekk','rislokka','okern','nydalen','storo','sinsen','carlberner','toyen','gronland','jernbanetorget','stortinget','nationaltheateret','majorstua','blindern','forskningsparken','ullevaal','nydalen','okern','rislokka','vollebekk','linderud','veitvet','rodtvet','kalbakken','ammerud','grorud','romsos','rommen','stovner','vestli'],

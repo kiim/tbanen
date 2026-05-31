@@ -115,6 +115,17 @@
       "year": 1898
     },
     {
+      "id": "skogen",
+      "name": "Skogen",
+      "lines": [
+        1
+      ],
+      "image": null,
+      "terminus": false,
+      "elevation": 378,
+      "year": 1916
+    },
+    {
       "id": "lillevann",
       "name": "Lillevann",
       "lines": [
@@ -1208,12 +1219,14 @@
     "1": [
       "frognerseteren",
       "voksenkollen",
-      "vettakollen",
-      "besserud",
+      "lillevann",
+      "skogen",
+      "voksenlia",
       "holmenkollen",
+      "besserud",
       "midtstuen",
       "skadalen",
-      "voksenlia",
+      "vettakollen",
       "gullerasen",
       "graakammen",
       "slemdal",
