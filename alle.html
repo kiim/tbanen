@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alle stasjoner · T—BANEN / OSLO</title>
+  <meta name="theme-color" content="#080808">
+  <link rel="icon" href="/tbanen/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #080808;
+      --surface: #0f0f0f;
+      --border:  #1a1a1a;
+      --dim:     #555;
+      --secondary: #888;
+      --primary: #c8c2b8;
+      --white:   #eae4da;
+      --sans: 'Barlow', 'Helvetica Neue', Arial, sans-serif;
+      --mono: 'IBM Plex Mono', 'Courier New', monospace;
+      --l1: #5B9BD5; --l2: #E8751A; --l3: #8B5EA7; --l4: #C8102E; --l5: #3D9A5C;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--primary);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100%;
+    }
+
+    /* ── Header ── */
+    .header {
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .header-id {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+      text-decoration: none;
+      padding: 18px 0;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .header-id .dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--l5);
+    }
+
+    /* ── Sort/filter bar ── */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 0;
+      flex-wrap: wrap;
+    }
+
+    .filter-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-right: 4px;
+    }
+
+    .filter-btn {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--secondary);
+      cursor: pointer;
+      transition: border-color 0.12s, color 0.12s, background 0.12s;
+      border-radius: 2px;
+    }
+    .filter-btn:hover { border-color: var(--secondary); color: var(--primary); }
+    .filter-btn.active {
+      background: var(--primary);
+      color: var(--bg);
+      border-color: var(--primary);
+    }
+
+    .line-btn { display: flex; align-items: center; gap: 5px; }
+    .line-pip { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+    /* ── Count ── */
+    .count {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.10em;
+      color: var(--dim);
+      margin-left: auto;
+      white-space: nowrap;
+      padding: 12px 0;
+    }
+
+    /* ── Station grid ── */
+    .station-grid {
+      padding: 0 24px 64px;
+    }
+
+    /* Section heading (line group or letter) */
+    .section-head {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      padding: 24px 0 10px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Station row */
+    .station-item {
+      display: flex;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.08s;
+    }
+    .station-item:hover { background: var(--surface); margin: 0 -24px; padding-left: 24px; padding-right: 24px; }
+    .station-item:last-child { border-bottom: none; }
+
+    .station-thumb {
+      width: 52px;
+      height: 34px;
+      object-fit: cover;
+      flex-shrink: 0;
+      opacity: 0.80;
+      background: var(--surface);
+    }
+    .station-thumb-empty {
+      width: 52px; height: 34px;
+      flex-shrink: 0;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .station-thumb-empty span {
+      font-size: 8px; color: var(--dim);
+    }
+
+    .station-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--white);
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .station-item.unpublished .station-name {
+      color: var(--dim);
+    }
+
+    .station-lines {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .station-line-pip {
+      width: 7px; height: 7px; border-radius: 50%;
+    }
+
+    .station-arrow {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--dim);
+      flex-shrink: 0;
+    }
+    .station-item:not(.unpublished) .station-arrow { color: var(--secondary); }
+    .station-item:hover .station-arrow { color: var(--primary); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <a class="header-id" href="/tbanen/">
+    T—BANEN
+    <span class="dot"></span>
+  </a>
+
+  <div class="filter-bar" id="filter-bar">
+    <span class="filter-label">Vis:</span>
+    <button class="filter-btn active" data-filter="alpha">A–Å</button>
+    <button class="filter-btn line-btn" data-filter="1"><span class="line-pip" style="background:var(--l1)"></span>Linje 1</button>
+    <button class="filter-btn line-btn" data-filter="2"><span class="line-pip" style="background:var(--l2)"></span>Linje 2</button>
+    <button class="filter-btn line-btn" data-filter="3"><span class="line-pip" style="background:var(--l3)"></span>Linje 3</button>
+    <button class="filter-btn line-btn" data-filter="4"><span class="line-pip" style="background:var(--l4)"></span>Linje 4</button>
+    <button class="filter-btn line-btn" data-filter="5"><span class="line-pip" style="background:var(--l5)"></span>Linje 5</button>
+  </div>
+
+  <div class="count" id="count"></div>
+</div>
+
+<div class="station-grid" id="station-grid"></div>
+
+<script>
+const LC = { 1:'#5B9BD5', 2:'#E8751A', 3:'#8B5EA7', 4:'#C8102E', 5:'#3D9A5C' };
+const LN = { 1:'Linje 1 — Frognerseteren / Bergkrystallen',
+             2:'Linje 2 — Østerås / Ellingsrudåsen',
+             3:'Linje 3 — Kolsås / Mortensrud',
+             4:'Linje 4 — Ringen / Vestli',
+             5:'Linje 5 — Sognsvann / Vestli' };
+
+let stations = [], lineSequences = {};
+let activeFilter = 'alpha';
+
+// ── Thumb URL (use thumbs/ if available, else stations/) ──────────
+function thumbSrc(s) {
+  if (!s.image) return null;
+  const id = s.image.replace(/\.[^.]+$/, '');
+  if (s.imageVersion) return `/tbanen/images/thumbs/${id}.jpg?v=${s.imageVersion}`;
+  return `/tbanen/images/stations/${s.image}`;
+}
+
+// ── Render ────────────────────────────────────────────────────────
+function render() {
+  const grid = document.getElementById('station-grid');
+  const countEl = document.getElementById('count');
+  grid.innerHTML = '';
+
+  if (activeFilter === 'alpha') {
+    renderAlpha(grid, countEl);
+  } else {
+    renderLine(grid, countEl, parseInt(activeFilter));
+  }
+}
+
+function stationHTML(s) {
+  const href = s.image ? `/tbanen/app.html?s=${s.id}` : null;
+  const thumb = thumbSrc(s);
+  const lines = (s.lines || []).map(l =>
+    `<span class="station-line-pip" style="background:${LC[l]}" title="Linje ${l}"></span>`
+  ).join('');
+
+  const thumbEl = thumb
+    ? `<img class="station-thumb" src="${thumb}" alt="" loading="lazy">`
+    : `<div class="station-thumb-empty"><span>—</span></div>`;
+
+  const arrow = s.image ? '→' : '';
+  const unpub = s.image ? '' : ' unpublished';
+
+  const inner = `
+    ${thumbEl}
+    <span class="station-name">${s.name}</span>
+    <span class="station-lines">${lines}</span>
+    <span class="station-arrow">${arrow}</span>
+  `;
+
+  return href
+    ? `<a class="station-item${unpub}" href="${href}">${inner}</a>`
+    : `<div class="station-item${unpub}" style="cursor:default">${inner}</div>`;
+}
+
+function renderAlpha(grid, countEl) {
+  const sorted = [...stations].sort((a, b) => a.name.localeCompare(b.name, 'no'));
+  const published = sorted.filter(s => s.image).length;
+  countEl.textContent = `${published} / ${sorted.length} stasjoner dokumentert`;
+
+  const groups = {};
+  sorted.forEach(s => {
+    const letter = s.name[0].toUpperCase();
+    if (!groups[letter]) groups[letter] = [];
+    groups[letter].push(s);
+  });
+
+  Object.entries(groups).forEach(([letter, list]) => {
+    const head = document.createElement('div');
+    head.className = 'section-head';
+    head.textContent = letter;
+    grid.appendChild(head);
+
+    const frag = document.createDocumentFragment();
+    list.forEach(s => {
+      const div = document.createElement('div');
+      div.innerHTML = stationHTML(s);
+      frag.appendChild(div.firstElementChild);
+    });
+    grid.appendChild(frag);
+  });
+}
+
+function renderLine(grid, countEl, lineNum) {
+  const seq = lineSequences[String(lineNum)] || [];
+  const lineStations = seq.map(id => stations.find(s => s.id === id)).filter(Boolean);
+  const published = lineStations.filter(s => s.image).length;
+  countEl.textContent = `${published} / ${lineStations.length} stasjoner dokumentert`;
+
+  const head = document.createElement('div');
+  head.className = 'section-head';
+  head.innerHTML = `<span class="line-pip" style="background:${LC[lineNum]};width:8px;height:8px;border-radius:50%;display:inline-block;"></span> ${LN[lineNum]}`;
+  grid.appendChild(head);
+
+  const frag = document.createDocumentFragment();
+  lineStations.forEach(s => {
+    const div = document.createElement('div');
+    div.innerHTML = stationHTML(s);
+    frag.appendChild(div.firstElementChild);
+  });
+  grid.appendChild(frag);
+}
+
+// ── Filter buttons ────────────────────────────────────────────────
+document.getElementById('filter-bar').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.filter;
+  render();
+});
+
+// ── Load data ─────────────────────────────────────────────────────
+fetch('/tbanen/data/stations.json')
+  .then(r => r.json())
+  .then(data => {
+    stations = data.stations;
+    lineSequences = data.lineSequences;
+    render();
+  });
+</script>
+
+</body>
+</html>

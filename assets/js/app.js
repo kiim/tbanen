@@ -79,13 +79,7 @@ async function init() {
   qs('#btn-menu').addEventListener('click', openMenu);
   qs('#btn-close-menu').addEventListener('click', closeMenu);
   qs('#menu-btn-map').addEventListener('click', () => { closeMenu(); openNetwork(); });
-  qs('#menu-btn-alpha').addEventListener('click', () => {
-    closeMenu();
-    openNetwork();
-    // Force list view regardless of screen size
-    qs('#network-list-view').style.display = 'flex';
-    qs('#network-map-view').style.display  = 'none';
-  });
+  qs('#menu-btn-alpha').addEventListener('click', () => { window.location.href = '/tbanen/alle.html'; });
   qs('#btn-network').addEventListener('click', openNetwork);
   qs('#btn-close-network').addEventListener('click', closeNetwork);
   qs('#btn-prev').addEventListener('click', () => { stopSlideshow(); navPrev(); });
@@ -101,7 +95,11 @@ async function init() {
   buildMapLegend();
   setupMapTooltip();
 
-  if (isEntryLoad) {
+  // Deep-link: ?s=stationid navigates directly to a station
+  const deepLink = new URLSearchParams(location.search).get('s');
+  if (deepLink && stationMap[deepLink]?.image) {
+    enterAt(deepLink, stationMap[deepLink].lines[0]);
+  } else if (isEntryLoad) {
     // Panel starts hidden — will arrive after the first photo loads
     qs('#station-panel').classList.add('panel-wait');
     enterAt('nationaltheateret', 1);
@@ -433,9 +431,6 @@ function openNetwork() {
 
 function closeNetwork() {
   qs('#view-network').setAttribute('hidden', '');
-  // Reset any forced list/map overrides so next open uses CSS defaults
-  qs('#network-list-view').style.display = '';
-  qs('#network-map-view').style.display  = '';
   if (cur.id) show('station');
 }
 
