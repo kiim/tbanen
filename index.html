@@ -895,6 +895,9 @@
   const tunnelEl = document.getElementById('tunnel');
 
   function render(now) {
+    requestAnimationFrame(render);
+    // Keep lastTime current while hidden so dt is normal on return
+    if (document.hidden) { lastTime = now; return; }
     const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
     globalTime += dt;
@@ -1007,8 +1010,6 @@
 
       ctx.globalAlpha = 1;
     });
-
-    requestAnimationFrame(render);
   }
 
   // ── Boot: load data asynchronously ───────────────────────────────
@@ -1084,6 +1085,8 @@
   });
 
   window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
+  // Reset timing when tab becomes visible — prevents dt spike after hidden period
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) lastTime = performance.now(); });
 
   // ── Start ─────────────────────────────────────────────────────────
   window.addEventListener('resize', () => { resize(); buildSegPoints(); buildGrain(); });

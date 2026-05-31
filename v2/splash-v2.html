@@ -881,6 +881,8 @@
   const tunnelEl = document.getElementById('tunnel');
 
   function render(now) {
+    requestAnimationFrame(render);
+    if (document.hidden) { lastTime = now; return; }
     const dt = Math.min((now - lastTime) / 1000, 0.1);
     lastTime = now;
     globalTime += dt;
@@ -993,8 +995,6 @@
 
       ctx.globalAlpha = 1;
     });
-
-    requestAnimationFrame(render);
   }
 
   // ── Boot: load data asynchronously ───────────────────────────────
@@ -1070,6 +1070,7 @@
   });
 
   window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) lastTime = performance.now(); });
 
   // ── Start ─────────────────────────────────────────────────────────
   window.addEventListener('resize', () => { resize(); buildSegPoints(); buildGrain(); });
