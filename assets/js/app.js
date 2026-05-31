@@ -79,7 +79,13 @@ async function init() {
   qs('#btn-menu').addEventListener('click', openMenu);
   qs('#btn-close-menu').addEventListener('click', closeMenu);
   qs('#menu-btn-map').addEventListener('click', () => { closeMenu(); openNetwork(); });
-  qs('#menu-btn-alpha').addEventListener('click', () => { closeMenu(); openNetwork(); });
+  qs('#menu-btn-alpha').addEventListener('click', () => {
+    closeMenu();
+    openNetwork();
+    // Force list view regardless of screen size
+    qs('#network-list-view').style.display = 'flex';
+    qs('#network-map-view').style.display  = 'none';
+  });
   qs('#btn-network').addEventListener('click', openNetwork);
   qs('#btn-close-network').addEventListener('click', closeNetwork);
   qs('#btn-prev').addEventListener('click', () => { stopSlideshow(); navPrev(); });
@@ -427,6 +433,9 @@ function openNetwork() {
 
 function closeNetwork() {
   qs('#view-network').setAttribute('hidden', '');
+  // Reset any forced list/map overrides so next open uses CSS defaults
+  qs('#network-list-view').style.display = '';
+  qs('#network-map-view').style.display  = '';
   if (cur.id) show('station');
 }
 
